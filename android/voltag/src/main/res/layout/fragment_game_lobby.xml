@@ -28,9 +28,19 @@
         />
 
     <ListView
+        android:id="@android:id/list"
+        android:layout_below="@id/gamelobby_tv_whosit"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-    </ListView>
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
+
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_below="@id/gamelobby_tv_whosit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+    </TextView>
 
 
 
