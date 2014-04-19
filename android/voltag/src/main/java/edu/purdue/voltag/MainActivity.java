@@ -28,18 +28,21 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
     }
 
-    public void beginButton(View v)
+    public void beginButton(View view)
     {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
         boolean isRegistered = settings.getBoolean(PREF_ISREGISTERED,false);
         Log.d("debug","isRegistered="+isRegistered);
+
+        View v = (View) findViewById(R.id.splash);
+        v.setVisibility(View.GONE);
+
         if(!isRegistered) {
             getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
         }
         else{
             getFragmentManager().beginTransaction().replace(android.R.id.content, new CreateGameFragment()).commit();
         }
-
     }
 
     @Override
