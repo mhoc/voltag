@@ -11,6 +11,7 @@ import com.parse.Parse;
 import com.parse.ParseObject;
 
 import edu.purdue.voltag.data.ParseConstants;
+import edu.purdue.voltag.data.VoltagDB;
 
 
 public class RegisterActivity extends Activity {
@@ -28,7 +29,10 @@ public class RegisterActivity extends Activity {
         player.put("hardwareID",android_id);
         Log.d("debug","before");
         player.saveInBackground();
-        Log.d("debug","after");
+        Log.d("debug", "after");
+
+        VoltagDB db = new VoltagDB(this);
+        db.refreshDB();
     }
 
 

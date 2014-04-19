@@ -6,12 +6,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 
 import java.util.List;
 
@@ -91,13 +94,16 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     /** Refreshes the database from parse */
     public void refreshDB() {
+        Log.d(MainActivity.LOG_TAG, "Starting database refresh.");
 
         // Get current game ID
         SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
         String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+        gameID = "wMa6q5KXob";
 
         // If there's no game, exit
         if (gameID.equals("")) {
+            Toast.makeText(c, "No current game.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -113,7 +119,22 @@ public class VoltagDB extends SQLiteOpenHelper{
                     return;
                 }
                 ParseObject game = parseObjects.get(0);
-                Toast.makeText(c, game.getString(ParseConstants.GAME_NAME), Toast.LENGTH_LONG).show();
+                Log.d(MainActivity.LOG_TAG, "Found game " + game.getString(ParseConstants.GAME_NAME));
+
+                // Get relation to current users
+                ParseRelation<ParseObject> relation = game.getRelation(ParseConstants.GAME_TAGGED);
+                relation.getQuery().findInBackground(new FindCallback<ParseObject>() {
+                    public void done(List<ParseObject> parseObjects, ParseException e) {
+                        for (ParseObject p : parseObjects) {
+                            String playerID = p.getString(ParseConstants.CLASS_ID);
+                            String hardwareID = p.getString(ParseConstants.PLAYER_HARDWARE_ID);
+                            String playerName = p.getString(ParseConstants.PLAYER_NAME);
+                            String playerEmail = p.getString(ParseConstants.PLAYER_EMAIL);
+                            Player p = new Player(playerID, hardwareID, playerName, playerEmail);
+                            addPlayer(p);
+                        }
+                    }
+                });
 
             }
         });

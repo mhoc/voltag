@@ -11,6 +11,7 @@ import edu.purdue.voltag.data.VoltagDB;
 
 public class MainActivity extends Activity {
 
+    public static final String LOG_TAG = "voltag_log";
     public static final String PREFS_NAME = "voltag_prefs";
     public static final String PREF_CURRENT_GAME_ID = "current_game_id";
 
@@ -19,8 +20,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        VoltagDB db = new VoltagDB(this);
-        db.refreshDB();
+
         Intent intent = new Intent(this,RegisterActivity.class);
     }
 
