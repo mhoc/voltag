@@ -1,13 +1,38 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="30dp"
     tools:context="edu.purdue.voltag.fragments.CreateGameFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/creategame_tv_create"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Create A Game"
+        android:textColor="#F00"
+        android:paddingBottom="30dp"
+        android:textAllCaps="true"
+        android:textSize="30sp"/>
+    <EditText
+        android:id="@+id/creategame_et_lobbyid"
+        android:textSize="25sp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/creategame_tv_create"
+        android:layout_centerHorizontal="true"
+        android:hint="Lobby ID" />
+    <Button
+        android:id="@+id/creategame_bu_share"
+        android:layout_below="@id/creategame_et_lobbyid"
+        android:layout_centerHorizontal="true"
+        android:text="Share"
+        android:padding="25dp"
+        android:textSize="25sp"
+        android:layout_marginTop="270dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

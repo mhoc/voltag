@@ -1,13 +1,37 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="30dp"
     tools:context="edu.purdue.voltag.fragments.JoinGameFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/joingame_tv_join"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Join A Game"
+        android:textColor="#F00"
+        android:paddingBottom="30dp"
+        android:textAllCaps="true"
+        android:textSize="30sp"/>
+    <EditText
+        android:id="@+id/joingame_et_lobbyid"
+        android:textSize="25sp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/joingame_tv_join"
+        android:layout_centerHorizontal="true"
+        android:hint="Lobby ID" />
+    <Button
+        android:id="@+id/joingame_bu_join"
+        android:layout_below="@id/joingame_et_lobbyid"
+        android:layout_centerHorizontal="true"
+        android:text="Join"
+        android:padding="25dp"
+        android:textSize="25sp"
+        android:layout_marginTop="270dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
-</FrameLayout>
+</RelativeLayout>
