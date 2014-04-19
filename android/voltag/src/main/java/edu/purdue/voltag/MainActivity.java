@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import edu.purdue.voltag.data.VoltagDB;
+import edu.purdue.voltag.fragments.GameLobbyFragment;
 import edu.purdue.voltag.fragments.RegistrationFragment;
 
 
@@ -25,6 +26,7 @@ public class MainActivity extends Activity {
 
     public void beginButton(View v)
     {
+
         getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
     }
 
