@@ -8,6 +8,9 @@ import android.view.MenuItem;
 
 public class MainActivity extends Activity {
 
+    public static final String PREFS_NAME = "voltag_prefs";
+    public static final String PREF_CURRENT_GAME_ID = "current_game_id";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

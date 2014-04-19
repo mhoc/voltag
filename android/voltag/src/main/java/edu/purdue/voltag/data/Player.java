@@ -8,6 +8,7 @@ public class Player {
     private String hardwareID;
     private String userName;
     private String email;
+    private boolean isIt = false;
 
 
     public Player(String hardwareID, String userName, String email) {
@@ -26,6 +27,10 @@ public class Player {
 
     public String getEmail() {
         return this.email;
+    }
+
+    public void setIsIt(boolean isIt) {
+        this.isIt = isIt;
     }
 
 }

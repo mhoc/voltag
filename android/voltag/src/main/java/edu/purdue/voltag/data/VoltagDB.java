@@ -3,14 +3,25 @@ package edu.purdue.voltag.data;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.util.List;
+
+import edu.purdue.voltag.MainActivity;
 
 public class VoltagDB extends SQLiteOpenHelper{
 
     /** Database information */
     public static final String DB_NAME = "voltag_db";
     public static final int DB_VERSION = 1;
+    private Context c;
 
     /** Tables */
     public static final String TABLE_PLAYERS = "t_players";
@@ -73,6 +84,30 @@ public class VoltagDB extends SQLiteOpenHelper{
         if (db != null) {
             db.insert(TABLE_PLAYERS, null, values);
         }
+
+    }
+
+    /** Refreshes the database from parse */
+    public void refreshDB() {
+
+        // Get current game ID
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+
+        // If there's no game, exit
+        if (gameID.equals("")) {
+            return;
+        }
+
+        // Query parse
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_GAME);
+        query.whereEqualTo(ParseConstants.CLASS_ID, gameID);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+
+            }
+        });
+
 
     }
 
