@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Register"
-        android:id="@+id/button"
+        android:id="@+id/btn_register"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"/>
 
@@ -18,10 +18,10 @@
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:ems="10"
-        android:id="@+id/editText"
+        android:id="@+id/etxt_email"
         android:textSize="25sp"
         android:hint="Email"
-        android:layout_above="@+id/editText2"
+        android:layout_above="@+id/etxt_displayName"
         android:layout_centerHorizontal="true"/>
 
     <EditText
@@ -29,10 +29,10 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:hint="Display name"
-        android:layout_above="@+id/button"
+        android:layout_above="@+id/btn_register"
         android:textSize="25sp"
         android:ems="10"
-        android:id="@+id/editText2"
+        android:id="@+id/etxt_displayName"
         android:layout_centerHorizontal="true"/>
 
     <TextView
