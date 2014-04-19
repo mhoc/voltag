@@ -34,7 +34,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     /** Table - Players */
     public static final String PLAYERS_PARSE_ID = "player_parse_id";
-    public static final String PLAYERS_HARDWARE_ID = "players_hardware_id";
+    public static final String PLAYERS_HARDWARE_ID = "player_hardware_id";
     public static final String PLAYERS_NAME = "player_name";
     public static final String PLAYERS_EMAIL = "player_email";
     public static final String PLAYERS_ISIT = "player_isit";
@@ -49,10 +49,10 @@ public class VoltagDB extends SQLiteOpenHelper{
 
         String createTablePlayers = "CREATE " + TABLE_PLAYERS + " (" +
                 PLAYERS_HARDWARE_ID + " TEXT, " +
-                PLAYERS_PARSE_ID + " TEXT," +
+                PLAYERS_PARSE_ID + " TEXT, " +
                 PLAYERS_NAME + " TEXT, " +
                 PLAYERS_EMAIL + " TEXT, " +
-                PLAYERS_ISIT + " INTEGER );";
+                PLAYERS_ISIT + " INTEGER);";
 
         if (db != null) {
             db.execSQL(createTablePlayers);
@@ -81,7 +81,26 @@ public class VoltagDB extends SQLiteOpenHelper{
         }
     }
 
-    /** Adds a player to the database */
+    /** Creates a new player on parse.
+     *  The ParseID field in the player object should be null. This call will fail if it isn't. */
+    public void createPlayer(Player p) {
+
+        if (p.getParseID() != null) {
+            Log.d(MainActivity.LOG_TAG, "Error in createPlayer(): ParseID field SHOULD be null.");
+            return;
+        }
+
+        ParseObject player = new ParseObject(ParseConstants.PARSE_CLASS_PLAYER);
+        player.put(ParseConstants.PLAYER_HARDWARE_ID, p.getHardwareID());
+        player.put(ParseConstants.PLAYER_NAME, p.getUserName());
+        player.put(ParseConstants.PLAYER_EMAIL, p.getEmail());
+
+        // Save it to parse
+        player.saveInBackground();
+
+    }
+
+    /** Adds a player to the local database */
     public void addPlayer(Player p) {
 
         ContentValues values = new ContentValues();
@@ -98,12 +117,14 @@ public class VoltagDB extends SQLiteOpenHelper{
     }
 
     /** Refreshes the database from parse */
-    public void refreshDB() {
+    public void refreshPlayersTable() {
         Log.d(MainActivity.LOG_TAG, "Starting database refresh.");
 
         // Get current game ID
         SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
         String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+
+        // TODO: REMOVE THIS AND GET FROM SHARED PREFERENCES
         gameID = "wMa6q5KXob";
 
         // If there's no game, exit
@@ -130,6 +151,10 @@ public class VoltagDB extends SQLiteOpenHelper{
                 ParseRelation<ParseObject> relation = game.getRelation(ParseConstants.GAME_TAGGED);
                 relation.getQuery().findInBackground(new FindCallback<ParseObject>() {
                     public void done(List<ParseObject> parseObjects, ParseException e) {
+                        // Clear out the database
+                        //dropTablePlayers();
+
+                        // Re-fill it with new players
                         for (ParseObject p : parseObjects) {
                             String playerID = p.getString(ParseConstants.CLASS_ID);
                             String hardwareID = p.getString(ParseConstants.PLAYER_HARDWARE_ID);
