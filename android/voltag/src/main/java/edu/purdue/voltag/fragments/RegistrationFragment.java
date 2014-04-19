@@ -108,7 +108,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         String email = nameBox.getText().toString();
         String android_id = Settings.Secure.getString(getActivity().getContentResolver(),Settings.Secure.ANDROID_ID);
         Player p = new Player(null,android_id,name,email);
-        db.createPlayer(p);
+        db.createPlayerOnParse(p);
         Toast.makeText(getActivity(), "You are registered", Toast.LENGTH_LONG);
         regButton.setEnabled(false);
 
