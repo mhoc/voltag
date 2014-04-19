@@ -92,7 +92,15 @@ public class GameChoiceFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new CreateGameFragment()).commit();
+        switch (view.getId()){
+            case R.id.btn_new_game:
+                getFragmentManager().beginTransaction().replace(android.R.id.content, new CreateGameFragment()).commit();
+                break;
+            case R.id.btn_existing_game:
+                getFragmentManager().beginTransaction().replace(android.R.id.content, new JoinGameFragment()).commit();
+                break;
+        }
+
     }
 
     /**
