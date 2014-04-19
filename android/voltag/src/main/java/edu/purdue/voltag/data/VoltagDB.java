@@ -4,6 +4,7 @@ package edu.purdue.voltag.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -16,6 +17,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.purdue.voltag.MainActivity;
@@ -31,7 +33,8 @@ public class VoltagDB extends SQLiteOpenHelper{
     public static final String TABLE_PLAYERS = "t_players";
 
     /** Table - Players */
-    public static final String PLAYERS_ID = "player_id";
+    public static final String PLAYERS_PARSE_ID = "player_parse_id";
+    public static final String PLAYERS_HARDWARE_ID = "players_hardware_id";
     public static final String PLAYERS_NAME = "player_name";
     public static final String PLAYERS_EMAIL = "player_email";
     public static final String PLAYERS_ISIT = "player_isit";
@@ -45,7 +48,8 @@ public class VoltagDB extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
 
         String createTablePlayers = "CREATE " + TABLE_PLAYERS + " (" +
-                PLAYERS_ID + " TEXT, " +
+                PLAYERS_HARDWARE_ID + " TEXT, " +
+                PLAYERS_PARSE_ID + " TEXT," +
                 PLAYERS_NAME + " TEXT, " +
                 PLAYERS_EMAIL + " TEXT, " +
                 PLAYERS_ISIT + " INTEGER );";
@@ -81,7 +85,8 @@ public class VoltagDB extends SQLiteOpenHelper{
     public void addPlayer(Player p) {
 
         ContentValues values = new ContentValues();
-        values.put(PLAYERS_ID, p.getHardwareID());
+        values.put(PLAYERS_PARSE_ID, p.getParseID());
+        values.put(PLAYERS_HARDWARE_ID, p.getHardwareID());
         values.put(PLAYERS_EMAIL, p.getEmail());
         values.put(PLAYERS_NAME, p.getUserName());
 
@@ -139,6 +144,29 @@ public class VoltagDB extends SQLiteOpenHelper{
             }
         });
 
+    }
+
+    public List<Player> getPlayersInCurrentGame() {
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        if (db != null) {
+            Cursor c = db.rawQuery("SELECT * FROM " + TABLE_PLAYERS + ";", null);
+            List<Player> players = new ArrayList<Player>();
+            if (c.moveToFirst()) {
+                do {
+                    String parseID = c.getString(c.getColumnIndex(PLAYERS_PARSE_ID));
+                    String hwID = c.getString(c.getColumnIndex(PLAYERS_HARDWARE_ID));
+                    String name = c.getString(c.getColumnIndex(PLAYERS_NAME));
+                    String email = c.getString(c.getColumnIndex(PLAYERS_EMAIL));
+                    Player p = new Player(parseID, hwID, name, email);
+                    players.add(p);
+                } while (c.moveToNext());
+            }
+            return players;
+        }
+
+        return null;
     }
 
 }
