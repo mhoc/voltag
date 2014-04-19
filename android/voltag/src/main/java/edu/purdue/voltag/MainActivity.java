@@ -8,10 +8,6 @@ import android.view.MenuItem;
 
 public class MainActivity extends Activity {
 
-    public static final String PARSE_CLASS_PLAYER = "Player";
-    public static final String PARSE_CLASS_GAME = "Game";
-    public static final String PARSE_CLASS_TAG = "Tag";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

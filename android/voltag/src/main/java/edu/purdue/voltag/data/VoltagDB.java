@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import edu.purdue.voltag.MainActivity;
+
 public class VoltagDB extends SQLiteOpenHelper{
 
     /** Database information */
@@ -82,7 +84,6 @@ public class VoltagDB extends SQLiteOpenHelper{
     /** Refreshes the database from parse */
     public void refreshDB() {
 
-        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>();
     }
 
 }
