@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -34,6 +35,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     public VoltagDB(Context c) {
         super(c, DB_NAME, null, DB_VERSION);
+        this.c = c;
     }
 
     @Override
@@ -105,9 +107,16 @@ public class VoltagDB extends SQLiteOpenHelper{
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> parseObjects, ParseException e) {
 
+                // Parse should return a list of a single Game which is the game we are currently in
+                if (parseObjects.size() > 1) {
+                    Toast.makeText(c, "Error in parse query. There should only be 1 game returned.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                ParseObject game = parseObjects.get(0);
+                Toast.makeText(c, game.getString(ParseConstants.GAME_NAME), Toast.LENGTH_LONG).show();
+
             }
         });
-
 
     }
 
