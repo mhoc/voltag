@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
+import java.util.Collection;
+
 import edu.purdue.voltag.data.ParseConstants;
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.data.Player;
