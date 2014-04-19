@@ -3,6 +3,10 @@ package edu.purdue.voltag.data;
 /** Class which stores static constants for object names and fields in the parse backend */
 public abstract class ParseConstants {
 
+    /** Parse keys please dont stealerino */
+    public static final String PARSE_APPLICATION_KEY = "RP4GH0ySHN7O2LdJQxGAlFEKgfN5s4aM4gOmpGAs";
+    public static final String PARSE_CLIENT_KEY = "pcNQ7PZCQv4gGWjCjR9ia6SVhNIetod2LNvb5ZhX";
+
     /** Object names */
     public static final String PARSE_CLASS_PLAYER = "Player";
     public static final String PARSE_CLASS_GAME = "Game";
