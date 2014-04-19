@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import edu.purdue.voltag.R;
 
@@ -19,7 +20,8 @@ import edu.purdue.voltag.R;
  * create an instance of this fragment.
  *
  */
-public class CreateGameFragment extends Fragment {
+public class CreateGameFragment extends Fragment implements View.OnClickListener {
+    private Button shareButton;
 
     public CreateGameFragment() {
         // Required empty public constructor
@@ -29,7 +31,15 @@ public class CreateGameFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_create_game, container, false);
+        View v = inflater.inflate(R.layout.fragment_create_game, container, false);
+        shareButton = (Button)v.findViewById(R.id.creategame_bu_share);
+        shareButton.setOnClickListener(this);
+        return v;
+
     }
 
+    @Override
+    public void onClick(View view) {
+        return;
+    }
 }
