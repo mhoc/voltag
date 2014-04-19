@@ -11,10 +11,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +92,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     /** Creates a new player on parse.
      *  The ParseID field in the player object should be null. This call will fail if it isn't. */
-    public void createPlayerOnParse(Player p) {
+    public void createPlayerOnParse(final Player p) {
 
         if (p.getParseID() != null) {
             Log.d(MainActivity.LOG_TAG, "Error in createPlayer(): ParseID field SHOULD be null.");
@@ -103,12 +105,74 @@ public class VoltagDB extends SQLiteOpenHelper{
         player.put(ParseConstants.PLAYER_EMAIL, p.getEmail());
 
         // Save it to parse
-        player.saveInBackground();
+        player.saveInBackground(new SaveCallback() {
+            public void done(ParseException e) {
+
+                // Query to get the new ID created
+                ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_PLAYER);
+                query.whereEqualTo(ParseConstants.PLAYER_HARDWARE_ID, p.getHardwareID());
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    public void done(List<ParseObject> parseObjects, ParseException e) {
+                        ParseObject user = parseObjects.get(0);
+                        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                        prefs.edit().putString(MainActivity.PREF_USER_ID, user.getString(ParseConstants.CLASS_ID)).commit();
+                    }
+                });
+            }
+        });
 
     }
 
+    /** Creates a new game on parse.
+     *  When complete, the game ID is stored in the shared preferences. */
+    public void createGameOnParse(final String gameName) {
+
+        // Get the user's userID
+        final SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        final String userID = prefs.getString(MainActivity.PREF_USER_ID, "");
+        if (userID.equals("")) {
+            return;
+        }
+
+        // Get the user from parse
+        new Thread(new Runnable() {
+            public void run() {
+
+                ParseQuery<ParseObject> queryUser = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_PLAYER);
+                queryUser.whereEqualTo(ParseConstants.CLASS_ID, userID);
+
+                ParseObject currentUser = null;
+                try {
+                    currentUser = queryUser.find().get(0);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Create the game
+                ParseObject game = new ParseObject(ParseConstants.PARSE_CLASS_GAME);
+                game.put(ParseConstants.GAME_NAME, gameName);
+                game.getRelation(ParseConstants.GAME_PLAYERS).add(currentUser);
+                game.getRelation(ParseConstants.GAME_TAGGED).add(currentUser);
+
+                // Send the game to the server
+                try {
+                    game.save();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Save the ID in the shared preferences
+                prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, game.getString(ParseConstants.CLASS_ID)).commit();
+
+            }
+        });
+
+
+    }
+
+
     /** Adds a player to the local database */
-    public void addPlayerToDB(Player p) {
+    private void addPlayerToDB(Player p) {
 
         ContentValues values = new ContentValues();
         values.put(PLAYERS_PARSE_ID, p.getParseID());
