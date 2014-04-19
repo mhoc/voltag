@@ -6,6 +6,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
 public class VoltagDB extends SQLiteOpenHelper{
 
     /** Database information */
@@ -74,6 +77,12 @@ public class VoltagDB extends SQLiteOpenHelper{
             db.insert(TABLE_PLAYERS, null, values);
         }
 
+    }
+
+    /** Refreshes the database from parse */
+    public void refreshDB() {
+
+        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>();
     }
 
 }
