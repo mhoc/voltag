@@ -84,6 +84,9 @@ public class VoltagDB extends SQLiteOpenHelper{
     /** Refreshes the database from parse */
     public void refreshDB() {
 
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_GAME);
+        query.whereEqualTo(ParseConstants.PLAYER)
+
     }
 
 }
