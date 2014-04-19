@@ -1,6 +1,7 @@
 package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
+import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.ParseConstants;
 import edu.purdue.voltag.data.Player;
@@ -111,6 +113,11 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         db.createPlayerOnParse(p);
         Toast.makeText(getActivity(), "You are registered", Toast.LENGTH_LONG);
         regButton.setEnabled(false);
+
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(MainActivity.PREF_ISREGISTERED,true);
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new CreateGameFragment()).commit();
 
     }
 }

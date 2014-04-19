@@ -2,12 +2,15 @@ package edu.purdue.voltag;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import edu.purdue.voltag.data.VoltagDB;
+import edu.purdue.voltag.fragments.CreateGameFragment;
 import edu.purdue.voltag.fragments.RegistrationFragment;
 
 
@@ -16,6 +19,7 @@ public class MainActivity extends Activity {
     public static final String LOG_TAG = "voltag_log";
     public static final String PREFS_NAME = "voltag_prefs";
     public static final String PREF_CURRENT_GAME_ID = "current_game_id";
+    public static final String PREF_ISREGISTERED = "is_registered";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +29,15 @@ public class MainActivity extends Activity {
 
     public void beginButton(View v)
     {
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
+        boolean isRegistered = settings.getBoolean(PREF_ISREGISTERED,false);
+        Log.d("debug","isRegistered="+isRegistered);
+        if(!isRegistered) {
+            getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
+        }
+        else{
+            getFragmentManager().beginTransaction().replace(android.R.id.content, new CreateGameFragment()).commit();
+        }
     }
 
     @Override
