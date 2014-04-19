@@ -15,6 +15,7 @@ import com.parse.Parse;
 import com.parse.ParseObject;
 
 import edu.purdue.voltag.data.ParseConstants;
+import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.data.Player;
 
 
@@ -25,6 +26,8 @@ public class RegisterActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         Parse.initialize(this, ParseConstants.PARSE_APPLICATION_KEY, ParseConstants.PARSE_CLIENT_KEY);
+        VoltagDB db = new VoltagDB(this);
+        db.refreshDB();
     }
 
 
