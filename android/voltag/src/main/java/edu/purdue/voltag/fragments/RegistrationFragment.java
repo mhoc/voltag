@@ -17,6 +17,8 @@ import com.parse.ParseObject;
 
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.ParseConstants;
+import edu.purdue.voltag.data.Player;
+import edu.purdue.voltag.data.VoltagDB;
 
 
 /*
@@ -28,7 +30,7 @@ import edu.purdue.voltag.data.ParseConstants;
  * create an instance of this fragment.
  *
  */
-public class RegistrationFragment extends Fragment {
+public class RegistrationFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -41,6 +43,7 @@ public class RegistrationFragment extends Fragment {
     private EditText emailBox;
     private EditText nameBox;
     private  Button  regButton;
+    private VoltagDB  db;
 
 
     /**
@@ -79,9 +82,11 @@ public class RegistrationFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_registration, container, false);
-        nameBox = (EditText)v.findViewById(R.id.emailEditText);
-        emailBox = (EditText)v.findViewById(R.id.userNameEditText);
-        regButton = (Button)v.findViewById(R.id.registerButton);
+        nameBox = (EditText)v.findViewById(R.id.etxt_email);
+        emailBox = (EditText)v.findViewById(R.id.etxt_displayName);
+        regButton = (Button)v.findViewById(R.id.btn_register);
+        regButton.setOnClickListener(this);
+        db = new VoltagDB(getActivity());
         return v;
     }
 
@@ -96,22 +101,16 @@ public class RegistrationFragment extends Fragment {
         super.onDetach();
     }
 
-    public void onRegisterClick(View v){
+
+    @Override
+    public void onClick(View view) {
         String name = emailBox.getText().toString();
         String email = nameBox.getText().toString();
         String android_id = Settings.Secure.getString(getActivity().getContentResolver(),Settings.Secure.ANDROID_ID);
-
-
-        ParseObject player = new ParseObject("Player");
-        player.put("name",name);
-        player.put("email",email);
-        player.put("hardwareID",android_id);
-        player.saveInBackground();
+        Player p = new Player(null,android_id,name,email);
+        db.createPlayer(p);
         Toast.makeText(getActivity(), "You are registered", Toast.LENGTH_LONG);
         regButton.setEnabled(false);
 
-
-
     }
-
 }
