@@ -22,6 +22,8 @@ public class MainActivity extends Activity {
         VoltagDB db = new VoltagDB(this);
         db.refreshDB();
         Intent intent = new Intent(this,RegisterActivity.class);
+
+       
     }
 
 

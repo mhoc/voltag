@@ -11,7 +11,8 @@
         android:text="Register"
         android:id="@+id/btn_register"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        android:onClick="onRegisterClick"/>
 
     <EditText
         android:layout_width="wrap_content"

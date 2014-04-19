@@ -4,11 +4,20 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.parse.Parse;
+import com.parse.ParseObject;
 
 import edu.purdue.voltag.R;
+import edu.purdue.voltag.data.ParseConstants;
+
 
 /*
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -28,6 +37,10 @@ public class RegistrationFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private EditText emailBox;
+    private EditText nameBox;
+    private  Button  regButton;
 
     private OnFragmentInteractionListener mListener;
 
@@ -59,13 +72,18 @@ public class RegistrationFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        Parse.initialize(getActivity(), ParseConstants.PARSE_APPLICATION_KEY, ParseConstants.PARSE_CLIENT_KEY);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_registration, container, false);
+        View v = inflater.inflate(R.layout.fragment_registration, container, false);
+        nameBox = (EditText)v.findViewById(R.id.emailEditText);
+        emailBox = (EditText)v.findViewById(R.id.userNameEditText);
+        regButton = (Button)v.findViewById(R.id.registerButton);
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -105,6 +123,25 @@ public class RegistrationFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+
+    public void onRegisterClick(View v){
+        String name = emailBox.getText().toString();
+        String email = nameBox.getText().toString();
+        String android_id = Settings.Secure.getString(getActivity().getContentResolver(),Settings.Secure.ANDROID_ID);
+
+
+        ParseObject player = new ParseObject("Player");
+        player.put("name",name);
+        player.put("email",email);
+        player.put("hardwareID",android_id);
+        player.saveInBackground();
+        Toast.makeText(getActivity(), "You are registered", Toast.LENGTH_LONG);
+        regButton.setEnabled(false);
+
+
+
     }
 
 }
