@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Join existing game"
-        android:id="@+id/button"
+        android:id="@+id/btn_existing_game"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
@@ -27,8 +27,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create new game"
-        android:id="@+id/button2"
-        android:layout_above="@+id/button"
+        android:id="@+id/btn_new_game"
+        android:layout_above="@+id/btn_existing_game"
         android:layout_marginBottom="10dp"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

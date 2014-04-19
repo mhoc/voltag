@@ -116,8 +116,8 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean(MainActivity.PREF_ISREGISTERED,true);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new CreateGameFragment()).commit();
+        editor.putBoolean(MainActivity.PREF_ISREGISTERED,true).commit();
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
 
     }
 }
