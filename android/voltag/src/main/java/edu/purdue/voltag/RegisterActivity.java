@@ -2,8 +2,15 @@ package edu.purdue.voltag;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.parse.Parse;
+import com.parse.ParseObject;
+
+import edu.purdue.voltag.data.ParseConstants;
 
 
 public class RegisterActivity extends Activity {
@@ -12,6 +19,16 @@ public class RegisterActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        Parse.initialize(this, ParseConstants.PARSE_APPLICATION_KEY, ParseConstants.PARSE_CLIENT_KEY);
+        ParseObject player = new ParseObject("testPlayer");
+        player.put("name","Test");
+         String android_id = Settings.Secure.getString(this.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+
+        player.put("hardwareID",android_id);
+        Log.d("debug","before");
+        player.saveInBackground();
+        Log.d("debug","after");
     }
 
 
