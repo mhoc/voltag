@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import edu.purdue.voltag.data.VoltagDB;
+import edu.purdue.voltag.fragments.RegistrationFragment;
 
 
 public class MainActivity extends Activity {
@@ -22,10 +24,12 @@ public class MainActivity extends Activity {
 
 
         Intent intent = new Intent(this,RegisterActivity.class);
-
-       
     }
 
+    public void beginButton(View v)
+    {
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
