@@ -11,6 +11,7 @@ import android.view.View;
 
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.fragments.CreateGameFragment;
+import edu.purdue.voltag.fragments.GameChoiceFragment;
 import edu.purdue.voltag.fragments.GameLobbyFragment;
 import edu.purdue.voltag.fragments.RegistrationFragment;
 
@@ -41,7 +42,7 @@ public class MainActivity extends Activity {
             getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
         }
         else{
-            getFragmentManager().beginTransaction().replace(android.R.id.content, new CreateGameFragment()).commit();
+            getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
         }
     }
 
