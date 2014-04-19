@@ -11,7 +11,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -70,6 +69,7 @@ public class VoltagDB extends SQLiteOpenHelper{
         SQLiteDatabase db = getWritableDatabase();
         if (db != null) {
             db.execSQL("DROP TABLE " + TABLE_PLAYERS);
+            onCreate(db);
         }
     }
 
@@ -78,12 +78,19 @@ public class VoltagDB extends SQLiteOpenHelper{
         SQLiteDatabase db = getWritableDatabase();
         if (db != null) {
             db.execSQL("DROP TABLE " + TABLE_PLAYERS);
+            String createTablePlayers = "CREATE " + TABLE_PLAYERS + " (" +
+                    PLAYERS_HARDWARE_ID + " TEXT, " +
+                    PLAYERS_PARSE_ID + " TEXT, " +
+                    PLAYERS_NAME + " TEXT, " +
+                    PLAYERS_EMAIL + " TEXT, " +
+                    PLAYERS_ISIT + " INTEGER);";
+            db.execSQL(createTablePlayers);
         }
     }
 
     /** Creates a new player on parse.
      *  The ParseID field in the player object should be null. This call will fail if it isn't. */
-    public void createPlayer(Player p) {
+    public void createPlayerOnParse(Player p) {
 
         if (p.getParseID() != null) {
             Log.d(MainActivity.LOG_TAG, "Error in createPlayer(): ParseID field SHOULD be null.");
@@ -101,7 +108,7 @@ public class VoltagDB extends SQLiteOpenHelper{
     }
 
     /** Adds a player to the local database */
-    public void addPlayer(Player p) {
+    public void addPlayerToDB(Player p) {
 
         ContentValues values = new ContentValues();
         values.put(PLAYERS_PARSE_ID, p.getParseID());
@@ -161,7 +168,7 @@ public class VoltagDB extends SQLiteOpenHelper{
                             String playerName = p.getString(ParseConstants.PLAYER_NAME);
                             String playerEmail = p.getString(ParseConstants.PLAYER_EMAIL);
                             Player player = new Player(playerID, hardwareID, playerName, playerEmail);
-                            addPlayer(player);
+                            addPlayerToDB(player);
                         }
                     }
                 });

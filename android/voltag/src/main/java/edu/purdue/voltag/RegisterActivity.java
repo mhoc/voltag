@@ -28,7 +28,7 @@ public class RegisterActivity extends Activity {
         Parse.initialize(this, ParseConstants.PARSE_APPLICATION_KEY, ParseConstants.PARSE_CLIENT_KEY);
         VoltagDB db = new VoltagDB(this);
 
-        db.createPlayer(new Player(null, "hardwareID", "Scarlett Johannson", "sj@youporn.com"));
+        db.createPlayerOnParse(new Player(null, "hardwareID", "Scarlett Johannson", "sj@youporn.com"));
         db.refreshPlayersTable();
 
     }
