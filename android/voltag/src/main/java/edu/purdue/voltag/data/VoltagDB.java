@@ -130,8 +130,8 @@ public class VoltagDB extends SQLiteOpenHelper{
                             String hardwareID = p.getString(ParseConstants.PLAYER_HARDWARE_ID);
                             String playerName = p.getString(ParseConstants.PLAYER_NAME);
                             String playerEmail = p.getString(ParseConstants.PLAYER_EMAIL);
-                            Player p = new Player(playerID, hardwareID, playerName, playerEmail);
-                            addPlayer(p);
+                            Player player = new Player(playerID, hardwareID, playerName, playerEmail);
+                            addPlayer(player);
                         }
                     }
                 });

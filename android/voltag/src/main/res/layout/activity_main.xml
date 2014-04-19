@@ -35,6 +35,7 @@
         android:id="@+id/etxt_displayName"
         android:layout_below="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="38dp" />
+        android:layout_marginTop="38dp"
+        android:textSize="40sp" />
 
 </RelativeLayout>
