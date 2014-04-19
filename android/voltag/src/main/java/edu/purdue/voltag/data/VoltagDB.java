@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.purdue.voltag.MainActivity;
+import edu.purdue.voltag.interfaces.OnGameCreatedListener;
 
 public class VoltagDB extends SQLiteOpenHelper{
 
@@ -125,7 +126,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     /** Creates a new game on parse.
      *  When complete, the game ID is stored in the shared preferences. */
-    public void createGameOnParse(final String gameName) {
+    public void createGameOnParse(final String gameName, final OnGameCreatedListener listener) {
 
         // Get the user's userID
         final SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
@@ -162,8 +163,11 @@ public class VoltagDB extends SQLiteOpenHelper{
                 }
 
                 // Save the ID in the shared preferences
-                prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, game.getString(ParseConstants.CLASS_ID)).commit();
+                String id = game.getString(ParseConstants.CLASS_ID);
+                prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, id).commit();
 
+                // Call the listener
+                listener.onGameCreated(id);
             }
         });
 
