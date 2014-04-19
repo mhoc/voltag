@@ -37,7 +37,8 @@ public class RegisterActivity extends Activity {
         Log.d("debug", "after");
 
         VoltagDB db = new VoltagDB(this);
-        db.refreshDB();
+        db.createPlayer(new Player(null, "hardwareID", "Scarlett Johannson", "sj@youporn.com"));
+        db.refreshPlayersTable();
 
     }
 
