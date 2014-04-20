@@ -11,20 +11,16 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
-import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.purdue.voltag.MainActivity;
-import edu.purdue.voltag.interfaces.OnDBRefreshListener;
-import edu.purdue.voltag.interfaces.OnGameCreatedListener;
-import edu.purdue.voltag.interfaces.OnUserCreatedListener;
+import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
 
 public class VoltagDB extends SQLiteOpenHelper{
 
@@ -95,7 +91,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     /** Creates a new player on parse.
      *  The ParseID field in the player object should be null. This call will fail if it isn't. */
-    public void createPlayerOnParse(final Player p, final OnUserCreatedListener listener) {
+    public void createPlayerOnParse(final Player p, final OnAsyncCompletedListener listener) {
 
         if (p.getParseID() != null) {
             Log.d(MainActivity.LOG_TAG, "Error in createPlayer(): ParseID field SHOULD be null.");
@@ -154,7 +150,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
                 // Alert listeners
                 if (listener != null) {
-                    listener.onUserCreated(user.getObjectId());
+                    listener.done(user.getObjectId());
                 }
 
             }
@@ -163,8 +159,9 @@ public class VoltagDB extends SQLiteOpenHelper{
     }
 
     /** Creates a new game on parse.
-     *  When complete, the game ID is stored in the shared preferences. */
-    public void createGameOnParse(final String gameName, final OnGameCreatedListener listener) {
+     *  When complete, the game ID is stored in the shared preferences and passed through
+     *  to the listener. */
+    public void createGameOnParse(final String gameName, final OnAsyncCompletedListener listener) {
 
         // Get the user's userID
         final SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
@@ -207,16 +204,16 @@ public class VoltagDB extends SQLiteOpenHelper{
 
                 // Call the listener
                 if (listener != null) {
-                    listener.onGameCreated(id);
+                    listener.done(id);
                 }
             }
         }).start();
 
-
     }
 
-    /** Adds a player to a given game on parse */
-    public void addPlayerToGameOnParse(final String gameID) {
+    /** Adds a player to a given game on parse.
+     *  ID passed into listener is the ParseID of the player added. */
+    public void addPlayerToGameOnParse(final String gameID, final OnAsyncCompletedListener listener) {
 
         // Get user ID
         SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
@@ -284,8 +281,9 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     }
 
-    /** Refreshes the database from parse */
-    public void refreshPlayersTable(final OnDBRefreshListener listener) {
+    /** Refreshes the database from parse.
+     *  The argument pass through the async listener is simply an empty string. */
+    public void refreshPlayersTable(final OnAsyncCompletedListener listener) {
         Log.d(MainActivity.LOG_TAG, "Starting database refresh.");
 
         // Get current game ID
@@ -331,7 +329,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
                         // Alert listeners
                         if (listener != null) {
-                            listener.onDBRefresh();
+                            listener.done("");
                         }
                     }
                 });
@@ -341,6 +339,10 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     }
 
+    /** Returns a list of all the players in the game based upon what is currently stored in the database.
+     *  Note that you can call refreshPlayersTable() before calling this. And actually, because refreshPlayerTable()
+     *  is asynchronous, utilize the OnAsyncCompletedListener to only call getPlayersInCurrentGame after the async
+     *  call is complete. */
     public List<Player> getPlayersInCurrentGame() {
 
         SQLiteDatabase db = getReadableDatabase();

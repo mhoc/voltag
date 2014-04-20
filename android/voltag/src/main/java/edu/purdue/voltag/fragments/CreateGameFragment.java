@@ -1,8 +1,6 @@
 package edu.purdue.voltag.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -14,7 +12,6 @@ import android.widget.EditText;
 
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.VoltagDB;
-import edu.purdue.voltag.interfaces.OnGameCreatedListener;
 
 /*
  * A simple {@link android.support.v4.app.Fragment} subclass.

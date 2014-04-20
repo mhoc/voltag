@@ -2,7 +2,6 @@ package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.provider.Settings;
@@ -14,14 +13,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.parse.Parse;
-import com.parse.ParseObject;
 
 import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.ParseConstants;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
-import edu.purdue.voltag.interfaces.OnUserCreatedListener;
 
 
 /*
