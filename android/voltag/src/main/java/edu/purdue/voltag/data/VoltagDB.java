@@ -118,6 +118,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
                 if (users.size() >= 1) {
                     // Don't add the user
+                    // TODO: Add the ID if they are logged in already
                     Toast.makeText(c, "You're already logged in.", Toast.LENGTH_SHORT).show();
                     return;
                 }
