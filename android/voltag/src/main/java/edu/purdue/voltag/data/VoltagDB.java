@@ -132,6 +132,7 @@ public class VoltagDB extends SQLiteOpenHelper{
         final SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
         final String userID = prefs.getString(MainActivity.PREF_USER_ID, "");
         if (userID.equals("")) {
+            Log.d(MainActivity.LOG_TAG, "Cannot create map. User is not logged in.");
             return;
         }
 
@@ -167,7 +168,9 @@ public class VoltagDB extends SQLiteOpenHelper{
                 prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, id).commit();
 
                 // Call the listener
-                listener.onGameCreated(id);
+                if (listener != null) {
+                    listener.onGameCreated(id);
+                }
             }
         });
 
