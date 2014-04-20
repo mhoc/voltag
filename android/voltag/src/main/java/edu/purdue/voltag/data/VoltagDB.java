@@ -100,6 +100,9 @@ public class VoltagDB extends SQLiteOpenHelper{
             return;
         }
 
+        // Check to see if the user already has an account
+        
+
         ParseObject player = new ParseObject(ParseConstants.PARSE_CLASS_PLAYER);
         player.put(ParseConstants.PLAYER_HARDWARE_ID, p.getHardwareID());
         player.put(ParseConstants.PLAYER_NAME, p.getUserName());
@@ -114,9 +117,11 @@ public class VoltagDB extends SQLiteOpenHelper{
                 query.whereEqualTo(ParseConstants.PLAYER_HARDWARE_ID, p.getHardwareID());
                 query.findInBackground(new FindCallback<ParseObject>() {
                     public void done(List<ParseObject> parseObjects, ParseException e) {
+                        Log.d(MainActivity.LOG_TAG, "Create User handshake successful.");
                         ParseObject user = parseObjects.get(0);
                         SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-                        prefs.edit().putString(MainActivity.PREF_USER_ID, user.getString(ParseConstants.CLASS_ID)).commit();
+                        prefs.edit().putString(MainActivity.PREF_USER_ID, user.getObjectId()).commit();
+                        prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, true).commit();
                     }
                 });
             }
@@ -164,7 +169,7 @@ public class VoltagDB extends SQLiteOpenHelper{
                 }
 
                 // Save the ID in the shared preferences
-                String id = game.getString(ParseConstants.CLASS_ID);
+                String id = game.getObjectId();
                 prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, id).commit();
 
                 // Call the listener

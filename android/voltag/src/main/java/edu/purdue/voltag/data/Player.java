@@ -1,5 +1,7 @@
 package edu.purdue.voltag.data;
 
+import android.util.Log;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -37,30 +39,33 @@ public class Player {
     }
 
     public String getEmail() {
-        return this.email;
+        return this.email.toLowerCase();
     }
 
     public String getGravitarURL() {
 
-        byte[] bytesOfMessage = new byte[0];
+        final String MD5 = "MD5";
         try {
-            bytesOfMessage = email.toLowerCase().getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest
+                    .getInstance(MD5);
+            digest.update(getEmail().getBytes());
+            byte messageDigest[] = digest.digest();
 
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance("MD5");
+            // Create Hex String
+            StringBuilder hexString = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                String h = Integer.toHexString(0xFF & aMessageDigest);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexString.append(h);
+            }
+            return hexString.toString();
+
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-
-        byte[] thedigest = md.digest(bytesOfMessage);
-
-        String hash =  new String(thedigest);
-
-        return "http://www.gravatar.com/avatar/" + hash;
+        return "";
     }
 
     public void setIsIt(boolean isIt) {

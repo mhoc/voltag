@@ -22,6 +22,7 @@ public class MainActivity extends Activity {
     public static final String PREFS_NAME = "voltag_prefs";
     public static final String PREF_CURRENT_GAME_ID = "current_game_id";
     public static final String PREF_USER_ID = "user_id";
+    public static final String PREF_EMAIL = "user_email";
     public static final String PREF_ISREGISTERED = "is_registered";
 
     @Override
