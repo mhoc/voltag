@@ -19,6 +19,7 @@ import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.ParseConstants;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
+import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
 
 
 /*
@@ -30,7 +31,7 @@ import edu.purdue.voltag.data.VoltagDB;
  * create an instance of this fragment.
  *
  */
-public class RegistrationFragment extends Fragment implements View.OnClickListener, OnUserCreatedListener {
+public class RegistrationFragment extends Fragment implements View.OnClickListener, OnAsyncCompletedListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -120,7 +121,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     }
 
     @Override
-    public void onUserCreated(String userID) {
+    public void done(String userID) {
         
     }
 }

@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.VoltagDB;
+import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
 
 /*
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -22,7 +23,7 @@ import edu.purdue.voltag.data.VoltagDB;
  * create an instance of this fragment.
  *
  */
-public class CreateGameFragment extends Fragment implements View.OnClickListener, OnGameCreatedListener {
+public class CreateGameFragment extends Fragment implements View.OnClickListener, OnAsyncCompletedListener {
     private Button shareButton;
     private EditText gameNameEditText;
     private VoltagDB db;
@@ -59,7 +60,7 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
     }
 
     @Override
-    public void onGameCreated(String id) {
+    public void done(String id) {
         Log.d("debug","gameId="+id);
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");

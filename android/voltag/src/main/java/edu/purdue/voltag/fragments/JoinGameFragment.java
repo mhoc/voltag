@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.VoltagDB;
+import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
 
 /*
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -53,7 +54,11 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener{
         switch (view.getId()){
             case R.id.joingame_bu_join:
                 String gameName = gameNameEditText.getText().toString();
-                db.addPlayerToGameOnParse(gameName);
+                db.addPlayerToGameOnParse(gameName, new OnAsyncCompletedListener() {
+                    public void done(String id) {
+
+                    }
+                });
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
         }
     }

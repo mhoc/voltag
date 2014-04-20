@@ -24,8 +24,7 @@ import edu.purdue.voltag.PlayerListAdapter;
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
-import edu.purdue.voltag.helper.ImageHelper;
-import edu.purdue.voltag.interfaces.OnDBRefreshListener;
+import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
 
 /*
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -36,7 +35,7 @@ import edu.purdue.voltag.interfaces.OnDBRefreshListener;
  * create an instance of this fragment.
  *
  */
-public class GameLobbyFragment extends ListFragment implements OnDBRefreshListener {
+public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedListener {
 
     VoltagDB db;
 
@@ -56,7 +55,7 @@ public class GameLobbyFragment extends ListFragment implements OnDBRefreshListen
 
         //db = new VoltagDB(getActivity());
         //db.refreshPlayersTable(this);
-        onDBRefresh();
+        done("");
         setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }
 
@@ -87,7 +86,9 @@ public class GameLobbyFragment extends ListFragment implements OnDBRefreshListen
     }
 
     @Override
-    public void onDBRefresh() {
+    public void done(String id) {
+        // Note that ID is just an empty string during this call
+
         Log.d("Lobby", "Database has refreshed!!");
         AsyncTask<Void, Void, List<Player>> addAdapter = new AsyncTask<Void, Void, List<Player>>() {
 
