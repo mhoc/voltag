@@ -125,7 +125,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                     int i = r.nextInt(emails.length);
                     players.add(new Player(null, null, name, emails[i]));
                 }
-                return players;
+                return db.getPlayersInCurrentGame();
             }
 
             @Override
