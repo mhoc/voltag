@@ -25,11 +25,6 @@
             </intent-filter>
 
         </activity>
-        <activity
-            android:name="edu.purdue.voltag.RegisterActivity"
-            android:label="Register" >
-
-        </activity>
 
     </application>
 
