@@ -39,17 +39,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@android:color/holo_blue_bright"
         android:layout_below="@+id/imageView" />
-
-    <TextView
-        android:visibility="invisible"
-        android:id="@android:id/empty"
-        android:layout_below="@id/gamelobby_tv_whosit"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-    </TextView>
-
 
 </RelativeLayout>

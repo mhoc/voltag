@@ -1,6 +1,7 @@
 package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import java.nio.charset.Charset;
 import static android.nfc.NdefRecord.createMime;
 
+import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
@@ -36,7 +38,7 @@ import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
  * create an instance of this fragment.
  *
  */
-public class JoinGameFragment extends Fragment implements View.OnClickListener, CreateNdefMessageCallback {
+public class JoinGameFragment extends Fragment implements View.OnClickListener {
     private Button joinGameButton;
     private EditText gameNameEditText;
     private VoltagDB db;
@@ -50,65 +52,6 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener, 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         db = new VoltagDB(getActivity());
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
-        if (mNfcAdapter == null) {
-            Toast.makeText(getActivity(), "NFC is not available", Toast.LENGTH_LONG).show();
-            //finish();
-            return;
-        }
-        mNfcAdapter.setNdefPushMessageCallback(this,this.getActivity());
-    }
-
-
-    @Override
-    public NdefMessage createNdefMessage(NfcEvent event) {
-        String text = ("You're it!!\n\n" +
-                "Beam Time: " + System.currentTimeMillis());
-        Log.d("debug","sendingNFC");
-        NdefMessage msg = new NdefMessage(
-                new NdefRecord[] { createMime(
-                        "application/edu.purdue.voltag", text.getBytes()),
-                        /**
-                         * The Android Application Record (AAR) is commented out. When a device
-                         * receives a push with an AAR in it, the application specified in the AAR
-                         * is guaranteed to run. The AAR overrides the tag dispatch system.
-                         * You can add it back in to guarantee that this
-                         * activity starts when receiving a beamed message. For now, this code
-                         * uses the tag dispatch system.
-                         */
-                        NdefRecord.createApplicationRecord("edu.purdue.voltag")
-                });
-        return msg;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Check to see that the Activity started due to an Android Beam
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getActivity().getIntent().getAction())) {
-            processIntent(getActivity().getIntent());
-        }
-    }
-
-    public void onNewIntent(Intent intent) {
-        // onResume gets called after this to handle the intent
-        getActivity().setIntent(intent);
-    }
-
-    /**
-     * Parses the NDEF Message from the intent and prints to the TextView
-     */
-    void processIntent(Intent intent) {
-        Log.d("debug","processing");
-        /*
-        textView = (TextView) findViewById(R.id.textView);
-        Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
-                NfcAdapter.EXTRA_NDEF_MESSAGES);
-        // only one message sent during the beam
-        NdefMessage msg = (NdefMessage) rawMsgs[0];
-        // record 0 contains the MIME type, record 1 is the AAR, if present
-        textView.setText(new String(msg.getRecords()[0].getPayload()));
-        */
     }
 
 
@@ -129,6 +72,10 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener, 
         switch (view.getId()){
             case R.id.joingame_bu_join:
                 String gameName = gameNameEditText.getText().toString();
+                SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString(MainActivity.PREF_CURRENT_GAME_ID,gameName);
+                editor.commit();
                 db.addPlayerToGameOnParse(gameName, new OnAsyncCompletedListener() {
                     public void done(String id) {
 

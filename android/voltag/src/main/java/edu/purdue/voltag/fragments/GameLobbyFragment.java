@@ -1,10 +1,13 @@
 package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.app.ListFragment;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,11 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,8 @@ import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
+
+import static android.nfc.NdefRecord.createMime;
 
 /*
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -35,9 +38,11 @@ import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
  * create an instance of this fragment.
  *
  */
-public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedListener {
+public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedListener,NfcAdapter.CreateNdefMessageCallback {
 
     VoltagDB db;
+    ListView theList;
+    private NfcAdapter mNfcAdapter;
 
     public GameLobbyFragment() {
     }
@@ -46,6 +51,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -53,22 +59,25 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     {
         super.onAttach(activity);
 
-        //db = new VoltagDB(getActivity());
-        //db.refreshPlayersTable(this);
-        done("");
-        setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
+        db = new VoltagDB(getActivity());
+        db.refreshPlayersTable(this);
+        //setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Log.d("GameLobbyFragment", "onCreateView()");
         View v = inflater.inflate(R.layout.fragment_game_lobby, container, false);
+        assert v != null;
+        theList = (ListView) v.findViewById(android.R.id.list);
         return v;
     }
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState)
     {
+        Log.d("GameLobbyFragment", "onViewCreated()");
         final Player it = new Player(null, null, null, "dmtschida1@gmail.com");
 
         new AsyncTask<Void, Void, Bitmap>() {
@@ -83,6 +92,15 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 iv.setImageBitmap(bitmap);
             }
         }.execute();
+
+        done("");
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
+        if (mNfcAdapter == null) {
+            Toast.makeText(getActivity(), "NFC is not available", Toast.LENGTH_LONG).show();
+            //finish();
+            return;
+        }
+        mNfcAdapter.setNdefPushMessageCallback(this,this.getActivity());
     }
 
     @Override
@@ -111,9 +129,66 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             {
                 Log.d("PlayerLoader", "onPostExecute()");
                 PlayerListAdapter adapt = new PlayerListAdapter(getActivity(), R.layout.player_list_item, R.id.name, players);
-                GameLobbyFragment.this.setListAdapter(adapt);
+                theList.setAdapter(adapt);
             }
         };
         addAdapter.execute();
     }
+
+
+    public NdefMessage createNdefMessage(NfcEvent event) {
+        String text = ("You're it!!\n\n" +
+                "Beam Time: " + System.currentTimeMillis());
+        Log.d("debug","sendingNFC");
+        NdefMessage msg = new NdefMessage(
+                new NdefRecord[] { createMime(
+                        "application/edu.purdue.voltag", text.getBytes()),
+                        /**
+                         * The Android Application Record (AAR) is commented out. When a device
+                         * receives a push with an AAR in it, the application specified in the AAR
+                         * is guaranteed to run. The AAR overrides the tag dispatch system.
+                         * You can add it back in to guarantee that this
+                         * activity starts when receiving a beamed message. For now, this code
+                         * uses the tag dispatch system.
+                         */
+                        NdefRecord.createApplicationRecord("edu.purdue.voltag")
+                });
+        return msg;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Check to see that the Activity started due to an Android Beam
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getActivity().getIntent().getAction())) {
+            processIntent(getActivity().getIntent());
+        }
+    }
+
+    public void onNewIntent(Intent intent) {
+        // onResume gets called after this to handle the intent
+        getActivity().setIntent(intent);
+    }
+
+    /**
+     * Parses the NDEF Message from the intent and prints to the TextView
+     */
+    void processIntent(Intent intent) {
+        Log.d("debug","processing");
+        /*
+        textView = (TextView) findViewById(R.id.textView);
+        Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
+                NfcAdapter.EXTRA_NDEF_MESSAGES);
+        // only one message sent during the beam
+        NdefMessage msg = (NdefMessage) rawMsgs[0];
+        // record 0 contains the MIME type, record 1 is the AAR, if present
+        textView.setText(new String(msg.getRecords()[0].getPayload()));
+        */
+    }
+
+
+
+
+
+
 }

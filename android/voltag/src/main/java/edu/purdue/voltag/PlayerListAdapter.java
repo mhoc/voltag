@@ -19,7 +19,6 @@ import edu.purdue.voltag.data.Player;
  */
 public class PlayerListAdapter extends ArrayAdapter<Player> {
 
-    List<Player> players;
     int listItemId;
 
     public PlayerListAdapter(Context context, int resource, int textViewResourceId, List<Player> players) {
@@ -33,28 +32,12 @@ public class PlayerListAdapter extends ArrayAdapter<Player> {
     }
 
     @Override
-    public int getCount() {
-        return players.size();
-    }
-
-    @Override
-    public Player getItem(int position) {
-        return players.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        Log.d("PlayerListAdapter", "getItemId()");
-        return this.players.get(position).hashCode();
-    }
-
-    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.d("PlayerListAdapter", "getView()");
         View v;
 
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        v = inflater.inflate(listItemId, (ViewGroup) convertView, false);
+        v = inflater.inflate(R.layout.player_list_item, parent, false);
 
         TextView name = (TextView) v.findViewById(R.id.name);
 
