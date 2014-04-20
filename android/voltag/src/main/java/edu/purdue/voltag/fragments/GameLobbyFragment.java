@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.app.ListFragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import edu.purdue.voltag.PlayerListAdapter;
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.helper.ImageHelper;
+import edu.purdue.voltag.interfaces.OnDBRefreshListener;
 
 /*
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -32,36 +35,40 @@ import edu.purdue.voltag.helper.ImageHelper;
  * create an instance of this fragment.
  *
  */
-public class GameLobbyFragment extends ListFragment {
+public class GameLobbyFragment extends ListFragment implements OnDBRefreshListener {
 
     VoltagDB db;
 
     public GameLobbyFragment() {
-
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        db = new VoltagDB(getActivity());
-
     }
 
     @Override
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
-        
+
+        db = new VoltagDB(getActivity());
+        db.refreshPlayersTable(this);
+
         setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_game_lobby, container, false);
+        return v;
+    }
 
-        final View v = inflater.inflate(R.layout.fragment_game_lobby, container, false);
-
+    @Override
+    public void onViewCreated(final View view, Bundle savedInstanceState)
+    {
         final Player it = new Player(null, null, null, "dmtschida1@gmail.com");
 
         new AsyncTask<Void, Void, Bitmap>() {
@@ -72,12 +79,36 @@ public class GameLobbyFragment extends ListFragment {
 
             @Override
             protected void onPostExecute(Bitmap bitmap) {
-                ((ImageView) v.findViewById(R.id.imageView)).setImageBitmap(bitmap);
+                ImageView iv = (ImageView) view.findViewById(R.id.imageView);
+                iv.setImageBitmap(bitmap);
             }
         }.execute();
-
-        return v;
     }
 
+    @Override
+    public void onDBRefresh() {
+        Log.d("Lobby", "Database has refreshed!!");
+        AsyncTask<Void, Void, List<Player>> addAdapter = new AsyncTask<Void, Void, List<Player>>() {
 
+            @Override
+            protected List<Player> doInBackground(Void... params) {
+                List<Player> players = db.getPlayersInCurrentGame();
+
+                String[] names = { "David","Gary", "Charles", "Chuck", "Dave", "Kyle", "Madison", "Jordan", "Katie", "Jennifer", "Anthony" };
+                for(String name : names)
+                {
+                    players.add(new Player(null, null, name, name + "@email.com"));
+                }
+                return players;
+            }
+
+            @Override
+            protected void onPostExecute(List<Player> players)
+            {
+                PlayerListAdapter adapter = new PlayerListAdapter(getActivity(), R.layout.player_list_item, R.id.name, players);
+                setListAdapter(adapter);
+            }
+
+        }.execute();
+    }
 }
