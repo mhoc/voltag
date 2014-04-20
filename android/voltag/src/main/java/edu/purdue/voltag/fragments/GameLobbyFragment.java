@@ -59,7 +59,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     {
         super.onAttach(activity);
 
-        db = new VoltagDB(getActivity());
+        db = VoltagDB.getDB(getActivity());
         db.refreshPlayersTable(this);
         //setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }

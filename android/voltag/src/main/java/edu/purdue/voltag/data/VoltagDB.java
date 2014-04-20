@@ -24,6 +24,7 @@ import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
 public class VoltagDB extends SQLiteOpenHelper{
 
     /** Database information */
+    private static VoltagDB db_instance;
     public static final String DB_NAME = "voltag_db";
     public static final int DB_VERSION = 1;
     private Context c;
@@ -38,7 +39,14 @@ public class VoltagDB extends SQLiteOpenHelper{
     public static final String PLAYERS_EMAIL = "player_email";
     public static final String PLAYERS_ISIT = "player_isit";
 
-    public VoltagDB(Context c) {
+    public static VoltagDB getDB(Context c) {
+        if (db_instance == null) {
+            db_instance = new VoltagDB(c);
+        }
+        return db_instance;
+    }
+
+    private VoltagDB(Context c) {
         super(c, DB_NAME, null, DB_VERSION);
         this.c = c;
     }
@@ -70,6 +78,7 @@ public class VoltagDB extends SQLiteOpenHelper{
         if (db != null) {
             db.execSQL("DROP TABLE " + TABLE_PLAYERS + ";");
         }
+        db.close();
     }
 
     /** Destroys the players table */
@@ -78,6 +87,7 @@ public class VoltagDB extends SQLiteOpenHelper{
         if (db != null) {
             db.execSQL("DROP TABLE " + TABLE_PLAYERS + ";");
         }
+        db.close();
     }
 
     /** Creates a new player on parse.
@@ -366,6 +376,7 @@ public class VoltagDB extends SQLiteOpenHelper{
         if (db != null) {
             db.insert(TABLE_PLAYERS, null, values);
         }
+        db.close();
 
     }
 
@@ -462,6 +473,8 @@ public class VoltagDB extends SQLiteOpenHelper{
                     players.add(p);
                 } while (c.moveToNext());
             }
+            c.close();
+            db.close();
             return players;
         }
 
