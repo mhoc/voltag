@@ -27,6 +27,7 @@ import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
+import edu.purdue.voltag.lobby.BitmapCacheHost;
 
 import static android.nfc.NdefRecord.createMime;
 
@@ -60,8 +61,8 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     {
         super.onAttach(activity);
 
-        db = VoltagDB.getDB(getActivity());
-        db.refreshPlayersTable(this);
+        //db = VoltagDB.getDB(getActivity());
+        //db.refreshPlayersTable(this);
         //setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }
 
@@ -84,7 +85,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         new AsyncTask<Void, Void, Bitmap>() {
             @Override
             protected Bitmap doInBackground(Void... params) {
-                return it.getGravitar(180);
+                return it.getGravitar(220);
             }
 
             @Override
@@ -93,7 +94,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 iv.setImageBitmap(bitmap);
             }
         }.execute();
-        //done("");
+        done("");
         mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
         if (mNfcAdapter == null) {
             Toast.makeText(getActivity(), "NFC is not available", Toast.LENGTH_LONG).show();
@@ -117,10 +118,10 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 ArrayList<Player> players = new ArrayList<Player>();
 
                 String[] names = { "David", "Gary", "Charles", "Chuck", "Dave", "Kyle", "Madison", "Jordan", "Katie", "Jennifer", "Anthony" };
-                String[] emails = {"tylorgarrett@gmail.com", "dmtschida1@gmail.com", "punkkid209@gmail.com", "mike@hockerman.com", "kyle@kptechblog.com"};
+                String[] emails = {"tylorgarrett@gmail.com", "punkkid209@gmail.com", "mike@hockerman.com", "kyle@kptechblog.com"};
+                Random r = new Random();
                 for(String name : names)
                 {
-                    Random r = new Random();
                     int i = r.nextInt(emails.length);
                     players.add(new Player(null, null, name, emails[i]));
                 }
@@ -131,7 +132,8 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             protected void onPostExecute(List<Player> players)
             {
                 Log.d("PlayerLoader", "onPostExecute()");
-                PlayerListAdapter adapt = new PlayerListAdapter(getActivity(), R.layout.player_list_item, R.id.name, players);
+                PlayerListAdapter adapt = new PlayerListAdapter(getActivity().getApplicationContext(),
+                        R.layout.player_list_item, R.id.name, players, (BitmapCacheHost) getActivity());
                 theList.setAdapter(adapt);
             }
         };

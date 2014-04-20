@@ -3,8 +3,10 @@ package edu.purdue.voltag;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,9 +19,10 @@ import edu.purdue.voltag.fragments.CreateGameFragment;
 import edu.purdue.voltag.fragments.GameChoiceFragment;
 import edu.purdue.voltag.fragments.GameLobbyFragment;
 import edu.purdue.voltag.fragments.RegistrationFragment;
+import edu.purdue.voltag.lobby.BitmapCacheHost;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements BitmapCacheHost {
 
     public static final String LOG_TAG = "voltag_log";
     public static final String PREFS_NAME = "voltag_prefs";
@@ -28,6 +31,37 @@ public class MainActivity extends Activity {
     public static final String PREF_USER_ID = "user_id";
     public static final String PREF_EMAIL = "user_email";
     public static final String PREF_ISREGISTERED = "is_registered";
+
+    private LruCache<String, Bitmap> mMemoryCache;
+
+    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        assert(mMemoryCache != null);
+        if (getBitmapFromMemCache(key) == null) {
+            mMemoryCache.put(key, bitmap);
+        }
+    }
+
+    public Bitmap getBitmapFromMemCache(String key) {
+        assert(mMemoryCache != null);
+        return mMemoryCache.get(key);
+    }
+
+    public void initMemoryCache()
+    {
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+
+        // Use 1/8th of the available memory for this memory cache.
+        final int cacheSize = maxMemory / 15;
+
+        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+                // The cache size will be measured in kilobytes rather than
+                // number of items.
+                return (bitmap.getRowBytes() * bitmap.getHeight()) / 1024;
+            }
+        };
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +72,7 @@ public class MainActivity extends Activity {
                 Parse.initialize(MainActivity.this, ParseConstants.PARSE_APPLICATION_KEY, ParseConstants.PARSE_CLIENT_KEY);
             }
         }).start();
-
+        initMemoryCache();
         setContentView(R.layout.activity_main);
     }
 
