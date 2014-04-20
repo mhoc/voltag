@@ -316,7 +316,7 @@ public class VoltagDB extends SQLiteOpenHelper{
                 relation.getQuery().findInBackground(new FindCallback<ParseObject>() {
                     public void done(List<ParseObject> parseObjects, ParseException e) {
                         // Clear out the database
-                        dropTablePlayers();
+                        // dropTablePlayers();
 
                         // Re-fill it with new players
                         for (ParseObject p : parseObjects) {

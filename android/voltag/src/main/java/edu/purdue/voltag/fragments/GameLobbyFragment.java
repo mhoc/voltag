@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.purdue.voltag.PlayerListAdapter;
@@ -53,9 +54,9 @@ public class GameLobbyFragment extends ListFragment implements OnDBRefreshListen
     {
         super.onAttach(activity);
 
-        db = new VoltagDB(getActivity());
-        db.refreshPlayersTable(this);
-
+        //db = new VoltagDB(getActivity());
+        //db.refreshPlayersTable(this);
+        onDBRefresh();
         setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }
 
@@ -92,9 +93,11 @@ public class GameLobbyFragment extends ListFragment implements OnDBRefreshListen
 
             @Override
             protected List<Player> doInBackground(Void... params) {
-                List<Player> players = db.getPlayersInCurrentGame();
+                Log.d("PlayerLoader", "doInBackground()");
+                //List<Player> players = db.getPlayersInCurrentGame();
+                ArrayList<Player> players = new ArrayList<Player>();
 
-                String[] names = { "David","Gary", "Charles", "Chuck", "Dave", "Kyle", "Madison", "Jordan", "Katie", "Jennifer", "Anthony" };
+                String[] names = { "David", "Gary", "Charles", "Chuck", "Dave", "Kyle", "Madison", "Jordan", "Katie", "Jennifer", "Anthony" };
                 for(String name : names)
                 {
                     players.add(new Player(null, null, name, name + "@email.com"));
@@ -105,10 +108,11 @@ public class GameLobbyFragment extends ListFragment implements OnDBRefreshListen
             @Override
             protected void onPostExecute(List<Player> players)
             {
-                PlayerListAdapter adapter = new PlayerListAdapter(getActivity(), R.layout.player_list_item, R.id.name, players);
-                setListAdapter(adapter);
+                Log.d("PlayerLoader", "onPostExecute()");
+                PlayerListAdapter adapt = new PlayerListAdapter(getActivity(), R.layout.player_list_item, R.id.name, players);
+                GameLobbyFragment.this.setListAdapter(adapt);
             }
-
-        }.execute();
+        };
+        addAdapter.execute();
     }
 }

@@ -1,6 +1,7 @@
 package edu.purdue.voltag;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,19 +17,19 @@ import edu.purdue.voltag.data.Player;
 /**
  * Created by david on 4/19/14.
  */
-public class PlayerListAdapter extends BaseAdapter {
+public class PlayerListAdapter extends ArrayAdapter<Player> {
 
     List<Player> players;
     int listItemId;
-    int nameBox;
-    Context context;
-
 
     public PlayerListAdapter(Context context, int resource, int textViewResourceId, List<Player> players) {
-        this.context = context;
-        this.listItemId = resource;
-        this.players = players;
-        this.nameBox = textViewResourceId;
+        super(context, resource, textViewResourceId, players);
+        Log.d("PlayerLostAdapter", "New Adapter");
+        for(Player p : players)
+        {
+            Log.d("Adapter", p.getUserName());
+        }
+        notifyDataSetChanged();
     }
 
     @Override
@@ -43,21 +44,18 @@ public class PlayerListAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
+        Log.d("PlayerListAdapter", "getItemId()");
         return this.players.get(position).hashCode();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("PlayerListAdapter", "getView()");
         View v;
-        if(convertView != null)
-        {
-            v = convertView;
-        }
-        else
-        {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-            v = inflater.inflate(listItemId, parent, false);
-        }
+
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        v = inflater.inflate(listItemId, (ViewGroup) convertView, false);
+
         TextView name = (TextView) v.findViewById(R.id.name);
 
         name.setText(getItem(position).getUserName());
