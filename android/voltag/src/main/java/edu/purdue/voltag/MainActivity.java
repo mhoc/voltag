@@ -43,6 +43,7 @@ public class MainActivity extends Activity {
         SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
         gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
         if(!(gameId.equals(""))){
+            closeSplash();
             getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
 
         }
@@ -51,8 +52,7 @@ public class MainActivity extends Activity {
 
     public void testClick(View view)
     {
-        View v = (View) findViewById(R.id.splash);
-        v.setVisibility(View.GONE);
+        closeSplash();
 
         getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
     }
@@ -63,8 +63,7 @@ public class MainActivity extends Activity {
         boolean isRegistered = settings.getBoolean(PREF_ISREGISTERED,false);
         Log.d("debug","isRegistered="+isRegistered);
 
-        View v = (View) findViewById(R.id.splash);
-        v.setVisibility(View.GONE);
+        closeSplash();
 
         if(!isRegistered) {
             getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
@@ -72,6 +71,11 @@ public class MainActivity extends Activity {
         else{
             getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
         }
+    }
+
+    private void closeSplash() {
+        View v = (View) findViewById(R.id.splash);
+        v.setVisibility(View.GONE);
     }
 
     @Override

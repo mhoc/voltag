@@ -47,13 +47,11 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     public GameLobbyFragment() {
     }
 
-
-
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -61,8 +59,8 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     {
         super.onAttach(activity);
 
-        //db = new VoltagDB(getActivity());
-        //db.refreshPlayersTable(this);
+        db = new VoltagDB(getActivity());
+        db.refreshPlayersTable(this);
         //setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }
 
