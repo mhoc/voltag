@@ -23,6 +23,7 @@ import java.util.List;
 
 import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.interfaces.OnGameCreatedListener;
+import edu.purdue.voltag.interfaces.OnUserCreatedListener;
 
 public class VoltagDB extends SQLiteOpenHelper{
 
@@ -93,39 +94,69 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     /** Creates a new player on parse.
      *  The ParseID field in the player object should be null. This call will fail if it isn't. */
-    public void createPlayerOnParse(final Player p) {
+    public void createPlayerOnParse(final Player p, final OnUserCreatedListener listener) {
 
         if (p.getParseID() != null) {
             Log.d(MainActivity.LOG_TAG, "Error in createPlayer(): ParseID field SHOULD be null.");
             return;
         }
 
-        // Check to see if the user already has an account
-        
+        new Thread(new Runnable() {
+            public void run() {
 
-        ParseObject player = new ParseObject(ParseConstants.PARSE_CLASS_PLAYER);
-        player.put(ParseConstants.PLAYER_HARDWARE_ID, p.getHardwareID());
-        player.put(ParseConstants.PLAYER_NAME, p.getUserName());
-        player.put(ParseConstants.PLAYER_EMAIL, p.getEmail());
+                // Check to see if the user has already logged in
+                ParseQuery<ParseObject> userQuery = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_PLAYER);
+                userQuery.whereEqualTo(ParseConstants.PLAYER_EMAIL, p.getEmail());
 
-        // Save it to parse
-        player.saveInBackground(new SaveCallback() {
-            public void done(ParseException e) {
+                List<ParseObject> users = null;
+                try {
+                    users = userQuery.find();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
-                // Query to get the new ID created
+                if (users.size() >= 1) {
+                    // Don't add the user
+                    Toast.makeText(c, "You're already logged in.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Create the player
+                ParseObject player = new ParseObject(ParseConstants.PARSE_CLASS_PLAYER);
+                player.put(ParseConstants.PLAYER_HARDWARE_ID, p.getHardwareID());
+                player.put(ParseConstants.PLAYER_NAME, p.getUserName());
+                player.put(ParseConstants.PLAYER_EMAIL, p.getEmail());
+
+                // Save to parse
+                try {
+                    player.save();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // When complete, query to get the new ID
                 ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_PLAYER);
                 query.whereEqualTo(ParseConstants.PLAYER_HARDWARE_ID, p.getHardwareID());
-                query.findInBackground(new FindCallback<ParseObject>() {
-                    public void done(List<ParseObject> parseObjects, ParseException e) {
-                        Log.d(MainActivity.LOG_TAG, "Create User handshake successful.");
-                        ParseObject user = parseObjects.get(0);
-                        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-                        prefs.edit().putString(MainActivity.PREF_USER_ID, user.getObjectId()).commit();
-                        prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, true).commit();
-                    }
-                });
+
+                ParseObject user = null;
+                try {
+                    user = query.find().get(0);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Update their ID in shared preferences
+                SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                prefs.edit().putString(MainActivity.PREF_USER_ID, user.getObjectId()).commit();
+                prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, true).commit();
+
+                // Alert listeners
+                if (listener != null) {
+                    listener.onUserCreated(user.getObjectId());
+                }
+
             }
-        });
+        }).start();
 
     }
 
@@ -206,9 +237,6 @@ public class VoltagDB extends SQLiteOpenHelper{
         // Get current game ID
         SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
         String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
-
-        // TODO: REMOVE THIS AND GET FROM SHARED PREFERENCES
-        gameID = "wMa6q5KXob";
 
         // If there's no game, exit
         if (gameID.equals("")) {
