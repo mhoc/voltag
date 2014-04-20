@@ -222,7 +222,7 @@ public class VoltagDB extends SQLiteOpenHelper{
         SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
         final String userID = prefs.getString(MainActivity.PREF_USER_ID, "");
         if (userID.equals("")) {
-            Toast.makeText(c, "User is not signed in.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(c, "User is not signed in.", Toast.LENGTH_LONG).show();
             return;
         }
 
