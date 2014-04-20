@@ -54,7 +54,7 @@ public class VoltagDB extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String createTablePlayers = "CREATE " + TABLE_PLAYERS + " (" +
+        String createTablePlayers = "CREATE TABLE " + TABLE_PLAYERS + " (" +
                 PLAYERS_HARDWARE_ID + " TEXT, " +
                 PLAYERS_PARSE_ID + " TEXT, " +
                 PLAYERS_NAME + " TEXT, " +
