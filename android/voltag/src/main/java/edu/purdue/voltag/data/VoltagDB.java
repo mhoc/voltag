@@ -114,9 +114,11 @@ public class VoltagDB extends SQLiteOpenHelper{
                 query.whereEqualTo(ParseConstants.PLAYER_HARDWARE_ID, p.getHardwareID());
                 query.findInBackground(new FindCallback<ParseObject>() {
                     public void done(List<ParseObject> parseObjects, ParseException e) {
+                        Log.d(MainActivity.LOG_TAG, "Create User handshake successful.");
                         ParseObject user = parseObjects.get(0);
                         SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-                        prefs.edit().putString(MainActivity.PREF_USER_ID, user.getString(ParseConstants.CLASS_ID)).commit();
+                        prefs.edit().putString(MainActivity.PREF_USER_ID, user.getObjectId()).commit();
+                        prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, true).commit();
                     }
                 });
             }
