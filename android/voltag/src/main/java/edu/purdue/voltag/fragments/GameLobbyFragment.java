@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import edu.purdue.voltag.PlayerListAdapter;
 import edu.purdue.voltag.R;
@@ -92,8 +93,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 iv.setImageBitmap(bitmap);
             }
         }.execute();
-
-        done("");
+        //done("");
         mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
         if (mNfcAdapter == null) {
             Toast.makeText(getActivity(), "NFC is not available", Toast.LENGTH_LONG).show();
@@ -117,9 +117,12 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 ArrayList<Player> players = new ArrayList<Player>();
 
                 String[] names = { "David", "Gary", "Charles", "Chuck", "Dave", "Kyle", "Madison", "Jordan", "Katie", "Jennifer", "Anthony" };
+                String[] emails = {"tylorgarrett@gmail.com", "dmtschida1@gmail.com", "punkkid209@gmail.com", "mike@hockerman.com", "kyle@kptechblog.com"};
                 for(String name : names)
                 {
-                    players.add(new Player(null, null, name, name + "@email.com"));
+                    Random r = new Random();
+                    int i = r.nextInt(emails.length);
+                    players.add(new Player(null, null, name, emails[i]));
                 }
                 return players;
             }

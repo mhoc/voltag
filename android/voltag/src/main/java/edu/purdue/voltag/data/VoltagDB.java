@@ -430,7 +430,7 @@ public class VoltagDB extends SQLiteOpenHelper{
                 }
 
                 // Clear out the database
-                // dropTablePlayers();
+                dropTablePlayers();
 
                 // Re-fill it with new players
                 for (ParseObject p : players) {
