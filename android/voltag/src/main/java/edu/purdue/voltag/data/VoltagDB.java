@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.purdue.voltag.MainActivity;
+import edu.purdue.voltag.interfaces.OnDBRefreshListener;
 import edu.purdue.voltag.interfaces.OnGameCreatedListener;
 import edu.purdue.voltag.interfaces.OnUserCreatedListener;
 
@@ -231,7 +232,7 @@ public class VoltagDB extends SQLiteOpenHelper{
     }
 
     /** Refreshes the database from parse */
-    public void refreshPlayersTable() {
+    public void refreshPlayersTable(final OnDBRefreshListener listener) {
         Log.d(MainActivity.LOG_TAG, "Starting database refresh.");
 
         // Get current game ID
@@ -273,6 +274,11 @@ public class VoltagDB extends SQLiteOpenHelper{
                             String playerEmail = p.getString(ParseConstants.PLAYER_EMAIL);
                             Player player = new Player(playerID, hardwareID, playerName, playerEmail);
                             addPlayerToDB(player);
+                        }
+
+                        // Alert listeners
+                        if (listener != null) {
+                            listener.onDBRefresh();
                         }
                     }
                 });
