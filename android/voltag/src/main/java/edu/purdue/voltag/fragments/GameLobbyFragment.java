@@ -13,6 +13,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -55,7 +58,22 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater){
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.game_lobby_menu, menu);
+
+    }
+
+    public boolean onContextItemSelected(MenuItem item){
+        if(item.getItemId() == R.id.exit_game){
+            Log.d("debug","exit game!");
+
+        }
+        return true;
     }
 
     @Override
