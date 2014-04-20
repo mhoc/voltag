@@ -198,9 +198,10 @@ public class VoltagDB extends SQLiteOpenHelper{
                     e.printStackTrace();
                 }
 
-                // Save the ID in the shared preferences
+                // Save the ID in the shared preferences and mark them as it
                 String id = game.getObjectId();
                 prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, id).commit();
+                prefs.edit().putBoolean(MainActivity.PREF_ISIT, true).commit();
 
                 // Call the listener
                 if (listener != null) {
@@ -262,10 +263,89 @@ public class VoltagDB extends SQLiteOpenHelper{
                 // Store the game ID in the shared preferences
                 SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
                 prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, game.getObjectId()).commit();
+                prefs.edit().putBoolean(MainActivity.PREF_ISIT, false).commit();
 
                 // Alert listeners
                 if (listener != null) {
                     listener.done(game.getObjectId());
+                }
+
+            }
+        }).start();
+
+    }
+
+    /** Tags THIS player as the new player to be it on Parse and updates the shared preferences */
+    public void tagThisPlayerOnParse(final OnAsyncCompletedListener listener) {
+
+        // Determine if the player is already it
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        boolean isTagged = prefs.getBoolean(MainActivity.PREF_ISIT, false);
+
+        if (isTagged == true) {
+            Log.d(MainActivity.LOG_TAG, "Player is already tagged. Exiting tagPlayerOnParse()");
+            return;
+        }
+
+        // Spawn a thread to mark the player as it
+        new Thread(new Runnable() {
+            public void run() {
+
+                // Get the game ID and playerID from shared preferences
+                SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+                String playerID = prefs.getString(MainActivity.PREF_USER_ID, "");
+                if (gameID.equals("") || playerID.equals("")) {
+                    Log.d(MainActivity.LOG_TAG, "Game ID or PlayerID is not set. Exiting tagThisPlayerOnParse loop.");
+                    return;
+                }
+
+                // Get the game on parse
+                ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_GAME);
+                gameQuery.whereEqualTo(ParseConstants.CLASS_ID, gameID);
+
+                ParseObject game = null;
+                try {
+                    game = gameQuery.find().get(0);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Get the old player who was "it"
+                ParseObject oldPlayerIt = null;
+                try {
+                    oldPlayerIt = game.getRelation(ParseConstants.GAME_TAGGED).getQuery().find().get(0);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Get the new player's parse object
+                ParseObject thisPlayer = null;
+                try {
+                    thisPlayer = game.getRelation(ParseConstants.GAME_PLAYERS).getQuery().whereEqualTo(ParseConstants.CLASS_ID, playerID).find().get(0);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Remove the old player as "it"
+                game.getRelation(ParseConstants.GAME_TAGGED).remove(oldPlayerIt);
+
+                // Add the new player as "it"
+                game.getRelation(ParseConstants.GAME_TAGGED).add(thisPlayer);
+
+                // Switch the player's local state to being tagged
+                prefs.edit().putBoolean(MainActivity.PREF_ISIT, true).commit();
+
+                // Save the game
+                try {
+                    game.save();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Alert listeners
+                if (listener != null) {
+                    listener.done("");
                 }
 
             }
