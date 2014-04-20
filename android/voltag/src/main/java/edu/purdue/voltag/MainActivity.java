@@ -39,6 +39,12 @@ public class MainActivity extends Activity {
             }
         }).start();
 
+        setContentView(R.layout.activity_main);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         String gameId;
         SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
         gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
@@ -47,7 +53,6 @@ public class MainActivity extends Activity {
             getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
 
         }
-        setContentView(R.layout.activity_main);
     }
 
     public void testClick(View view)
