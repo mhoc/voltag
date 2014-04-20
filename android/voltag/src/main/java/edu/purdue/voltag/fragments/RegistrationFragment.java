@@ -21,6 +21,7 @@ import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.ParseConstants;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
+import edu.purdue.voltag.interfaces.OnUserCreatedListener;
 
 
 /*
@@ -32,7 +33,7 @@ import edu.purdue.voltag.data.VoltagDB;
  * create an instance of this fragment.
  *
  */
-public class RegistrationFragment extends Fragment implements View.OnClickListener {
+public class RegistrationFragment extends Fragment implements View.OnClickListener, OnUserCreatedListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -110,7 +111,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         String email = nameBox.getText().toString();
         String android_id = Settings.Secure.getString(getActivity().getContentResolver(),Settings.Secure.ANDROID_ID);
         Player p = new Player(null,android_id,name,email);
-        db.createPlayerOnParse(p);
+        db.createPlayerOnParse(p,this);
         Toast.makeText(getActivity(), "You are registered", Toast.LENGTH_LONG);
         regButton.setEnabled(false);
 
@@ -119,5 +120,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         editor.putBoolean(MainActivity.PREF_ISREGISTERED,true).commit();
         getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
 
+    }
+
+    @Override
+    public void onUserCreated(String userID) {
+        
     }
 }
