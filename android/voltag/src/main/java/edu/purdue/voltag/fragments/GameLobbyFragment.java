@@ -121,14 +121,14 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                     int i = r.nextInt(emails.length);
                     players.add(new Player(null, null, name, emails[i]));
                 }
-                return db.getPlayersInCurrentGame();
+                return players;
             }
 
             @Override
             protected void onPostExecute(List<Player> players)
             {
                 Log.d("PlayerLoader", "onPostExecute()");
-                PlayerListAdapter adapt = new PlayerListAdapter(getActivity().getApplicationContext(),
+                PlayerListAdapter adapt = new PlayerListAdapter(getActivity(),
                         R.layout.player_list_item, R.id.name, players, (BitmapCacheHost) getActivity());
                 theList.setAdapter(adapt);
             }
