@@ -172,7 +172,7 @@ public class VoltagDB extends SQLiteOpenHelper{
                     listener.onGameCreated(id);
                 }
             }
-        });
+        }).start();
 
 
     }
