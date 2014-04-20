@@ -3,11 +3,17 @@ package edu.purdue.voltag;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.parse.Parse;
 
@@ -18,8 +24,10 @@ import edu.purdue.voltag.fragments.GameChoiceFragment;
 import edu.purdue.voltag.fragments.GameLobbyFragment;
 import edu.purdue.voltag.fragments.RegistrationFragment;
 
+import static android.nfc.NdefRecord.createMime;
 
-public class MainActivity extends Activity {
+
+public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback {
 
     public static final String LOG_TAG = "voltag_log";
     public static final String PREFS_NAME = "voltag_prefs";
@@ -28,6 +36,7 @@ public class MainActivity extends Activity {
     public static final String PREF_USER_ID = "user_id";
     public static final String PREF_EMAIL = "user_email";
     public static final String PREF_ISREGISTERED = "is_registered";
+    private NfcAdapter mNfcAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +47,13 @@ public class MainActivity extends Activity {
                 Parse.initialize(MainActivity.this, ParseConstants.PARSE_APPLICATION_KEY, ParseConstants.PARSE_CLIENT_KEY);
             }
         }).start();
-
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (mNfcAdapter == null) {
+            Toast.makeText(this, "NFC is not available", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+        mNfcAdapter.setNdefPushMessageCallback(this,this);
         setContentView(R.layout.activity_main);
     }
 
@@ -66,7 +81,7 @@ public class MainActivity extends Activity {
     {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
         boolean isRegistered = settings.getBoolean(PREF_ISREGISTERED,false);
-        Log.d("debug","isRegistered="+isRegistered);
+        Log.d("debug", "isRegistered=" + isRegistered);
 
         closeSplash();
 
@@ -101,6 +116,83 @@ public class MainActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public NdefMessage createNdefMessage(NfcEvent event) {
+        SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        Boolean isIt = settings.getBoolean(MainActivity.PREF_ISIT,false);
+        if(isIt) {
+            String text = ("it");
+            Log.d("debug", "sendingNFC You are it.");
+            NdefMessage msg = new NdefMessage(
+                    new NdefRecord[]{createMime(
+                            "application/edu.purdue.voltag", text.getBytes()),
+                            /**
+                             * The Android Application Record (AAR) is commented out. When a device
+                             * receives a push with an AAR in it, the application specified in the AAR
+                             * is guaranteed to run. The AAR overrides the tag dispatch system.
+                             * You can add it back in to guarantee that this
+                             * activity starts when receiving a beamed message. For now, this code
+                             * uses the tag dispatch system.
+                             */
+                            NdefRecord.createApplicationRecord("edu.purdue.voltag")
+                    }
+            );
+            return msg;
+        }
+
+        else{
+            String text = ("ignore");
+            Log.d("debug", "sendingNFC You are it.");
+            NdefMessage msg = new NdefMessage(
+                    new NdefRecord[]{createMime(
+                            "application/edu.purdue.voltag", text.getBytes()),
+                            /**
+                             * The Android Application Record (AAR) is commented out. When a device
+                             * receives a push with an AAR in it, the application specified in the AAR
+                             * is guaranteed to run. The AAR overrides the tag dispatch system.
+                             * You can add it back in to guarantee that this
+                             * activity starts when receiving a beamed message. For now, this code
+                             * uses the tag dispatch system.
+                             */
+                            NdefRecord.createApplicationRecord("edu.purdue.voltag")
+                    }
+            );
+            return msg;
+        }
+
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Check to see that the Activity started due to an Android Beam
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
+            processIntent(getIntent());
+        }
+    }
+
+    public void onNewIntent(Intent intent) {
+        // onResume gets called after this to handle the intent
+        setIntent(intent);
+    }
+
+    /**
+     * Parses the NDEF Message from the intent and prints to the TextView
+     */
+    void processIntent(Intent intent) {
+        Log.d("debug","processing sending that I am now it to server");
+        Toast.makeText(this, "You are it!", Toast.LENGTH_LONG).show();
+        //db.tagThisPlayerOnParse(null);
+        Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
+                NfcAdapter.EXTRA_NDEF_MESSAGES);
+        // only one message sent during the beam
+        NdefMessage msg = (NdefMessage) rawMsgs[0];
+        String message = msg.toString();
+        Log.d("debug","message="+new String(msg.getRecords()[0].getPayload()));
+        // record 0 contains the MIME type, record 1 is the AAR, if present
     }
 
 }

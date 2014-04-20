@@ -2,6 +2,7 @@ package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.app.ListFragment;
 import android.nfc.NdefMessage;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.PlayerListAdapter;
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.Player;
@@ -38,7 +40,7 @@ import static android.nfc.NdefRecord.createMime;
  * create an instance of this fragment.
  *
  */
-public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedListener,NfcAdapter.CreateNdefMessageCallback {
+public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedListener {
 
     VoltagDB db;
     ListView theList;
@@ -60,7 +62,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         super.onAttach(activity);
 
         db = new VoltagDB(getActivity());
-        db.refreshPlayersTable(this);
+       // db.refreshPlayersTable(this);
         //setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }
 
@@ -94,13 +96,6 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         }.execute();
 
         done("");
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
-        if (mNfcAdapter == null) {
-            Toast.makeText(getActivity(), "NFC is not available", Toast.LENGTH_LONG).show();
-            //finish();
-            return;
-        }
-        mNfcAdapter.setNdefPushMessageCallback(this,this.getActivity());
     }
 
     @Override
@@ -134,61 +129,5 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         };
         addAdapter.execute();
     }
-
-
-    public NdefMessage createNdefMessage(NfcEvent event) {
-        String text = ("You're it!!\n\n" +
-                "Beam Time: " + System.currentTimeMillis());
-        Log.d("debug","sendingNFC");
-        NdefMessage msg = new NdefMessage(
-                new NdefRecord[] { createMime(
-                        "application/edu.purdue.voltag", text.getBytes()),
-                        /**
-                         * The Android Application Record (AAR) is commented out. When a device
-                         * receives a push with an AAR in it, the application specified in the AAR
-                         * is guaranteed to run. The AAR overrides the tag dispatch system.
-                         * You can add it back in to guarantee that this
-                         * activity starts when receiving a beamed message. For now, this code
-                         * uses the tag dispatch system.
-                         */
-                        NdefRecord.createApplicationRecord("edu.purdue.voltag")
-                });
-        return msg;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Check to see that the Activity started due to an Android Beam
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getActivity().getIntent().getAction())) {
-            processIntent(getActivity().getIntent());
-        }
-    }
-
-    public void onNewIntent(Intent intent) {
-        // onResume gets called after this to handle the intent
-        getActivity().setIntent(intent);
-    }
-
-    /**
-     * Parses the NDEF Message from the intent and prints to the TextView
-     */
-    void processIntent(Intent intent) {
-        Log.d("debug","processing");
-        /*
-        textView = (TextView) findViewById(R.id.textView);
-        Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
-                NfcAdapter.EXTRA_NDEF_MESSAGES);
-        // only one message sent during the beam
-        NdefMessage msg = (NdefMessage) rawMsgs[0];
-        // record 0 contains the MIME type, record 1 is the AAR, if present
-        textView.setText(new String(msg.getRecords()[0].getPayload()));
-        */
-    }
-
-
-
-
-
 
 }

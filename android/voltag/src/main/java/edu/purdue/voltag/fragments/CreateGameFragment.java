@@ -57,7 +57,7 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
     public void onClick(View view) {
         String gameName = gameNameEditText.getText().toString();
         db.createGameOnParse(gameName,this);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
+        //getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
         Log.d("debug","test");
 
     }
@@ -68,6 +68,7 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(MainActivity.PREF_CURRENT_GAME_ID,id);
+        editor.putBoolean(MainActivity.PREF_ISIT,true);
         editor.commit();
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
@@ -75,6 +76,8 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Join the revolt");
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
         startActivity(Intent.createChooser(sharingIntent, "Share via"));
+        //getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
+        getFragmentManager().popBackStack();
 
     }
 }
