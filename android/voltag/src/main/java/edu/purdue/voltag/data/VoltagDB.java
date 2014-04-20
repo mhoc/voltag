@@ -434,7 +434,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
                 // Re-fill it with new players
                 for (ParseObject p : players) {
-                    String playerID = p.getString(ParseConstants.CLASS_ID);
+                    String playerID = p.getString(p.getObjectId());
                     String hardwareID = p.getString(ParseConstants.PLAYER_HARDWARE_ID);
                     String playerName = p.getString(ParseConstants.PLAYER_NAME);
                     String playerEmail = p.getString(ParseConstants.PLAYER_EMAIL);
