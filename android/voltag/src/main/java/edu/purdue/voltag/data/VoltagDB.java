@@ -392,46 +392,60 @@ public class VoltagDB extends SQLiteOpenHelper{
             return;
         }
 
-        // Query parse
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_GAME);
-        query.whereEqualTo(ParseConstants.CLASS_ID, gameID);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> parseObjects, ParseException e) {
+        // Spawn a new thread
+        new Thread(new Runnable() {
+            public void run() {
 
-                // Parse should return a list of a single Game which is the game we are currently in
-                if (parseObjects.size() > 1) {
-                    Toast.makeText(c, "Error in parse query. There should only be 1 game returned.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                ParseObject game = parseObjects.get(0);
-                Log.d(MainActivity.LOG_TAG, "Found game " + game.getString(ParseConstants.GAME_NAME));
+                // Query parse
+                ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_GAME);
+                query.whereEqualTo(ParseConstants.CLASS_ID, gameID);
 
-                // Get relation to current users
-                ParseRelation<ParseObject> relation = game.getRelation(ParseConstants.GAME_TAGGED);
-                relation.getQuery().findInBackground(new FindCallback<ParseObject>() {
-                    public void done(List<ParseObject> parseObjects, ParseException e) {
-                        // Clear out the database
-                        // dropTablePlayers();
-
-                        // Re-fill it with new players
-                        for (ParseObject p : parseObjects) {
-                            String playerID = p.getString(ParseConstants.CLASS_ID);
-                            String hardwareID = p.getString(ParseConstants.PLAYER_HARDWARE_ID);
-                            String playerName = p.getString(ParseConstants.PLAYER_NAME);
-                            String playerEmail = p.getString(ParseConstants.PLAYER_EMAIL);
-                            Player player = new Player(playerID, hardwareID, playerName, playerEmail);
-                            addPlayerToDB(player);
-                        }
-
-                        // Alert listeners
-                        if (listener != null) {
-                            listener.done("");
-                        }
+                ParseObject game = null;
+                try {
+                    List<ParseObject> objs = query.find();
+                    if (objs.size() == 0) {
+                        Log.d(MainActivity.LOG_TAG, "No game exists with the id provided. Exiting.");
+                        return;
                     }
-                });
+                    if (objs.size() > 1) {
+                        Log.d(MainActivity.LOG_TAG, "Error in parse query. More than one game returned.");
+                        return;
+                    }
+                    game = objs.get(0);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Get relation to uses in that game
+                ParseRelation<ParseObject> relationPlayersInGame = game.getRelation(ParseConstants.GAME_PLAYERS);
+                List<ParseObject> players = null;
+
+                try {
+                    players = relationPlayersInGame.getQuery().find();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Clear out the database
+                // dropTablePlayers();
+
+                // Re-fill it with new players
+                for (ParseObject p : players) {
+                    String playerID = p.getString(ParseConstants.CLASS_ID);
+                    String hardwareID = p.getString(ParseConstants.PLAYER_HARDWARE_ID);
+                    String playerName = p.getString(ParseConstants.PLAYER_NAME);
+                    String playerEmail = p.getString(ParseConstants.PLAYER_EMAIL);
+                    Player player = new Player(playerID, hardwareID, playerName, playerEmail);
+                    addPlayerToDB(player);
+                }
+
+                // Alert listeners
+                if (listener != null) {
+                    listener.done("");
+                }
 
             }
-        });
+        }).start();
 
     }
 
