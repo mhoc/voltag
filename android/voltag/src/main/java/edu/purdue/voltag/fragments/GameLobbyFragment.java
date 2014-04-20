@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -38,6 +39,7 @@ import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
 public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedListener {
 
     VoltagDB db;
+    ListView theList;
 
     public GameLobbyFragment() {
     }
@@ -55,20 +57,23 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
 
         //db = new VoltagDB(getActivity());
         //db.refreshPlayersTable(this);
-        done("");
-        setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
+        //setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Log.d("GameLobbyFragment", "onCreateView()");
         View v = inflater.inflate(R.layout.fragment_game_lobby, container, false);
+        assert v != null;
+        theList = (ListView) v.findViewById(android.R.id.list);
         return v;
     }
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState)
     {
+        Log.d("GameLobbyFragment", "onViewCreated()");
         final Player it = new Player(null, null, null, "dmtschida1@gmail.com");
 
         new AsyncTask<Void, Void, Bitmap>() {
@@ -83,6 +88,8 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 iv.setImageBitmap(bitmap);
             }
         }.execute();
+        done("");
+        //theList.setAdapter(new ArrayAdapter<String>(getActivity(), R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }
 
     @Override
@@ -111,7 +118,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             {
                 Log.d("PlayerLoader", "onPostExecute()");
                 PlayerListAdapter adapt = new PlayerListAdapter(getActivity(), R.layout.player_list_item, R.id.name, players);
-                GameLobbyFragment.this.setListAdapter(adapt);
+                theList.setAdapter(adapt);
             }
         };
         addAdapter.execute();
