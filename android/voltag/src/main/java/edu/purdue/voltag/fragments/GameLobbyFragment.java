@@ -44,10 +44,11 @@ public class GameLobbyFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Bitmap bitmap = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.david);
-        ImageView imageView = (ImageView) getActivity().findViewById(R.id.imageView);
+        View v = inflater.inflate(R.layout.fragment_game_lobby, container, false);
+        Bitmap bitmap = BitmapFactory.decodeResource(v.getResources(), R.drawable.david);
+        ImageView imageView = (ImageView) v.findViewById(R.id.imageView);
         imageView.setImageBitmap(ImageHelper.getRoundedCornerBitmap(bitmap, 500));
-        return inflater.inflate(R.layout.fragment_game_lobby, container, false);
+        return v;
     }
 
 }
