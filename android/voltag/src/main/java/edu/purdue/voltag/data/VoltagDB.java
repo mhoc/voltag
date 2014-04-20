@@ -336,9 +336,16 @@ public class VoltagDB extends SQLiteOpenHelper{
                 // Switch the player's local state to being tagged
                 prefs.edit().putBoolean(MainActivity.PREF_ISIT, true).commit();
 
-                // Save the game
+                // Create the tag object on parse
+                ParseObject tag = new ParseObject(ParseConstants.PARSE_CLASS_TAG);
+                tag.getRelation(ParseConstants.TAG_GAME).add(game);
+                tag.getRelation(ParseConstants.TAG_PLAYER_IT).add(thisPlayer);
+                tag.getRelation(ParseConstants.TAG_PLAYER_TAGGED).add(oldPlayerIt);
+
+                // Save the game and the tag object
                 try {
                     game.save();
+                    tag.save();
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
