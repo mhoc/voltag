@@ -87,7 +87,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         emailBox = (EditText)v.findViewById(R.id.etxt_displayName);
         regButton = (Button)v.findViewById(R.id.btn_register);
         regButton.setOnClickListener(this);
-        db = new VoltagDB(getActivity());
+        db = VoltagDB.getDB(getActivity());
         return v;
     }
 

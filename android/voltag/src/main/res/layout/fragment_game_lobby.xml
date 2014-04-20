@@ -5,7 +5,6 @@
     android:padding="30dp"
     tools:context="edu.purdue.voltag.fragments.GameLobbyFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/gamelobby_tv_lobbyid"
         android:layout_width="fill_parent"
@@ -27,7 +26,7 @@
     <TextView
         android:id="@+id/gamelobby_tv_whosit"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/imageView"
         android:text="ImItYeezy3000"
         android:gravity="center_horizontal"
@@ -39,6 +38,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/imageView" />
+        android:layout_below="@+id/gamelobby_tv_whosit" />
 
 </RelativeLayout>

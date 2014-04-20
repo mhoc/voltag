@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -25,6 +24,7 @@ import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
 public class VoltagDB extends SQLiteOpenHelper{
 
     /** Database information */
+    private static VoltagDB db_instance;
     public static final String DB_NAME = "voltag_db";
     public static final int DB_VERSION = 1;
     private Context c;
@@ -39,7 +39,14 @@ public class VoltagDB extends SQLiteOpenHelper{
     public static final String PLAYERS_EMAIL = "player_email";
     public static final String PLAYERS_ISIT = "player_isit";
 
-    public VoltagDB(Context c) {
+    public static VoltagDB getDB(Context c) {
+        if (db_instance == null) {
+            db_instance = new VoltagDB(c);
+        }
+        return db_instance;
+    }
+
+    private VoltagDB(Context c) {
         super(c, DB_NAME, null, DB_VERSION);
         this.c = c;
     }
@@ -47,7 +54,7 @@ public class VoltagDB extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String createTablePlayers = "CREATE " + TABLE_PLAYERS + " (" +
+        String createTablePlayers = "CREATE TABLE " + TABLE_PLAYERS + " (" +
                 PLAYERS_HARDWARE_ID + " TEXT, " +
                 PLAYERS_PARSE_ID + " TEXT, " +
                 PLAYERS_NAME + " TEXT, " +
@@ -69,24 +76,18 @@ public class VoltagDB extends SQLiteOpenHelper{
     public void destroy() {
         SQLiteDatabase db = getWritableDatabase();
         if (db != null) {
-            db.execSQL("DROP TABLE " + TABLE_PLAYERS);
-            onCreate(db);
+            db.execSQL("DROP TABLE " + TABLE_PLAYERS + ";");
         }
+        db.close();
     }
 
     /** Destroys the players table */
     public void dropTablePlayers() {
         SQLiteDatabase db = getWritableDatabase();
         if (db != null) {
-            db.execSQL("DROP TABLE " + TABLE_PLAYERS);
-            String createTablePlayers = "CREATE " + TABLE_PLAYERS + " (" +
-                    PLAYERS_HARDWARE_ID + " TEXT, " +
-                    PLAYERS_PARSE_ID + " TEXT, " +
-                    PLAYERS_NAME + " TEXT, " +
-                    PLAYERS_EMAIL + " TEXT, " +
-                    PLAYERS_ISIT + " INTEGER);";
-            db.execSQL(createTablePlayers);
+            db.execSQL("DELETE FROM " + TABLE_PLAYERS + ";");
         }
+        db.close();
     }
 
     /** Creates a new player on parse.
@@ -114,8 +115,9 @@ public class VoltagDB extends SQLiteOpenHelper{
 
                 if (users.size() >= 1) {
                     // Don't add the user
-                    // TODO: Add the ID if they are logged in already
-                    //Toast.makeText(c, "You're already logged in.", Toast.LENGTH_SHORT).show();
+                    String id = users.get(0).getObjectId();
+                    SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                    prefs.edit().putString(MainActivity.PREF_USER_ID, id).commit();
                     return;
                 }
 
@@ -374,6 +376,7 @@ public class VoltagDB extends SQLiteOpenHelper{
         if (db != null) {
             db.insert(TABLE_PLAYERS, null, values);
         }
+        db.close();
 
     }
 
@@ -384,7 +387,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
         // Get current game ID
         SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+        final String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
 
         // If there's no game, exit
         if (gameID.equals("")) {
@@ -392,46 +395,61 @@ public class VoltagDB extends SQLiteOpenHelper{
             return;
         }
 
-        // Query parse
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_GAME);
-        query.whereEqualTo(ParseConstants.CLASS_ID, gameID);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> parseObjects, ParseException e) {
+        // Spawn a new thread
+        new Thread(new Runnable() {
+            public void run() {
 
-                // Parse should return a list of a single Game which is the game we are currently in
-                if (parseObjects.size() > 1) {
-                    Toast.makeText(c, "Error in parse query. There should only be 1 game returned.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                ParseObject game = parseObjects.get(0);
-                Log.d(MainActivity.LOG_TAG, "Found game " + game.getString(ParseConstants.GAME_NAME));
+                // Query parse
+                ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_GAME);
+                query.whereEqualTo(ParseConstants.CLASS_ID, gameID);
 
-                // Get relation to current users
-                ParseRelation<ParseObject> relation = game.getRelation(ParseConstants.GAME_TAGGED);
-                relation.getQuery().findInBackground(new FindCallback<ParseObject>() {
-                    public void done(List<ParseObject> parseObjects, ParseException e) {
-                        // Clear out the database
-                        // dropTablePlayers();
-
-                        // Re-fill it with new players
-                        for (ParseObject p : parseObjects) {
-                            String playerID = p.getString(ParseConstants.CLASS_ID);
-                            String hardwareID = p.getString(ParseConstants.PLAYER_HARDWARE_ID);
-                            String playerName = p.getString(ParseConstants.PLAYER_NAME);
-                            String playerEmail = p.getString(ParseConstants.PLAYER_EMAIL);
-                            Player player = new Player(playerID, hardwareID, playerName, playerEmail);
-                            addPlayerToDB(player);
-                        }
-
-                        // Alert listeners
-                        if (listener != null) {
-                            listener.done("");
-                        }
+                ParseObject game = null;
+                try {
+                    List<ParseObject> objs = query.find();
+                    if (objs.size() == 0) {
+                        Log.d(MainActivity.LOG_TAG, "No game exists with the id provided. Exiting.");
+                        return;
                     }
-                });
+                    if (objs.size() > 1) {
+                        Log.d(MainActivity.LOG_TAG, "Error in parse query. More than one game returned.");
+                        return;
+                    }
+                    game = objs.get(0);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Get relation to uses in that game
+                ParseRelation<ParseObject> relationPlayersInGame = game.getRelation(ParseConstants.GAME_PLAYERS);
+                List<ParseObject> players = null;
+
+                try {
+                    players = relationPlayersInGame.getQuery().find();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Clear out the database
+                dropTablePlayers();
+
+                // Re-fill it with new players
+                for (ParseObject p : players) {
+                    Log.d(MainActivity.LOG_TAG, "Player Parse ID: " + p.getObjectId());
+                    String playerID = p.getString(p.getObjectId());
+                    String hardwareID = p.getString(ParseConstants.PLAYER_HARDWARE_ID);
+                    String playerName = p.getString(ParseConstants.PLAYER_NAME);
+                    String playerEmail = p.getString(ParseConstants.PLAYER_EMAIL);
+                    Player player = new Player(playerID, hardwareID, playerName, playerEmail);
+                    addPlayerToDB(player);
+                }
+
+                // Alert listeners
+                if (listener != null) {
+                    listener.done("");
+                }
 
             }
-        });
+        }).start();
 
     }
 
@@ -456,6 +474,8 @@ public class VoltagDB extends SQLiteOpenHelper{
                     players.add(p);
                 } while (c.moveToNext());
             }
+            c.close();
+            db.close();
             return players;
         }
 

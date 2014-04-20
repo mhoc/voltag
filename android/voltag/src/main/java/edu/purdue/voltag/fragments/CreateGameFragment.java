@@ -38,7 +38,7 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        db = new VoltagDB(getActivity());
+        db = VoltagDB.getDB(getActivity());
     }
 
     @Override
