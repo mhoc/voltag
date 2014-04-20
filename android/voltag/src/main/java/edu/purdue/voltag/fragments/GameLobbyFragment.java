@@ -62,16 +62,21 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         setHasOptionsMenu(true);
 
     }
-
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater){
-        MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.game_lobby_menu, menu);
+        menuInflater.inflate(R.menu.game_lobby_menu, menu);
 
     }
-
-    public boolean onContextItemSelected(MenuItem item){
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
         if(item.getItemId() == R.id.exit_game){
             Log.d("debug","exit game!");
+            SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(MainActivity.PREF_CURRENT_GAME_ID,"");
+            editor.commit();
+            getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
+
 
         }
         return true;
