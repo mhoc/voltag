@@ -16,9 +16,11 @@ import android.widget.ArrayAdapter;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.Player;
+import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.helper.ImageHelper;
 
 /*
@@ -32,14 +34,23 @@ import edu.purdue.voltag.helper.ImageHelper;
  */
 public class GameLobbyFragment extends ListFragment {
 
+    VoltagDB db;
+
     public GameLobbyFragment() {
 
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        db = new VoltagDB(getActivity());
     }
 
     @Override
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
+        
         setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }
 
@@ -49,34 +60,17 @@ public class GameLobbyFragment extends ListFragment {
 
         final View v = inflater.inflate(R.layout.fragment_game_lobby, container, false);
 
-        final Player p = new Player(null, null, null, "dmtschida1@gmail.com");
+        final Player it = new Player(null, null, null, "dmtschida1@gmail.com");
 
         new AsyncTask<Void, Void, Bitmap>() {
             @Override
             protected Bitmap doInBackground(Void... params) {
-                final String baseUrl = "http://www.gravatar.com/avatar/";
-                final String processedAddress = p.getEmail();
-
-                final String hashCode = p.getGravitarURL();
-                final String url = baseUrl + hashCode+"?s=" + "180" + "&d=blank";
-
-                HttpURLConnection httpURLConnection = null;
-                try {
-                    httpURLConnection = (HttpURLConnection) new URL(url).openConnection();
-                    final InputStream is = httpURLConnection.getInputStream();
-                    Bitmap gravitar = BitmapFactory.decodeStream(is, null, new BitmapFactory.Options());
-                    return ImageHelper.getRoundedCornerBitmap(gravitar, 500);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    httpURLConnection.disconnect();
-                }
-                return null;
+                return it.getGravitar(180);
             }
 
             @Override
             protected void onPostExecute(Bitmap bitmap) {
-                ((ImageView)v.findViewById(R.id.imageView)).setImageBitmap(bitmap);
+                ((ImageView) v.findViewById(R.id.imageView)).setImageBitmap(bitmap);
             }
         }.execute();
 

@@ -1,11 +1,15 @@
 package edu.purdue.voltag.data;
 
-import android.util.Log;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import edu.purdue.voltag.helper.ImageHelper;
 
 /**
  * Created by mike on 4/19/14.
@@ -42,7 +46,7 @@ public class Player {
         return this.email.toLowerCase();
     }
 
-    public String getGravitarURL() {
+    private String getEmailMD5() {
 
         final String MD5 = "MD5";
         try {
@@ -66,6 +70,28 @@ public class Player {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public Bitmap getGravitar(int size)
+    {
+        final String baseUrl = "http://www.gravatar.com/avatar/";
+        final String processedAddress = getEmail();
+
+        final String hashCode = getEmailMD5();
+        final String url = baseUrl + hashCode+"?s=" + size + "&d=blank";
+
+        HttpURLConnection httpURLConnection = null;
+        try {
+            httpURLConnection = (HttpURLConnection) new URL(url).openConnection();
+            final InputStream is = httpURLConnection.getInputStream();
+            Bitmap gravitar = BitmapFactory.decodeStream(is, null, new BitmapFactory.Options());
+            return ImageHelper.getRoundedCornerBitmap(gravitar, 500);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            httpURLConnection.disconnect();
+        }
+        return null;
     }
 
     public void setIsIt(boolean isIt) {
