@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -69,8 +68,7 @@ public class VoltagDB extends SQLiteOpenHelper{
     public void destroy() {
         SQLiteDatabase db = getWritableDatabase();
         if (db != null) {
-            db.execSQL("DROP TABLE " + TABLE_PLAYERS);
-            onCreate(db);
+            db.execSQL("DROP TABLE " + TABLE_PLAYERS + ";");
         }
     }
 
@@ -78,14 +76,7 @@ public class VoltagDB extends SQLiteOpenHelper{
     public void dropTablePlayers() {
         SQLiteDatabase db = getWritableDatabase();
         if (db != null) {
-            db.execSQL("DROP TABLE " + TABLE_PLAYERS);
-            String createTablePlayers = "CREATE " + TABLE_PLAYERS + " (" +
-                    PLAYERS_HARDWARE_ID + " TEXT, " +
-                    PLAYERS_PARSE_ID + " TEXT, " +
-                    PLAYERS_NAME + " TEXT, " +
-                    PLAYERS_EMAIL + " TEXT, " +
-                    PLAYERS_ISIT + " INTEGER);";
-            db.execSQL(createTablePlayers);
+            db.execSQL("DROP TABLE " + TABLE_PLAYERS + ";");
         }
     }
 
@@ -385,7 +376,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
         // Get current game ID
         SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+        final String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
 
         // If there's no game, exit
         if (gameID.equals("")) {
