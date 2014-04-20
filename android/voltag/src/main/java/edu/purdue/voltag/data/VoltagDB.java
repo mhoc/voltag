@@ -100,6 +100,9 @@ public class VoltagDB extends SQLiteOpenHelper{
             return;
         }
 
+        // Check to see if the user already has an account
+        
+
         ParseObject player = new ParseObject(ParseConstants.PARSE_CLASS_PLAYER);
         player.put(ParseConstants.PLAYER_HARDWARE_ID, p.getHardwareID());
         player.put(ParseConstants.PLAYER_NAME, p.getUserName());
@@ -166,7 +169,7 @@ public class VoltagDB extends SQLiteOpenHelper{
                 }
 
                 // Save the ID in the shared preferences
-                String id = game.getString(ParseConstants.CLASS_ID);
+                String id = game.getObjectId();
                 prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, id).commit();
 
                 // Call the listener
