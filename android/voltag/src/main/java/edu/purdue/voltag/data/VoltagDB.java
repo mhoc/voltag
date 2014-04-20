@@ -259,6 +259,15 @@ public class VoltagDB extends SQLiteOpenHelper{
                     e.printStackTrace();
                 }
 
+                // Store the game ID in the shared preferences
+                SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, game.getObjectId()).commit();
+
+                // Alert listeners
+                if (listener != null) {
+                    listener.done(game.getObjectId());
+                }
+
             }
         }).start();
 
