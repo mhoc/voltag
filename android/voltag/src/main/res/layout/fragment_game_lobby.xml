@@ -13,7 +13,7 @@
         android:gravity="center_horizontal"
         android:textSize="30sp"
         android:paddingBottom="30dp"
-        android:textColor="#F00"
+        android:textColor="@android:color/holo_red_dark"
         android:text="LOBBY ID"
         />
 
