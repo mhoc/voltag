@@ -214,6 +214,58 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     }
 
+    /** Adds a player to a given game on parse */
+    public void addPlayerToGameOnParse(final String gameID) {
+
+        // Get user ID
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        final String userID = prefs.getString(MainActivity.PREF_USER_ID, "");
+        if (userID.equals("")) {
+            Toast.makeText(c, "User is not signed in.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Spawn off a thread
+        new Thread(new Runnable() {
+            public void run() {
+
+                // Query parse for the game
+                ParseQuery<ParseObject> gamequery = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_GAME);
+                gamequery.whereEqualTo(ParseConstants.CLASS_ID, gameID);
+
+                ParseObject game = null;
+                try {
+                    game = gamequery.find().get(0);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Query parse for the player
+                ParseQuery<ParseObject> userquery = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_PLAYER);
+                userquery.whereEqualTo(ParseConstants.CLASS_ID, userID);
+
+                ParseObject user = null;
+                try {
+                    user = userquery.find().get(0);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Update game's relational reference to its player objects
+                game.getRelation(ParseConstants.GAME_PLAYERS).add(user);
+
+                // Save the game to parse
+                try {
+                    game.save();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+
+    }
+
 
     /** Adds a player to the local database */
     private void addPlayerToDB(Player p) {
