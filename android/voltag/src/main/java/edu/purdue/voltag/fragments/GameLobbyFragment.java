@@ -43,7 +43,9 @@ public class GameLobbyFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+        super.onCreate(savedInstanceState);
         db = new VoltagDB(getActivity());
+
     }
 
     @Override
