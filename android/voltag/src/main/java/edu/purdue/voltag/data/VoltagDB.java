@@ -85,7 +85,7 @@ public class VoltagDB extends SQLiteOpenHelper{
     public void dropTablePlayers() {
         SQLiteDatabase db = getWritableDatabase();
         if (db != null) {
-            db.execSQL("DROP TABLE " + TABLE_PLAYERS + ";");
+            db.execSQL("DELETE FROM " + TABLE_PLAYERS + ";");
         }
         db.close();
     }
@@ -434,6 +434,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
                 // Re-fill it with new players
                 for (ParseObject p : players) {
+                    Log.d(MainActivity.LOG_TAG, "Player Parse ID: " + p.getObjectId());
                     String playerID = p.getString(p.getObjectId());
                     String hardwareID = p.getString(ParseConstants.PLAYER_HARDWARE_ID);
                     String playerName = p.getString(ParseConstants.PLAYER_NAME);
