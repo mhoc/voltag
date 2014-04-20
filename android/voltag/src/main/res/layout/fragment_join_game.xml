@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="Join A Game"
-        android:textColor="#F00"
+        android:textColor="@android:color/holo_red_dark"
         android:paddingBottom="30dp"
         android:textAllCaps="true"
         android:textSize="30sp"/>
