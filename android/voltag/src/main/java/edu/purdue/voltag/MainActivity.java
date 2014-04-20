@@ -37,6 +37,14 @@ public class MainActivity extends Activity {
                 Parse.initialize(MainActivity.this, ParseConstants.PARSE_APPLICATION_KEY, ParseConstants.PARSE_CLIENT_KEY);
             }
         }).start();
+
+        String gameId;
+        SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
+        gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
+        if(!(gameId.equals(""))){
+            getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
+
+        }
         setContentView(R.layout.activity_main);
     }
 
