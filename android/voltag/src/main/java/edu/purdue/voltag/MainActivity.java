@@ -1,6 +1,8 @@
 package edu.purdue.voltag;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
@@ -10,11 +12,15 @@ import android.nfc.NfcEvent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.Parse;
@@ -104,6 +110,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         }
     }
 
+
     public void testClick(View view)
     {
         closeSplash();
@@ -148,8 +155,33 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_about) {
+            showAboutDialog();
+
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showAboutDialog() {
+        // 1. Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builder.setMessage(R.string.dialog_message)
+                .setCancelable(true)
+                .setTitle(R.string.dialog_title);
+
+        builder.setPositiveButton( android.R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+
+        // 3. Get the AlertDialog from create()
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
     }
 
 
