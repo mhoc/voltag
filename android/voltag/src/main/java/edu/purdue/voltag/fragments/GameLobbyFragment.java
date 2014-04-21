@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -99,6 +100,9 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         View v = inflater.inflate(R.layout.fragment_game_lobby, container, false);
         assert v != null;
         theList = (ListView) v.findViewById(android.R.id.list);
+
+
+
         return v;
     }
 
@@ -106,7 +110,16 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     public void onViewCreated(final View view, Bundle savedInstanceState)
     {
         Log.d("GameLobbyFragment", "onViewCreated()");
-        final Player it = new Player(null, null, null, "dmtschida1@gmail.com");
+        final Player it = new Player(null, null, "David", "dmtschida1@gmail.com");
+        TextView t = (TextView) view.findViewById(R.id.gamelobby_tv_whosit);
+        t.setText(it.getUserName());
+
+        String gameId;
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+        gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
+
+        TextView id = (TextView) view.findViewById(R.id.gamelobby_tv_lobbyid);
+        id.setText(gameId);
 
         new AsyncTask<Void, Void, Bitmap>() {
             @Override
