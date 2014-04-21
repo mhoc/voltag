@@ -35,7 +35,7 @@ import edu.purdue.voltag.lobby.BitmapCacheHost;
 
 import static android.nfc.NdefRecord.createMime;
 
-public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback,BitmapCacheHost {
+public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback {
 
     public static final String LOG_TAG = "voltag_log";
     public static final String PREFS_NAME = "voltag_prefs";
@@ -46,36 +46,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     public static final String PREF_ISREGISTERED = "is_registered";
     private NfcAdapter mNfcAdapter;
 
-    private LruCache<String, Bitmap> mMemoryCache;
 
-    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        assert(mMemoryCache != null);
-        if (getBitmapFromMemCache(key) == null) {
-            mMemoryCache.put(key, bitmap);
-        }
-    }
-
-    public Bitmap getBitmapFromMemCache(String key) {
-        assert(mMemoryCache != null);
-        return mMemoryCache.get(key);
-    }
-
-    public void initMemoryCache()
-    {
-        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-
-        // Use 1/8th of the available memory for this memory cache.
-        final int cacheSize = maxMemory / 15;
-
-        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
-            @Override
-            protected int sizeOf(String key, Bitmap bitmap) {
-                // The cache size will be measured in kilobytes rather than
-                // number of items.
-                return (bitmap.getRowBytes() * bitmap.getHeight()) / 1024;
-            }
-        };
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +64,6 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             return;
         }
         mNfcAdapter.setNdefPushMessageCallback(this,this);
-        initMemoryCache();
         setContentView(R.layout.activity_main);
     }
 

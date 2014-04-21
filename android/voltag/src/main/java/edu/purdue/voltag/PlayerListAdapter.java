@@ -34,7 +34,7 @@ public class PlayerListAdapter extends ArrayAdapter<Player> {
         Log.d("PlayerLostAdapter", "New Adapter");
         for(Player p : players)
         {
-            Log.d("Adapter", p.getUserName());
+            Log.d("Adapter", p.getUserName() + "\t: " + p.getEmail());
         }
         notifyDataSetChanged();
         this.host = host;

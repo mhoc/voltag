@@ -12,6 +12,7 @@ import android.nfc.NfcEvent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,11 +47,13 @@ import static android.nfc.NdefRecord.createMime;
  * create an instance of this fragment.
  *
  */
-public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedListener {
+public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedListener, BitmapCacheHost {
 
     VoltagDB db;
     ListView theList;
     private NfcAdapter mNfcAdapter;
+
+    private LruCache<String, Bitmap> mMemoryCache;
 
     public GameLobbyFragment() {
     }
@@ -60,13 +63,14 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
+        initMemoryCache();
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater){
         menuInflater.inflate(R.menu.game_lobby_menu, menu);
-
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if(item.getItemId() == R.id.exit_game){
@@ -94,6 +98,13 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     }
 
     @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        clearCache();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         Log.d("GameLobbyFragment", "onCreateView()");
@@ -115,7 +126,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         t.setText(it.getUserName());
 
         String gameId;
-        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
 
         TextView id = (TextView) view.findViewById(R.id.gamelobby_tv_lobbyid);
@@ -134,6 +145,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             }
         }.execute();
         done("");
+
     }
 
     @Override
@@ -150,7 +162,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 ArrayList<Player> players = new ArrayList<Player>();
 
                 String[] names = { "David", "Gary", "Charles", "Chuck", "Dave", "Kyle", "Madison", "Jordan", "Katie", "Jennifer", "Anthony" };
-                String[] emails = {"tylorgarrett@gmail.com", "punkkid209@gmail.com", "mike@hockerman.com", "kyle@kptechblog.com"};
+                String[] emails = {"tylorgarrett@gmail.com", "dmtschida1@gmail.com", "mike@hockerman.com", "kyle@kptechblog.com"};
                 Random r = new Random();
                 for(String name : names)
                 {
@@ -165,11 +177,44 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             {
                 Log.d("PlayerLoader", "onPostExecute()");
                 PlayerListAdapter adapt = new PlayerListAdapter(getActivity(),
-                        R.layout.player_list_item, R.id.name, players, (BitmapCacheHost) getActivity());
+                        R.layout.player_list_item, R.id.name, players, (BitmapCacheHost) GameLobbyFragment.this);
                 theList.setAdapter(adapt);
             }
         };
         addAdapter.execute();
     }
 
+    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        assert(mMemoryCache != null);
+        if (getBitmapFromMemCache(key) == null) {
+            mMemoryCache.put(key, bitmap);
+        }
+    }
+
+    public Bitmap getBitmapFromMemCache(String key) {
+        assert(mMemoryCache != null);
+        return mMemoryCache.get(key);
+    }
+
+    public void initMemoryCache()
+    {
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+
+        // Use 1/8th of the available memory for this memory cache.
+        final int cacheSize = maxMemory / 15;
+
+        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+                // The cache size will be measured in kilobytes rather than
+                // number of items.
+                return (bitmap.getRowBytes() * bitmap.getHeight()) / 1024;
+            }
+        };
+    }
+
+    public void clearCache()
+    {
+        mMemoryCache.evictAll();
+    }
 }
