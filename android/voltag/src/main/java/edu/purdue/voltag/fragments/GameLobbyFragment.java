@@ -72,21 +72,6 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        if(item.getItemId() == R.id.exit_game){
-            Log.d("debug","exit game!");
-            SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putString(MainActivity.PREF_CURRENT_GAME_ID,"");
-            editor.commit();
-            getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
-
-
-        }
-        return true;
-    }
-
-    @Override
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
@@ -125,12 +110,12 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         TextView t = (TextView) view.findViewById(R.id.gamelobby_tv_whosit);
         t.setText(it.getUserName());
 
-        String gameId;
+        String gameName;
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
+        gameName = settings.getString(MainActivity.PREF_CURRENT_GAME_NAME,"");
 
         TextView id = (TextView) view.findViewById(R.id.gamelobby_tv_lobbyid);
-        id.setText(gameId);
+        id.setText(gameName);
 
         new AsyncTask<Void, Void, Bitmap>() {
             @Override
@@ -182,6 +167,35 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             }
         };
         addAdapter.execute();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.share:
+                String gameId;
+                SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
+
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody = "Come join the revolt! Enter the id " + gameId;
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Join the revolt");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                return true;
+            case R.id.exit_game:
+                Log.d("debug","exit game!");
+                SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+                SharedPreferences.Editor editor = _settings.edit();
+                editor.putString(MainActivity.PREF_CURRENT_GAME_ID,"");
+                editor.commit();
+                getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
+                return true;
+            default: return false;
+        }
     }
 
     public void addBitmapToMemoryCache(String key, Bitmap bitmap) {

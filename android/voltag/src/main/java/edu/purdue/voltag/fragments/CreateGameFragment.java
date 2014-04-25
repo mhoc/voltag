@@ -56,6 +56,12 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         String gameName = gameNameEditText.getText().toString();
+
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(MainActivity.PREF_CURRENT_GAME_NAME,gameName);
+        editor.commit();
+
         db.createGameOnParse(gameName,this);
         //getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
         Log.d("debug","test");
