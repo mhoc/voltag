@@ -2,6 +2,9 @@ package edu.purdue.voltag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,6 +37,7 @@ import edu.purdue.voltag.fragments.CreateGameFragment;
 import edu.purdue.voltag.fragments.GameChoiceFragment;
 import edu.purdue.voltag.fragments.GameLobbyFragment;
 import edu.purdue.voltag.fragments.RegistrationFragment;
+import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
 import edu.purdue.voltag.lobby.BitmapCacheHost;
 
 import static android.nfc.NdefRecord.createMime;
@@ -247,18 +251,30 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         String message = new String(msg.getRecords()[0].getPayload());
         Log.d("debug","message="+message);
         if(message.equals("it")){
-            db.tagThisPlayerOnParse(null);
-            SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(MainActivity.PREF_ISIT,true);
-            editor.commit();
-            ParsePush push = new ParsePush();
-            String test = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
-            Log.d("debug","sending push to channels " + test);
-            push.setChannel(test);
-            String name = settings.getString(MainActivity.PREFS_NAME,"");
-            push.setMessage( name+ " is now it!");
-            push.sendInBackground();
+            db.tagThisPlayerOnParse( new OnAsyncCompletedListener() {
+                @Override
+                public void done(String data) {
+                    SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putBoolean(MainActivity.PREF_ISIT,true);
+                    editor.commit();
+                    ParsePush push = new ParsePush();
+                    String test = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
+                    Log.d("debug","sending push to channels " + test);
+                    push.setChannel(test);
+                    String name = settings.getString(MainActivity.PREFS_NAME,"");
+                    push.setMessage( name+ " is now it!");
+                    push.sendInBackground();
+
+                    FragmentManager.BackStackEntry backStack = getFragmentManager().getBackStackEntryAt(getFragmentManager().getBackStackEntryCount()-1);
+                    String str = backStack.getName();
+                    Fragment fragment =getFragmentManager().findFragmentByTag(str);
+                    if(fragment instanceof  GameLobbyFragment){
+                        Log.d("debug and test","fragment is instanceof GameLobbyFragment");
+                    }
+                }
+            });
+
         }
         // record 0 contains the MIME type, record 1 is the AAR, if present
     }
