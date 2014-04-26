@@ -56,6 +56,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     private NfcAdapter mNfcAdapter;
 
     private LruCache<String, Bitmap> mMemoryCache;
+    private ImageView itPic;
 
     public GameLobbyFragment() {
     }
@@ -115,25 +116,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         TextView id = (TextView) view.findViewById(R.id.gamelobby_tv_lobbyid);
         id.setText(gameName);
 
-        new AsyncTask<Void, Void, Bitmap>() {
-
-            Player it;
-
-            @Override
-            protected Bitmap doInBackground(Void... params) {
-                it = new Player(null, null, "David", "dmtschida1@gmail.com");
-                return it.getGravitar(220);
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                ImageView iv = (ImageView) view.findViewById(R.id.imageView);
-                iv.setImageBitmap(bitmap);
-
-                TextView t = (TextView) view.findViewById(R.id.gamelobby_tv_whosit);
-                t.setText(it.getUserName());
-            }
-        }.execute();
+        itPic = (ImageView) view.findViewById(R.id.imageView);
 
         db.refreshPlayersTable(this);
 
@@ -167,8 +150,33 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             protected void onPostExecute(List<Player> players)
             {
                 Log.d("PlayerLoader", "onPostExecute()");
+                Player it = null;
+                for (Player p : players)
+                {
+                    if(p.getIsIt()) {
+                        it = p;
+                        break;
+                    }
+                }
+                players.remove(it);
+
+                AsyncTask<Player, Void, Bitmap> itPerson = new AsyncTask<Player, Void, Bitmap>() {
+                    @Override
+                    protected Bitmap doInBackground(Player... params) {
+                        return params[0].getGravitar(512);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Bitmap bitmap)
+                    {
+                        itPic.setImageBitmap(bitmap);
+                    }
+                };
+                itPerson.execute(it);
+
                 PlayerListAdapter adapt = new PlayerListAdapter(getActivity(),
                         R.layout.player_list_item, R.id.name, players, (BitmapCacheHost) GameLobbyFragment.this);
+
                 theList.setAdapter(adapt);
             }
         };
