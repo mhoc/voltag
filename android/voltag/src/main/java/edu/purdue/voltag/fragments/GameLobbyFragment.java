@@ -147,7 +147,6 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 it = p;
             }
         }
-        Log.d("tylor", it.getEmail());
         return it;
     }
 

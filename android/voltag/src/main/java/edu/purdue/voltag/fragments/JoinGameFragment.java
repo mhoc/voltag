@@ -5,9 +5,11 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.content.Intent;
@@ -70,6 +72,17 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
         joinGameButton = (Button) v.findViewById(R.id.joingame_bu_join);
         gameNameEditText = (EditText) v.findViewById(R.id.joingame_et_lobbyid);
         joinGameButton.setOnClickListener(this);
+
+
+        gameNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(i == EditorInfo.IME_ACTION_GO){
+                    joinGameButton.performClick();
+                }
+                return false;
+            }
+        });
         return v;
     }
 

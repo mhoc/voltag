@@ -22,6 +22,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/joingame_tv_join"
         android:layout_centerHorizontal="true"
+        android:singleLine="true"
+        android:imeOptions="actionGo"
         android:hint="Lobby ID" />
     <Button
         android:id="@+id/joingame_bu_join"
