@@ -24,6 +24,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.PushService;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -179,7 +181,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         int id = item.getItemId();
         switch (id) {
             case R.id.share:
-                String gameId;
+                String gameId = null;
                 SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
                 gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
 
@@ -193,6 +195,8 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             case R.id.exit_game:
                 Log.d("debug","exit game!");
                 SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+               PushService.unsubscribe(getActivity(), _settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
+
                 SharedPreferences.Editor editor = _settings.edit();
                 editor.putString(MainActivity.PREF_CURRENT_GAME_ID,"");
                 editor.commit();

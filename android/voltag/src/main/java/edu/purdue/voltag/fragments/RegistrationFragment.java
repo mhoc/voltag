@@ -75,7 +75,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        Parse.initialize(getActivity(), ParseConstants.PARSE_APPLICATION_KEY, ParseConstants.PARSE_CLIENT_KEY);
+        //Parse.initialize(getActivity(), ParseConstants.PARSE_APPLICATION_KEY, ParseConstants.PARSE_CLIENT_KEY);
     }
 
     @Override

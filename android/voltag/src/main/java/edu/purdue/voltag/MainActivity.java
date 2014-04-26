@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.Parse;
+import com.parse.ParsePush;
 import com.parse.PushService;
 
 import edu.purdue.voltag.data.ParseConstants;
@@ -242,6 +243,13 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(MainActivity.PREF_ISIT,true);
             editor.commit();
+            ParsePush push = new ParsePush();
+            String test = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
+            Log.d("debug","sending push to channels " + test);
+            push.setChannel(test);
+            String name = settings.getString(MainActivity.PREFS_NAME,"");
+            push.setMessage(name + " is now it!");
+            push.sendInBackground();
         }
         // record 0 contains the MIME type, record 1 is the AAR, if present
     }

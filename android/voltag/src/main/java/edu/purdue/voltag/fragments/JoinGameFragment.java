@@ -21,6 +21,9 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.parse.PushService;
+
 import java.nio.charset.Charset;
 import static android.nfc.NdefRecord.createMime;
 
@@ -76,6 +79,7 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString(MainActivity.PREF_CURRENT_GAME_ID,gameName);
                 editor.commit();
+                PushService.subscribe(getActivity(),gameName,MainActivity.class);
                 db.addPlayerToGameOnParse(gameName, new OnAsyncCompletedListener() {
                     public void done(String id) {
 

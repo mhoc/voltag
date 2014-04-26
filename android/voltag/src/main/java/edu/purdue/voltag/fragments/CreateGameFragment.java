@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.parse.PushService;
+
 import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.VoltagDB;
@@ -83,6 +85,7 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
         startActivity(Intent.createChooser(sharingIntent, "Share via"));
         //getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
+        PushService.subscribe(getActivity(),id,MainActivity.class);
         getFragmentManager().popBackStack();
 
     }
