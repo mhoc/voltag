@@ -176,12 +176,16 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                             NdefRecord.createApplicationRecord("edu.purdue.voltag")
                     }
             );
+      
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(MainActivity.PREF_ISIT,false);
+            editor.commit();
             return msg;
         }
 
         else{
             String text = ("ignore");
-            Log.d("debug", "sendingNFC You are it.");
+            Log.d("debug", "sendingNFC ignore.");
             NdefMessage msg = new NdefMessage(
                     new NdefRecord[]{createMime(
                             "application/edu.purdue.voltag", text.getBytes()),
@@ -222,13 +226,20 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     void processIntent(Intent intent) {
         Log.d("debug","processing sending that I am now it to server");
         Toast.makeText(this, "You are it!", Toast.LENGTH_LONG).show();
-        //db.tagThisPlayerOnParse(null);
+        VoltagDB db = VoltagDB.getDB(this);
         Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
                 NfcAdapter.EXTRA_NDEF_MESSAGES);
         // only one message sent during the beam
         NdefMessage msg = (NdefMessage) rawMsgs[0];
-        String message = msg.toString();
-        Log.d("debug","message="+new String(msg.getRecords()[0].getPayload()));
+        String message = new String(msg.getRecords()[0].getPayload());
+        Log.d("debug","message="+message);
+        if(message.equals("it")){
+            db.tagThisPlayerOnParse(null);
+            SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(MainActivity.PREF_ISIT,true);
+            editor.commit();
+        }
         // record 0 contains the MIME type, record 1 is the AAR, if present
     }
 
