@@ -250,7 +250,10 @@ public class VoltagDB extends SQLiteOpenHelper{
 
                 ParseObject user = null;
                 try {
-                    user = userquery.find().get(0);
+                    List<ParseObject> list = userquery.find();
+                    if (list.size() != 0) {
+                        user = userquery.find().get(0);
+                    }
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
