@@ -202,13 +202,15 @@ public class VoltagDB extends SQLiteOpenHelper{
 
                 // Save the ID in the shared preferences and mark them as it
                 String id = game.getObjectId();
+                prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_NAME, gameName).commit();
                 prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, id).commit();
                 prefs.edit().putBoolean(MainActivity.PREF_ISIT, true).commit();
 
                 // Call the listener
                 if (listener != null) {
-                    listener.done(id);
+                    listener.done(new Game(id, gameName));
                 }
+
             }
         }).start();
 
@@ -264,12 +266,13 @@ public class VoltagDB extends SQLiteOpenHelper{
 
                 // Store the game ID in the shared preferences
                 SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_NAME, game.getString(ParseConstants.GAME_NAME)).commit();
                 prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, game.getObjectId()).commit();
                 prefs.edit().putBoolean(MainActivity.PREF_ISIT, false).commit();
 
                 // Alert listeners
                 if (listener != null) {
-                    listener.done(game.getObjectId());
+                    listener.done(new Game(game.getObjectId(), game.getString(ParseConstants.GAME_NAME)));
                 }
 
             }
@@ -298,7 +301,7 @@ public class VoltagDB extends SQLiteOpenHelper{
                 String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
                 String playerID = prefs.getString(MainActivity.PREF_USER_ID, "");
                 if (gameID.equals("") || playerID.equals("")) {
-                    Log.d(MainActivity.LOG_TAG, "Game ID or PlayerID is not set. Exiting tagThisPlayerOnParse loop.");
+                    Log.d(MainActivity.LOG_TAG, "Game ID or Player ID is not set. Exiting tagThisPlayerOnParse.");
                     return;
                 }
 
@@ -381,7 +384,7 @@ public class VoltagDB extends SQLiteOpenHelper{
     }
 
     /** Refreshes the database from parse.
-     *  The argument pass through the async listener is simply an empty string. */
+     *  The argument passed through the async listener is simply an empty string. */
     public void refreshPlayersTable(final OnAsyncCompletedListener listener) {
         Log.d(MainActivity.LOG_TAG, "Starting database refresh.");
 
