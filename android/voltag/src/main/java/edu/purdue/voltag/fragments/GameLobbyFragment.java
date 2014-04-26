@@ -201,6 +201,9 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 editor.putString(MainActivity.PREF_CURRENT_GAME_ID,"");
                 editor.commit();
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
+                VoltagDB db = VoltagDB.getDB(getActivity());
+                db.removePlayerFromGameOnParse(null);
+
                 return true;
             default: return false;
         }
