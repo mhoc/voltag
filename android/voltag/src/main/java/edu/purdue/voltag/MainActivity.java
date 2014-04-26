@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.Parse;
+import com.parse.PushService;
 
 import edu.purdue.voltag.data.ParseConstants;
 import edu.purdue.voltag.data.VoltagDB;
@@ -56,6 +57,8 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         new Thread(new Runnable() {
             public void run() {
                 Parse.initialize(MainActivity.this, ParseConstants.PARSE_APPLICATION_KEY, ParseConstants.PARSE_CLIENT_KEY);
+                PushService.setDefaultPushCallback(getApplicationContext(),MainActivity.class);
+
             }
         }).start();
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
