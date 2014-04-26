@@ -427,6 +427,75 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     }
 
+    /** Completely drops a player's registration on Parse */
+    public void dropPlayerRegistrationOnParse(final OnAsyncCompletedListener listener) {
+
+        // Get player ID
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        final String id = prefs.getString(MainActivity.PREF_USER_ID, "");
+        if (id.equals("")) {
+            return;
+        }
+
+        new Thread(new Runnable() {
+            public void run() {
+
+                // Complete the parse query
+                ParseQuery<ParseObject> playerQuery = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_PLAYER);
+                playerQuery.whereEqualTo(ParseConstants.CLASS_ID, id);
+
+                ParseObject player = null;
+                try {
+                    player = playerQuery.find().get(0);
+                    player.delete();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Call listener
+                if (listener != null) {
+                    listener.done("");
+                }
+
+            }
+        });
+
+    }
+
+    /** Deletes the current game on parse */
+    public void deleteGameOnParse(final OnAsyncCompletedListener listener) {
+
+        // Get player ID
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        final String id = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+        if (id.equals("")) {
+            return;
+        }
+
+        new Thread(new Runnable() {
+            public void run() {
+
+                // Complete the parse query
+                ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_GAME);
+                gameQuery.whereEqualTo(ParseConstants.CLASS_ID, id);
+
+                ParseObject game = null;
+                try {
+                    game = gameQuery.find().get(0);
+                    game.delete();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Call listener
+                if (listener != null) {
+                    listener.done("");
+                }
+
+            }
+        });
+
+    }
 
     /** Adds a player to the local database */
     private void addPlayerToDB(Player p) {

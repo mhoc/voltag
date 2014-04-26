@@ -52,6 +52,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         new Thread(new Runnable() {
             public void run() {
                 PushService.setDefaultPushCallback(getApplicationContext(),MainActivity.class);
@@ -59,18 +60,21 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
             }
         }).start();
+
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
             Toast.makeText(this, "NFC is not available", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
+
         mNfcAdapter.setNdefPushMessageCallback(this,this);
         setContentView(R.layout.activity_main);
     }
 
     @Override
     public void onStart() {
+
         super.onStart();
         String gameId;
         SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
@@ -78,23 +82,25 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         if(!(gameId.equals(""))){
             closeSplash();
             getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
-
         }
+
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
 
-    public void testClick(View view)
-    {
-        closeSplash();
+        // Check to see that the Activity started due to an Android Beam
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
+            processIntent(getIntent());
+        }
 
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
     }
 
-    public void beginButton(View view)
-    {
+    public void onClickBeginButton(View view) {
+
         SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
         boolean isRegistered = settings.getBoolean(PREF_ISREGISTERED,false);
-        Log.d("debug", "isRegistered=" + isRegistered);
 
         closeSplash();
 
@@ -104,10 +110,11 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         else{
             getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
         }
+
     }
 
     private void closeSplash() {
-        View v = (View) findViewById(R.id.splash);
+        View v = findViewById(R.id.splash);
         v.setVisibility(View.GONE);
     }
 
@@ -121,42 +128,43 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.action_about) {
-            showAboutDialog();
 
-            return true;
+        switch (item.getItemId()) {
+
+            case R.id.action_settings:
+                return true;
+
+            case R.id.action_about:
+                showAboutDialog();
+                return true;
+
         }
+
         return super.onOptionsItemSelected(item);
     }
 
     private void showAboutDialog() {
-        // 1. Instantiate an AlertDialog.Builder with its constructor
+
+        // Create builder
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        // 2. Chain together various setter methods to set the dialog characteristics
+        // Set message, cancelable, and title
         builder.setMessage(R.string.dialog_message)
                 .setCancelable(true)
                 .setTitle(R.string.dialog_title);
 
+        // Set a positive button to dismiss
         builder.setPositiveButton( android.R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
             }
         });
 
-        // 3. Get the AlertDialog from create()
-        AlertDialog dialog = builder.create();
-
-        dialog.show();
+        // Create and show the dialog
+        builder.create().show();
     }
 
-
+    @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
         SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
         Boolean isIt = settings.getBoolean(MainActivity.PREF_ISIT,false);
@@ -164,16 +172,8 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             String text = ("it");
             Log.d("debug", "sendingNFC You are it.");
             NdefMessage msg = new NdefMessage(
-                    new NdefRecord[]{createMime(
+                    new NdefRecord[]{ createMime(
                             "application/edu.purdue.voltag", text.getBytes()),
-                            /**
-                             * The Android Application Record (AAR) is commented out. When a device
-                             * receives a push with an AAR in it, the application specified in the AAR
-                             * is guaranteed to run. The AAR overrides the tag dispatch system.
-                             * You can add it back in to guarantee that this
-                             * activity starts when receiving a beamed message. For now, this code
-                             * uses the tag dispatch system.
-                             */
                             NdefRecord.createApplicationRecord("edu.purdue.voltag")
                     }
             );
@@ -208,23 +208,13 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        // Check to see that the Activity started due to an Android Beam
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
-            processIntent(getIntent());
-        }
-    }
-
     public void onNewIntent(Intent intent) {
         // onResume gets called after this to handle the intent
         setIntent(intent);
     }
 
-    /**
-     * Parses the NDEF Message from the intent and prints to the TextView
-     */
-    void processIntent(Intent intent) {
+    /** Parses the NDEF Message from the intent and prints to the TextView */
+    public void processIntent(Intent intent) {
         Log.d("debug","processing sending that I am now it to server");
         Toast.makeText(this, "You are it!", Toast.LENGTH_LONG).show();
         VoltagDB db = VoltagDB.getDB(this);
