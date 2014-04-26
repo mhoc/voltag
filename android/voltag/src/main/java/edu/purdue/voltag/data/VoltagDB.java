@@ -326,6 +326,12 @@ public class VoltagDB extends SQLiteOpenHelper{
                 // Remove the player from the relation
                 players.remove(player);
 
+                try {
+                    game.save();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
                 // Call listener
                 if (listener != null) {
                     listener.done("");
