@@ -284,6 +284,58 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     }
 
+    /** Removes a player from their current game on parse */
+    public void removePlayerFromGameOnParse(final OnAsyncCompletedListener listener) {
+
+        // Get the game ID
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        final String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+        if (gameID.equals("")) {
+            return;
+        }
+
+        // Get the player ID
+        final String playerID = prefs.getString(MainActivity.PREF_USER_ID, "");
+        if (playerID.equals("")) {
+            return;
+        }
+
+        new Thread(new Runnable() {
+            public void run() {
+
+                // Query the game on parse
+                ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_GAME);
+                gameQuery.whereEqualTo(ParseConstants.CLASS_ID, gameID);
+
+                ParseObject game = null;
+                try {
+                    game = gameQuery.find().get(0);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Get the players relation
+                ParseRelation<ParseObject> players = game.getRelation(ParseConstants.GAME_PLAYERS);
+                ParseObject player = null;
+                try {
+                    player = players.getQuery().whereEqualTo(ParseConstants.CLASS_ID, playerID).find().get(0);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Remove the player from the relation
+                players.remove(player);
+
+                // Call listener
+                if (listener != null) {
+                    listener.done("");
+                }
+
+            }
+        }).start();
+
+    }
+
     /** Tags THIS player as the new player to be it on Parse and updates the shared preferences */
     public void tagThisPlayerOnParse(final OnAsyncCompletedListener listener) {
 
