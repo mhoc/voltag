@@ -227,10 +227,13 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 push.setChannel(_settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
                 push.setMessage(name + " has left the game");
                 final Activity aA = getActivity();
+
+                // Save the game ID so we can remove it later
+                final String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+
                 push.sendInBackground(new SendCallback() {
-                    @Override
                     public void done(ParseException e) {
-                        PushService.unsubscribe(aA, prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+                        PushService.unsubscribe(aA, gameID);
                     }
                 });
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
