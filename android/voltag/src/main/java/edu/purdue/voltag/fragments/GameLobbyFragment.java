@@ -108,6 +108,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     public void onViewCreated(final View view, Bundle savedInstanceState)
     {
         Log.d("GameLobbyFragment", "onViewCreated()");
+        db.refreshPlayersTable(this);
         final List<Player> whichOne = db.getPlayersInCurrentGame();
         String gameName;
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
@@ -122,7 +123,6 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
 
             @Override
             protected Bitmap doInBackground(Void... params) {
-                //it = new Player(null, null, "Tylor", "tylorgarrett@gmail.com", true);
                 it = getWhoIsIt(whichOne);
                 return it.getGravitar(220);
             }
@@ -143,11 +143,12 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
 
     public Player getWhoIsIt(List<Player> list){
         Player it = null;
-        db.refreshPlayersTable(this);
         for ( Player p : list){
             if ( p.getIsIt() ){
+                Log.d("tylor", "It: " + p.getUserName());
                 it = p;
             }
+            Log.d("tylor", p.getUserName());
         }
         return it;
     }
