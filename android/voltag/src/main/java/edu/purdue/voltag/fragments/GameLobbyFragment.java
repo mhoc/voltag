@@ -142,6 +142,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
 
     public Player getWhoIsIt(List<Player> list){
         Player it = null;
+        db.refreshPlayersTable(this);
         for ( Player p : list){
             if ( p.getIsIt() ){
                 it = p;
