@@ -239,6 +239,11 @@ public class VoltagDB extends SQLiteOpenHelper{
 
                 ParseObject game = null;
                 try {
+                    List<ParseObject> games = gamequery.find();
+                    if (games.size() != 1) {
+                        listener.onLobbyEnter(null);
+                        return;
+                    }
                     game = gamequery.find().get(0);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -458,7 +463,7 @@ public class VoltagDB extends SQLiteOpenHelper{
                 }
 
             }
-        });
+        }).start();
 
     }
 

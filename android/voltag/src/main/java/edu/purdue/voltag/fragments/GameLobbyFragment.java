@@ -24,7 +24,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseException;
+import com.parse.ParsePush;
 import com.parse.PushService;
+import com.parse.SendCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -185,13 +188,59 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        final SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        final VoltagDB db = VoltagDB.getDB(getActivity());
+
         int id = item.getItemId();
         switch (id) {
 
             case R.id.drop_registration:
-                VoltagDB db1 = VoltagDB.getDB(getActivity());
+                db.dropPlayerRegistrationOnParse(null);
+                prefs.edit().putString(MainActivity.PREF_USER_ID, "").commit();
+                prefs.edit().putString(MainActivity.PREF_EMAIL, "").commit();
+                prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, false).commit();
+
+                String nameA = prefs.getString(MainActivity.PREFS_NAME,"");
+                ParsePush pushA = new ParsePush();
+                pushA.setChannel(prefs.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
+                pushA.setMessage(nameA + " has left the game");
+                Activity a = getActivity();
+                pushA.sendInBackground(new SendCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        PushService.unsubscribe(getActivity(), prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+                    }
+                });
+                getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
+                db.removePlayerFromGameOnParse(null);
+
+                prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, "").commit();
+
+                return true;
+
+            case R.id.exit_game:
+
+                final SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+                String name = _settings.getString(MainActivity.PREFS_NAME,"");
+                ParsePush push = new ParsePush();
+                push.setChannel(_settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
+                push.setMessage(name + " has left the game");
+                final Activity aA = getActivity();
+                push.sendInBackground(new SendCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        PushService.unsubscribe(aA, prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+                    }
+                });
+                getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
+                db.removePlayerFromGameOnParse(null);
+
+                SharedPreferences.Editor editor = _settings.edit();
+                editor.putString(MainActivity.PREF_CURRENT_GAME_ID, "");
+                editor.commit();
+
                 return true;
 
             case R.id.share:
@@ -205,20 +254,6 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Join the revolt");
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
-                return true;
-
-            case R.id.exit_game:
-                Log.d("debug","exit game!");
-                SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
-                PushService.unsubscribe(getActivity(), _settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
-
-                getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
-                VoltagDB db = VoltagDB.getDB(getActivity());
-                db.removePlayerFromGameOnParse(null);
-
-                SharedPreferences.Editor editor = _settings.edit();
-                editor.putString(MainActivity.PREF_CURRENT_GAME_ID, "");
-                editor.commit();
 
                 return true;
 

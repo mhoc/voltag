@@ -53,6 +53,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         new Thread(new Runnable() {
             public void run() {
                 PushService.setDefaultPushCallback(getApplicationContext(),MainActivity.class);
@@ -68,8 +69,11 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             return;
         }
 
+        Button buBegin = (Button) findViewById(R.id.btn_beginButton);
+        buBegin.setOnClickListener(this);
+
         mNfcAdapter.setNdefPushMessageCallback(this,this);
-        setContentView(R.layout.activity_main);
+
     }
 
     @Override
@@ -108,10 +112,10 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
         closeSplash();
 
-        if(!isRegistered) {
+        if (!isRegistered) {
             getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
         }
-        else{
+        else {
             getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
         }
 
