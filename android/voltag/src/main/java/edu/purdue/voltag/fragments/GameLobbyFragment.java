@@ -77,8 +77,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         super.onAttach(activity);
 
 
-        //db = VoltagDB.getDB(getActivity());
-        //db.refreshPlayersTable(this);
+        db = VoltagDB.getDB(getActivity());
         //setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }
 
@@ -106,9 +105,6 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     public void onViewCreated(final View view, Bundle savedInstanceState)
     {
         Log.d("GameLobbyFragment", "onViewCreated()");
-        final Player it = new Player(null, null, "David", "dmtschida1@gmail.com");
-        TextView t = (TextView) view.findViewById(R.id.gamelobby_tv_whosit);
-        t.setText(it.getUserName());
 
         String gameName;
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
@@ -118,8 +114,12 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         id.setText(gameName);
 
         new AsyncTask<Void, Void, Bitmap>() {
+
+            Player it;
+
             @Override
             protected Bitmap doInBackground(Void... params) {
+                it = new Player(null, null, "David", "dmtschida1@gmail.com");
                 return it.getGravitar(220);
             }
 
@@ -127,9 +127,13 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             protected void onPostExecute(Bitmap bitmap) {
                 ImageView iv = (ImageView) view.findViewById(R.id.imageView);
                 iv.setImageBitmap(bitmap);
+
+                TextView t = (TextView) view.findViewById(R.id.gamelobby_tv_whosit);
+                t.setText(it.getUserName());
             }
         }.execute();
-        done("");
+
+        db.refreshPlayersTable(this);
 
     }
 
@@ -144,16 +148,16 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             protected List<Player> doInBackground(Void... params) {
                 Log.d("PlayerLoader", "doInBackground()");
                 //List<Player> players = db.getPlayersInCurrentGame();
-                ArrayList<Player> players = new ArrayList<Player>();
+                List<Player> players = db.getPlayersInCurrentGame();
 
-                String[] names = { "David", "Gary", "Charles", "Chuck", "Dave", "Kyle", "Madison", "Jordan", "Katie", "Jennifer", "Anthony" };
+                /*String[] names = { "David", "Gary", "Charles", "Chuck", "Dave", "Kyle", "Madison", "Jordan", "Katie", "Jennifer", "Anthony" };
                 String[] emails = {"tylorgarrett@gmail.com", "dmtschida1@gmail.com", "mike@hockerman.com", "kyle@kptechblog.com"};
                 Random r = new Random();
                 for(String name : names)
                 {
                     int i = r.nextInt(emails.length);
                     players.add(new Player(null, null, name, emails[i]));
-                }
+                }*/
                 return players;
             }
 
