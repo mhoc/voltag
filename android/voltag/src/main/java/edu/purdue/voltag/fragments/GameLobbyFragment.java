@@ -24,7 +24,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseException;
+import com.parse.ParsePush;
 import com.parse.PushService;
+import com.parse.SendCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,9 +198,19 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
 
             case R.id.exit_game:
                 Log.d("debug","exit game!");
-                SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
-                PushService.unsubscribe(getActivity(), _settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
+               final SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+                String name = _settings.getString(MainActivity.PREFS_NAME,"");
+                ParsePush push = new ParsePush();
+                push.setChannel(_settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
+                push.setMessage(name + " has left the game");
+                Activity a = getActivity();
+                push.sendInBackground(new SendCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        PushService.unsubscribe(getActivity(), _settings.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
 
+                    }
+                });
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
                 VoltagDB db = VoltagDB.getDB(getActivity());
                 db.removePlayerFromGameOnParse(null);
@@ -205,6 +218,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 SharedPreferences.Editor editor = _settings.edit();
                 editor.putString(MainActivity.PREF_CURRENT_GAME_ID, "");
                 editor.commit();
+
 
                 return true;
             default: return false;

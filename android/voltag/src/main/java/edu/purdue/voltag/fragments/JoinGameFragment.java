@@ -22,6 +22,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParsePush;
 import com.parse.PushService;
 
 import java.nio.charset.Charset;
@@ -82,6 +83,11 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
                 editor.putString(MainActivity.PREF_CURRENT_GAME_ID,gameName);
                 editor.commit();
                 PushService.subscribe(getActivity(), gameName, MainActivity.class);
+                ParsePush push = new ParsePush();
+                push.setChannel(settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
+                String name = settings.getString(MainActivity.PREFS_NAME,"");
+                push.setMessage(name + " has joined the game");
+                push.sendInBackground();
                 db.addPlayerToGameOnParse(gameName, new OnEnterLobbyListener() {
                     @Override
                     public void onLobbyEnter(Game g) {

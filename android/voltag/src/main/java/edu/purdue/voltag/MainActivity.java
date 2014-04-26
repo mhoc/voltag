@@ -225,6 +225,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
      * Parses the NDEF Message from the intent and prints to the TextView
      */
     void processIntent(Intent intent) {
+         Log.d("action",intent.getAction());
         Log.d("debug","processing sending that I am now it to server");
         Toast.makeText(this, "You are it!", Toast.LENGTH_LONG).show();
         VoltagDB db = VoltagDB.getDB(this);
