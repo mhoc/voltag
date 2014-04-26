@@ -57,6 +57,8 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     VoltagDB db;
     ListView theList;
     private NfcAdapter mNfcAdapter;
+    private  ImageView iv;
+    private TextView tv;
 
     private LruCache<String, Bitmap> mMemoryCache;
 
@@ -98,7 +100,8 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         View v = inflater.inflate(R.layout.fragment_game_lobby, container, false);
         assert v != null;
         theList = (ListView) v.findViewById(android.R.id.list);
-
+        iv = (ImageView) v.findViewById(R.id.imageView);
+        tv = (TextView) v.findViewById(R.id.gamelobby_tv_lobbyid);
 
 
         return v;
@@ -109,35 +112,13 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     {
         Log.d("GameLobbyFragment", "onViewCreated()");
         db.refreshPlayersTable(this);
-        final List<Player> whichOne = db.getPlayersInCurrentGame();
+        //final List<Player> whichOne = db.getPlayersInCurrentGame();
         String gameName;
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         gameName = settings.getString(MainActivity.PREF_CURRENT_GAME_NAME,"");
 
         TextView id = (TextView) view.findViewById(R.id.gamelobby_tv_lobbyid);
         id.setText(gameName);
-
-        new AsyncTask<Void, Void, Bitmap>() {
-
-            Player it;
-
-            @Override
-            protected Bitmap doInBackground(Void... params) {
-                it = getWhoIsIt(whichOne);
-                return it.getGravitar(220);
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                ImageView iv = (ImageView) view.findViewById(R.id.imageView);
-                iv.setImageBitmap(bitmap);
-
-                TextView t = (TextView) view.findViewById(R.id.gamelobby_tv_whosit);
-                t.setText(it.getUserName());
-            }
-        }.execute();
-
-        db.refreshPlayersTable(this);
 
     }
 
@@ -187,6 +168,27 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             }
         };
         addAdapter.execute();
+
+        new AsyncTask<Void, Void, Bitmap>() {
+
+            Player it;
+            final List<Player> whichOne = db.getPlayersInCurrentGame();
+            @Override
+            protected Bitmap doInBackground(Void... params) {
+                it = getWhoIsIt(whichOne);
+                // return it.getGravitar(220);
+                return  null;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                //ImageView iv = (ImageView) view.findViewById(R.id.imageView);
+                iv.setImageBitmap(bitmap);
+
+                //TextView t = (TextView) view.findViewById(R.id.gamelobby_tv_whosit);
+                
+            }
+        }.execute();
     }
 
     @Override
