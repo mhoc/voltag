@@ -249,7 +249,6 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             push.setChannel(test);
             String name = settings.getString(MainActivity.PREFS_NAME,"");
             push.setMessage("is now it!");
-            Log.d("debug",push.);
             push.sendInBackground();
         }
         // record 0 contains the MIME type, record 1 is the AAR, if present
