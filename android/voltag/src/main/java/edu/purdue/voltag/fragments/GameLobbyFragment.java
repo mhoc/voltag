@@ -41,6 +41,7 @@ import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
 import edu.purdue.voltag.lobby.BitmapCacheHost;
+import edu.purdue.voltag.lobby.BitmapWorkerTask;
 
 import static android.nfc.NdefRecord.createMime;
 
@@ -62,6 +63,9 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     private TextView tv;
 
     private LruCache<String, Bitmap> mMemoryCache;
+    private List<Player> players;
+    private Player it;
+    private TextView tv_it;
 
     public GameLobbyFragment() {
     }
@@ -84,7 +88,6 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     {
         super.onAttach(activity);
         db = VoltagDB.getDB(getActivity());
-        //setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }
 
     @Override
@@ -96,15 +99,8 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         Log.d("GameLobbyFragment", "onCreateView()");
         View v = inflater.inflate(R.layout.fragment_game_lobby, container, false);
-        assert v != null;
-        theList = (ListView) v.findViewById(android.R.id.list);
-        iv = (ImageView) v.findViewById(R.id.imageView);
-        tv = (TextView) v.findViewById(R.id.gamelobby_tv_lobbyid);
-
-
         return v;
     }
 
@@ -112,14 +108,17 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     public void onViewCreated(final View view, Bundle savedInstanceState)
     {
         Log.d("GameLobbyFragment", "onViewCreated()");
-        db.refreshPlayersTable(this);
-        //final List<Player> whichOne = db.getPlayersInCurrentGame();
+        theList = (ListView) view.findViewById(android.R.id.list);
+        iv = (ImageView) view.findViewById(R.id.imageView);
+        tv = (TextView) view.findViewById(R.id.gamelobby_tv_lobbyid);
+        tv_it = (TextView) view.findViewById(R.id.gamelobby_tv_whosit);
         String gameName;
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         gameName = settings.getString(MainActivity.PREF_CURRENT_GAME_NAME,"");
 
-        TextView id = (TextView) view.findViewById(R.id.gamelobby_tv_lobbyid);
-        id.setText(gameName);
+        tv.setText(gameName);
+
+        db.refreshPlayersTable(this);
     }
 
     public Player getWhoIsIt(List<Player> list){
@@ -145,50 +144,43 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             protected List<Player> doInBackground(Void... params) {
                 Log.d("PlayerLoader", "doInBackground()");
                 //List<Player> players = db.getPlayersInCurrentGame();
-                List<Player> players = db.getPlayersInCurrentGame();
+                players = db.getPlayersInCurrentGame();
 
-                /*String[] names = { "David", "Gary", "Charles", "Chuck", "Dave", "Kyle", "Madison", "Jordan", "Katie", "Jennifer", "Anthony" };
-                String[] emails = {"tylorgarrett@gmail.com", "dmtschida1@gmail.com", "mike@hockerman.com", "kyle@kptechblog.com"};
-                Random r = new Random();
-                for(String name : names)
-                {
-                    int i = r.nextInt(emails.length);
-                    players.add(new Player(null, null, name, emails[i]));
-                }*/
                 return players;
             }
 
             @Override
-            protected void onPostExecute(List<Player> players)
+            protected void onPostExecute(List<Player> playersList)
             {
                 Log.d("PlayerLoader", "onPostExecute()");
                 PlayerListAdapter adapt = new PlayerListAdapter(getActivity(),
-                        R.layout.player_list_item, R.id.name, players, (BitmapCacheHost) GameLobbyFragment.this);
+                        R.layout.player_list_item, R.id.name, players, GameLobbyFragment.this);
                 theList.setAdapter(adapt);
+
+
+
+                new AsyncTask<Void, Void, Bitmap>() {
+
+                    Player it;
+
+                    @Override
+                    protected Bitmap doInBackground(Void... params) {
+                        it = getWhoIsIt(players);
+                        return it.getGravitar(MainActivity.IT_SIZE);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Bitmap bitmap) {
+                        //ImageView iv = (ImageView) view.findViewById(R.id.imageView);
+                        iv.setImageBitmap(bitmap);
+
+                        tv_it.setText(it.getUserName());
+                    }
+                }.execute();
             }
         };
         addAdapter.execute();
 
-        new AsyncTask<Void, Void, Bitmap>() {
-
-            Player it;
-            final List<Player> whichOne = db.getPlayersInCurrentGame();
-            @Override
-            protected Bitmap doInBackground(Void... params) {
-                it = getWhoIsIt(whichOne);
-                //return it.getGravitar(MainActivity.IT_SIZE);
-                return  null;
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                //ImageView iv = (ImageView) view.findViewById(R.id.imageView);
-                iv.setImageBitmap(bitmap);
-
-                //TextView t = (TextView) view.findViewById(R.id.gamelobby_tv_whosit);
-                
-            }
-        }.execute();
     }
 
     @Override
