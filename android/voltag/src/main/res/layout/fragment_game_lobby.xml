@@ -13,7 +13,6 @@
         android:textSize="30sp"
         android:paddingBottom="30dp"
         android:textColor="@android:color/holo_red_dark"
-        android:text="LOBBY ID"
         />
 
     <ImageView
