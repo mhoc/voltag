@@ -121,7 +121,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
 
             @Override
             protected Bitmap doInBackground(Void... params) {
-                it = new Player(null, null, "David", "dmtschida1@gmail.com");
+                it = new Player(null, null, "David", "dmtschida1@gmail.com",false);
                 return it.getGravitar(220);
             }
 
