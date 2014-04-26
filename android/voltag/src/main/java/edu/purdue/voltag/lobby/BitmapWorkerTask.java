@@ -2,6 +2,7 @@ package edu.purdue.voltag.lobby;
 
 import java.lang.ref.WeakReference;
 
+import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.helper.ImageHelper;
 
@@ -25,7 +26,7 @@ public class BitmapWorkerTask extends AsyncTask<Player, Void, Bitmap>
 	protected Bitmap doInBackground(Player... players)
 	{
 		player = players[0];
-		Bitmap bitmap = player.getGravitar(180);
+		Bitmap bitmap = player.getGravitar(MainActivity.ITEM_SIZE);
 		cacheHost.addBitmapToMemoryCache(player.getEmail(), bitmap);
 		return bitmap;
 	}

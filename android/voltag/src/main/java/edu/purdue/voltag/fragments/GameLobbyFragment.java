@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.LruCache;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -124,7 +125,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             @Override
             protected Bitmap doInBackground(Void... params) {
                 it = getWhoIsIt(whichOne);
-                return it.getGravitar(220);
+                return it.getGravitar(MainActivity.IT_SIZE);
             }
 
             @Override

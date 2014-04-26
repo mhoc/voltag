@@ -18,6 +18,7 @@ import android.os.Parcelable;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.Menu;
@@ -52,6 +53,9 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     public static final String PREF_USER_ID = "user_id";
     public static final String PREF_EMAIL = "user_email";
     public static final String PREF_ISREGISTERED = "is_registered";
+    public static int ITEM_SIZE;
+    public static int IT_SIZE;
+
     private NfcAdapter mNfcAdapter;
 
     @Override
@@ -78,6 +82,8 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
         mNfcAdapter.setNdefPushMessageCallback(this, this);
 
+        IT_SIZE = (int) getResources().getDimension(R.dimen.itSize);
+        ITEM_SIZE = (int) getResources().getDimension(R.dimen.itemSize);
     }
 
     @Override
