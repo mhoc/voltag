@@ -118,11 +118,12 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
 
         new AsyncTask<Void, Void, Bitmap>() {
 
-            Player it = getWhoIsIt(whichOne);
+            Player it;
 
             @Override
             protected Bitmap doInBackground(Void... params) {
                 //it = new Player(null, null, "Tylor", "tylorgarrett@gmail.com", true);
+                it = getWhoIsIt(whichOne);
                 return it.getGravitar(220);
             }
 
