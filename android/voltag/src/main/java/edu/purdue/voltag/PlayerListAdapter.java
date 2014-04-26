@@ -31,10 +31,10 @@ public class PlayerListAdapter extends ArrayAdapter<Player> {
 
     public PlayerListAdapter(Context context, int resource, int textViewResourceId, List<Player> players, BitmapCacheHost host) {
         super(context, resource, textViewResourceId, players);
-        Log.d("PlayerLostAdapter", "New Adapter");
+       // Log.d("PlayerLostAdapter", "New Adapter");
         for(Player p : players)
         {
-            Log.d("Adapter", p.getUserName() + "\t: " + p.getEmail());
+            //Log.d("Adapter", p.getUserName() + "\t: " + p.getEmail());
         }
         notifyDataSetChanged();
         this.host = host;
@@ -44,7 +44,7 @@ public class PlayerListAdapter extends ArrayAdapter<Player> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("PlayerListAdapter", "getView()");
+       // Log.d("PlayerListAdapter", "getView()");
         View v;
 
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
