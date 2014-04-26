@@ -83,10 +83,11 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
                 editor.commit();
                 PushService.subscribe(getActivity(), gameName, MainActivity.class);
                 db.addPlayerToGameOnParse(gameName, new OnEnterLobbyListener() {
-                    @Override
                     public void onLobbyEnter(Game g) {
+                        if (g == null) {
+                            return;
+                        }
                         getActivity().runOnUiThread(new Runnable() {
-                            @Override
                             public void run() {
                                 getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
                             }

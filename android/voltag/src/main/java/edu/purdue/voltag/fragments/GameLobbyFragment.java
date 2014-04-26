@@ -174,13 +174,34 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        VoltagDB db = VoltagDB.getDB(getActivity());
+
         int id = item.getItemId();
         switch (id) {
 
             case R.id.drop_registration:
-                VoltagDB db1 = VoltagDB.getDB(getActivity());
+                db.dropPlayerRegistrationOnParse(null);
+                prefs.edit().putString(MainActivity.PREF_USER_ID, "").commit();
+                prefs.edit().putString(MainActivity.PREF_EMAIL, "").commit();
+                prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, false).commit();
+
+                PushService.unsubscribe(getActivity(), prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+                getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
+                db.removePlayerFromGameOnParse(null);
+                prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, "").commit();
+
+                return true;
+
+            case R.id.exit_game:
+
+                PushService.unsubscribe(getActivity(), prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+                getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
+                db.removePlayerFromGameOnParse(null);
+                prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, "").commit();
+
                 return true;
 
             case R.id.share:
@@ -194,21 +215,6 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Join the revolt");
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
-                return true;
-
-            case R.id.exit_game:
-                Log.d("debug","exit game!");
-                SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
-                PushService.unsubscribe(getActivity(), _settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
-
-                getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
-                VoltagDB db = VoltagDB.getDB(getActivity());
-                db.removePlayerFromGameOnParse(null);
-
-                SharedPreferences.Editor editor = _settings.edit();
-                editor.putString(MainActivity.PREF_CURRENT_GAME_ID, "");
-                editor.commit();
-
                 return true;
 
             default:

@@ -20,6 +20,7 @@ import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +53,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         new Thread(new Runnable() {
             public void run() {
@@ -68,8 +70,15 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             return;
         }
 
+        Button buBegin = (Button) findViewById(R.id.btn_beginButton);
+        buBegin.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onClickBeginButton(v);
+            }
+        });
+
         mNfcAdapter.setNdefPushMessageCallback(this,this);
-        setContentView(R.layout.activity_main);
+
     }
 
     @Override
