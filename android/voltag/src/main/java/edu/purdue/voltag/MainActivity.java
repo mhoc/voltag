@@ -52,11 +52,11 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Parse.initialize(this, ParseConstants.PARSE_APPLICATION_KEY, ParseConstants.PARSE_CLIENT_KEY);
         new Thread(new Runnable() {
             public void run() {
                 Parse.initialize(MainActivity.this, ParseConstants.PARSE_APPLICATION_KEY, ParseConstants.PARSE_CLIENT_KEY);
                 PushService.setDefaultPushCallback(getApplicationContext(),MainActivity.class);
+                Parse.setLogLevel(Parse.LOG_LEVEL_VERBOSE);
 
             }
         }).start();
@@ -246,7 +246,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             Log.d("debug","sending push to channels " + test);
             push.setChannel(test);
             String name = settings.getString(MainActivity.PREFS_NAME,"");
-            push.setMessage(name + " is now it!");
+            push.setMessage("is now it!");
             push.sendInBackground();
         }
         // record 0 contains the MIME type, record 1 is the AAR, if present
