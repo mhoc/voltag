@@ -23,11 +23,12 @@ public class Player {
     private boolean isIt = false;
 
 
-    public Player(String parseID, String hardwareID, String userName, String email) {
+    public Player(String parseID, String hardwareID, String userName, String email, boolean isIt) {
         this.parseID = parseID;
         this.hardwareID = hardwareID;
         this.userName = userName;
         this.email = email;
+        this.isIt = isIt;
     }
 
     public String getParseID() {
@@ -44,6 +45,10 @@ public class Player {
 
     public String getEmail() {
         return this.email.toLowerCase();
+    }
+
+    public boolean getIsIt() {
+        return this.isIt;
     }
 
     private String getEmailMD5() {

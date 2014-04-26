@@ -375,6 +375,7 @@ public class VoltagDB extends SQLiteOpenHelper{
         values.put(PLAYERS_HARDWARE_ID, p.getHardwareID());
         values.put(PLAYERS_EMAIL, p.getEmail());
         values.put(PLAYERS_NAME, p.getUserName());
+        values.put(PLAYERS_ISIT, p.getIsIt() ? 1 : 0);
 
         SQLiteDatabase db = getWritableDatabase();
         if (db != null) {
@@ -423,12 +424,20 @@ public class VoltagDB extends SQLiteOpenHelper{
                     e.printStackTrace();
                 }
 
-                // Get relation to uses in that game
+                // Get relation to Players in that game
                 ParseRelation<ParseObject> relationPlayersInGame = game.getRelation(ParseConstants.GAME_PLAYERS);
                 List<ParseObject> players = null;
-
                 try {
                     players = relationPlayersInGame.getQuery().find();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Get relation to the IT player in the game
+                ParseRelation<ParseObject> relationPlayerIt = game.getRelation(ParseConstants.GAME_TAGGED);
+                ParseObject isIt = null;
+                try {
+                    isIt = relationPlayerIt.getQuery().find().get(0);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -443,7 +452,14 @@ public class VoltagDB extends SQLiteOpenHelper{
                     String hardwareID = p.getString(ParseConstants.PLAYER_HARDWARE_ID);
                     String playerName = p.getString(ParseConstants.PLAYER_NAME);
                     String playerEmail = p.getString(ParseConstants.PLAYER_EMAIL);
-                    Player player = new Player(playerID, hardwareID, playerName, playerEmail);
+
+                    // Determine if they are it or not
+                    boolean isItBool = false;
+                    if (playerID.equals(isIt.getObjectId())) {
+                        isItBool = true;
+                    }
+
+                    Player player = new Player(playerID, hardwareID, playerName, playerEmail, isItBool);
                     addPlayerToDB(player);
                 }
 
@@ -474,7 +490,9 @@ public class VoltagDB extends SQLiteOpenHelper{
                     String hwID = c.getString(c.getColumnIndex(PLAYERS_HARDWARE_ID));
                     String name = c.getString(c.getColumnIndex(PLAYERS_NAME));
                     String email = c.getString(c.getColumnIndex(PLAYERS_EMAIL));
-                    Player p = new Player(parseID, hwID, name, email);
+                    int isIt = c.getInt(c.getColumnIndex(PLAYERS_ISIT));
+
+                    Player p = new Player(parseID, hwID, name, email, isIt==1 ? true : false);
                     players.add(p);
                 } while (c.moveToNext());
             }
