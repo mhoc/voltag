@@ -29,8 +29,10 @@ import static android.nfc.NdefRecord.createMime;
 
 import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
+import edu.purdue.voltag.data.Game;
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
+import edu.purdue.voltag.interfaces.OnEnterLobbyListener;
 
 /*
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -79,9 +81,10 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString(MainActivity.PREF_CURRENT_GAME_ID,gameName);
                 editor.commit();
-                PushService.subscribe(getActivity(),gameName,MainActivity.class);
-                db.addPlayerToGameOnParse(gameName, new OnAsyncCompletedListener() {
-                    public void done(String id) {
+                PushService.subscribe(getActivity(), gameName, MainActivity.class);
+                db.addPlayerToGameOnParse(gameName, new OnEnterLobbyListener() {
+                    @Override
+                    public void onLobbyEnter(Game g) {
 
                     }
                 });

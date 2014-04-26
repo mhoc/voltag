@@ -15,8 +15,10 @@ import com.parse.PushService;
 
 import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
+import edu.purdue.voltag.data.Game;
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
+import edu.purdue.voltag.interfaces.OnEnterLobbyListener;
 
 /*
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -27,7 +29,7 @@ import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
  * create an instance of this fragment.
  *
  */
-public class CreateGameFragment extends Fragment implements View.OnClickListener, OnAsyncCompletedListener {
+public class CreateGameFragment extends Fragment implements View.OnClickListener, OnEnterLobbyListener {
     private Button shareButton;
     private EditText gameNameEditText;
     private VoltagDB db;
@@ -71,21 +73,21 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
     }
 
     @Override
-    public void done(String id) {
-        Log.d("debug","gameId="+id);
+    public void onLobbyEnter(Game g) {
+        Log.d("debug","gameId=" + g.getID());
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString(MainActivity.PREF_CURRENT_GAME_ID,id);
-        editor.putBoolean(MainActivity.PREF_ISIT,true);
+        editor.putString(MainActivity.PREF_CURRENT_GAME_ID, g.getID());
+        editor.putBoolean(MainActivity.PREF_ISIT, true);
         editor.commit();
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
-        String shareBody = "Come join the revolt! Enter the id " + id;
+        String shareBody = "Come join the revolt! Enter the id " + g.getID();
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Join the revolt");
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
         startActivity(Intent.createChooser(sharingIntent, "Share via"));
         //getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
-        PushService.subscribe(getActivity(),id,MainActivity.class);
+        PushService.subscribe(getActivity(), g.getID(), MainActivity.class);
         getFragmentManager().popBackStack();
 
     }
