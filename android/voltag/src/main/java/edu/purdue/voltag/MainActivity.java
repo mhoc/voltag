@@ -38,7 +38,7 @@ import edu.purdue.voltag.lobby.BitmapCacheHost;
 
 import static android.nfc.NdefRecord.createMime;
 
-public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback {
+public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback, View.OnClickListener {
 
     public static final String LOG_TAG = "voltag_log";
     public static final String PREFS_NAME = "voltag_prefs";
@@ -54,7 +54,6 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         new Thread(new Runnable() {
             public void run() {
                 PushService.setDefaultPushCallback(getApplicationContext(),MainActivity.class);
@@ -71,11 +70,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         }
 
         Button buBegin = (Button) findViewById(R.id.btn_beginButton);
-        buBegin.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                onClickBeginButton(v);
-            }
-        });
+        buBegin.setOnClickListener(this);
 
         mNfcAdapter.setNdefPushMessageCallback(this,this);
 
@@ -85,6 +80,8 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     public void onStart() {
 
         super.onStart();
+        Button button = (Button) this.findViewById(R.id.btn_beginButton);
+        button.setOnClickListener(this);
         String gameId;
         SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
         gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
@@ -106,17 +103,19 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
     }
 
-    public void onClickBeginButton(View view) {
+
+    @Override
+    public void onClick(View view) {
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
         boolean isRegistered = settings.getBoolean(PREF_ISREGISTERED,false);
 
         closeSplash();
 
-        if(!isRegistered) {
+        if (!isRegistered) {
             getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
         }
-        else{
+        else {
             getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
         }
 
