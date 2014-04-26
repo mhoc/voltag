@@ -192,17 +192,19 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 return true;
+
             case R.id.exit_game:
                 Log.d("debug","exit game!");
                 SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
-               PushService.unsubscribe(getActivity(), _settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
+                PushService.unsubscribe(getActivity(), _settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
 
-                SharedPreferences.Editor editor = _settings.edit();
-                editor.putString(MainActivity.PREF_CURRENT_GAME_ID,"");
-                editor.commit();
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
                 VoltagDB db = VoltagDB.getDB(getActivity());
                 db.removePlayerFromGameOnParse(null);
+
+                SharedPreferences.Editor editor = _settings.edit();
+                editor.putString(MainActivity.PREF_CURRENT_GAME_ID, "");
+                editor.commit();
 
                 return true;
             default: return false;
