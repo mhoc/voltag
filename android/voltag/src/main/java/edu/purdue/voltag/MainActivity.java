@@ -72,7 +72,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         Button buBegin = (Button) findViewById(R.id.btn_beginButton);
         buBegin.setOnClickListener(this);
 
-        mNfcAdapter.setNdefPushMessageCallback(this,this);
+        mNfcAdapter.setNdefPushMessageCallback(this, this);
 
     }
 
@@ -138,6 +138,20 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
+
+            case R.id.drop_registration_main:
+
+                SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                VoltagDB db = VoltagDB.getDB(this);
+
+                db.dropPlayerRegistrationOnParse(null);
+                prefs.edit().putString(MainActivity.PREF_USER_ID, "").commit();
+                prefs.edit().putString(MainActivity.PREF_EMAIL, "").commit();
+                prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, false).commit();
+
+                getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
+
+                break;
 
             case R.id.action_settings:
                 return true;
