@@ -21,6 +21,8 @@
         android:id="@+id/etxt_email"
         android:textSize="25sp"
         android:hint="Email"
+        android:singleLine="true"
+        android:imeOptions="actionNext"
         android:layout_above="@+id/etxt_displayName"
         android:layout_centerHorizontal="true"/>
 
@@ -33,6 +35,8 @@
         android:textSize="25sp"
         android:ems="10"
         android:id="@+id/etxt_displayName"
+        android:singleLine="true"
+        android:imeOptions="actionGo"
         android:layout_centerHorizontal="true"/>
 
     <TextView

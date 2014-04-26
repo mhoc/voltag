@@ -1,15 +1,20 @@
 package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.provider.Settings;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.Parse;
@@ -76,6 +81,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         //Parse.initialize(getActivity(), ParseConstants.PARSE_APPLICATION_KEY, ParseConstants.PARSE_CLIENT_KEY);
+
     }
 
     @Override
@@ -87,14 +93,15 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         emailBox = (EditText)v.findViewById(R.id.etxt_displayName);
         regButton = (Button)v.findViewById(R.id.btn_register);
         regButton.setOnClickListener(this);
-        db = VoltagDB.getDB(getActivity());
+
+
         return v;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
+        db = VoltagDB.getDB(getActivity());
     }
 
     @Override
@@ -105,6 +112,11 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
+
+        /*InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(nameBox.getWindowToken(), 0);*/
+
         String name = emailBox.getText().toString();
         String email = nameBox.getText().toString();
         String android_id = Settings.Secure.getString(getActivity().getContentResolver(),Settings.Secure.ANDROID_ID);
@@ -116,7 +128,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean(MainActivity.PREF_ISREGISTERED,true).commit();
-        editor.putString(MainActivity.PREFS_NAME,name).commit();
+        editor.putString(MainActivity.PREFS_NAME, name).commit();
+
+
+
         getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
 
     }
