@@ -341,6 +341,13 @@ public class VoltagDB extends SQLiteOpenHelper{
                         game.delete();
                     } else {
                         players.remove(player);
+
+                        if (playerIsIt) {
+                            ParseRelation<ParseObject> itRelation = game.getRelation(ParseConstants.GAME_TAGGED);
+                            itRelation.remove(itRelation.getQuery().find().get(0));
+                            itRelation.add(playersInGame.get(0));
+                        }
+
                         game.save();
                     }
                 } catch (ParseException e) {
