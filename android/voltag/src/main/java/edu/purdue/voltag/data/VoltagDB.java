@@ -20,6 +20,7 @@ import java.util.List;
 
 import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
+import edu.purdue.voltag.interfaces.OnEnterLobbyListener;
 
 public class VoltagDB extends SQLiteOpenHelper{
 
@@ -163,7 +164,7 @@ public class VoltagDB extends SQLiteOpenHelper{
     /** Creates a new game on parse.
      *  When complete, the game ID is stored in the shared preferences and passed through
      *  to the listener. */
-    public void createGameOnParse(final String gameName, final OnAsyncCompletedListener listener) {
+    public void createGameOnParse(final String gameName, final OnEnterLobbyListener listener) {
 
         // Get the user's userID
         final SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
@@ -208,7 +209,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
                 // Call the listener
                 if (listener != null) {
-                    listener.done(new Game(id, gameName));
+                    listener.onLobbyEnter(new Game(id, gameName));
                 }
 
             }
@@ -218,7 +219,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     /** Adds a player to a given game on parse.
      *  ID passed into listener is the ParseID of the player added. */
-    public void addPlayerToGameOnParse(final String gameID, final OnAsyncCompletedListener listener) {
+    public void addPlayerToGameOnParse(final String gameID, final OnEnterLobbyListener listener) {
 
         // Get user ID
         SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
@@ -272,7 +273,7 @@ public class VoltagDB extends SQLiteOpenHelper{
 
                 // Alert listeners
                 if (listener != null) {
-                    listener.done(new Game(game.getObjectId(), game.getString(ParseConstants.GAME_NAME)));
+                    listener.onLobbyEnter(new Game(game.getObjectId(), game.getString(ParseConstants.GAME_NAME)));
                 }
 
             }
