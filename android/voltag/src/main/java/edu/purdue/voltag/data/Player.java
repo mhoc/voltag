@@ -2,6 +2,8 @@ package edu.purdue.voltag.data;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
