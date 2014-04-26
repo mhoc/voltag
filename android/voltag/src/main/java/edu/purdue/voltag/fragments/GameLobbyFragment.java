@@ -80,8 +80,6 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
-
-
         db = VoltagDB.getDB(getActivity());
         //setListAdapter(new ArrayAdapter<String>(activity, R.layout.player_list_item, R.id.name, new String[]{"David", "Tylor", "Kyle", "Cartman", "Michael"}));
     }
@@ -183,6 +181,11 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     {
         int id = item.getItemId();
         switch (id) {
+
+            case R.id.drop_registration:
+                VoltagDB db1 = VoltagDB.getDB(getActivity());
+                return true;
+
             case R.id.share:
                 String gameId = null;
                 SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
@@ -221,7 +224,10 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
 
 
                 return true;
-            default: return false;
+
+            default:
+                return false;
+
         }
     }
 
