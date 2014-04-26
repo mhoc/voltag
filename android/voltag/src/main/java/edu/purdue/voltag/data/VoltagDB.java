@@ -305,6 +305,9 @@ public class VoltagDB extends SQLiteOpenHelper{
             return;
         }
 
+        // Get whether they are it
+        final boolean playerIsIt = prefs.getBoolean(MainActivity.PREF_ISIT, false);
+
         new Thread(new Runnable() {
             public void run() {
 
@@ -319,20 +322,27 @@ public class VoltagDB extends SQLiteOpenHelper{
                     e.printStackTrace();
                 }
 
-                // Get the players relation
-                ParseRelation<ParseObject> players = game.getRelation(ParseConstants.GAME_PLAYERS);
+                // Query the player
+                ParseQuery<ParseObject> playerQuery = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_PLAYER);
+                playerQuery.whereEqualTo(ParseConstants.CLASS_ID, playerID);
+
                 ParseObject player = null;
                 try {
-                    player = players.getQuery().whereEqualTo(ParseConstants.CLASS_ID, playerID).find().get(0);
+                    player = playerQuery.find().get(0);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
 
-                // Remove the player from the relation
-                players.remove(player);
-
+                // Get the players relation
+                ParseRelation<ParseObject> players = game.getRelation(ParseConstants.GAME_PLAYERS);
                 try {
-                    game.save();
+                    List<ParseObject> playersInGame = players.getQuery().find();
+                    if (playersInGame.size() == 1) {
+                        game.delete();
+                    } else {
+                        players.remove(player);
+                        game.save();
+                    }
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
