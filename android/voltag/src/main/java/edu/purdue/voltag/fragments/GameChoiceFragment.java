@@ -1,9 +1,9 @@
 package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +49,7 @@ public class GameChoiceFragment extends Fragment implements View.OnClickListener
         fragment.setArguments(args);
         return fragment;
     }
+
     public GameChoiceFragment() {
         // Required empty public constructor
     }
@@ -67,8 +68,8 @@ public class GameChoiceFragment extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_game_choice, container, false);
-        newGameButton = (Button)v.findViewById(R.id.btn_new_game);
-        exisitngGameButton = (Button)v.findViewById(R.id.btn_existing_game);
+        newGameButton = (Button) v.findViewById(R.id.btn_new_game);
+        exisitngGameButton = (Button) v.findViewById(R.id.btn_existing_game);
         newGameButton.setOnClickListener(this);
         exisitngGameButton.setOnClickListener(this);
         return v;
@@ -92,7 +93,7 @@ public class GameChoiceFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btn_new_game:
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new CreateGameFragment()).commit();
                 break;

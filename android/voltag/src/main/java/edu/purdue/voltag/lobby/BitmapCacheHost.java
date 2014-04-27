@@ -8,7 +8,10 @@ import android.graphics.Bitmap;
 public interface BitmapCacheHost {
 
     public void addBitmapToMemoryCache(String id, Bitmap bitmap);
+
     public Bitmap getBitmapFromMemCache(String key);
+
     public void initMemoryCache();
+
     public void clearCache();
 }

@@ -10,18 +10,24 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VoltagDB extends SQLiteOpenHelper{
+public class VoltagDB extends SQLiteOpenHelper {
 
-    /** Database information */
+    /**
+     * Database information
+     */
     private static VoltagDB db_instance;
     public static final String DB_NAME = "voltag_db";
     public static final int DB_VERSION = 1;
     private Context c;
 
-    /** Tables */
+    /**
+     * Tables
+     */
     public static final String TABLE_PLAYERS = "t_players";
 
-    /** Table - Players */
+    /**
+     * Table - Players
+     */
     public static final String PLAYERS_PARSE_ID = "player_parse_id";
     public static final String PLAYERS_HARDWARE_ID = "player_hardware_id";
     public static final String PLAYERS_NAME = "player_name";
@@ -61,7 +67,9 @@ public class VoltagDB extends SQLiteOpenHelper{
         // On database upgrade
     }
 
-    /** Destroys the entire database */
+    /**
+     * Destroys the entire database
+     */
     public void destroy() {
         SQLiteDatabase db = getWritableDatabase();
         if (db != null) {
@@ -70,7 +78,9 @@ public class VoltagDB extends SQLiteOpenHelper{
         db.close();
     }
 
-    /** Destroys the players table */
+    /**
+     * Destroys the players table
+     */
     public void dropTablePlayers() {
         SQLiteDatabase db = getWritableDatabase();
         if (db != null) {
@@ -79,7 +89,9 @@ public class VoltagDB extends SQLiteOpenHelper{
         db.close();
     }
 
-    /** Adds a player to the local database */
+    /**
+     * Adds a player to the local database
+     */
     public void addPlayerToDB(Player p) {
 
         ContentValues values = new ContentValues();
@@ -97,10 +109,12 @@ public class VoltagDB extends SQLiteOpenHelper{
 
     }
 
-    /** Returns a list of all the players in the game based upon what is currently stored in the database.
-     *  Note that you can call refreshPlayersTable() before calling this. And actually, because refreshPlayerTable()
-     *  is asynchronous, utilize the OnAsyncCompletedListener to only call getPlayersInCurrentGame after the async
-     *  call is complete. */
+    /**
+     * Returns a list of all the players in the game based upon what is currently stored in the database.
+     * Note that you can call refreshPlayersTable() before calling this. And actually, because refreshPlayerTable()
+     * is asynchronous, utilize the OnAsyncCompletedListener to only call getPlayersInCurrentGame after the async
+     * call is complete.
+     */
     public List<Player> getPlayersInCurrentGame() {
 
         SQLiteDatabase db = getReadableDatabase();
@@ -116,7 +130,7 @@ public class VoltagDB extends SQLiteOpenHelper{
                     String email = c.getString(c.getColumnIndex(PLAYERS_EMAIL));
                     int isIt = c.getInt(c.getColumnIndex(PLAYERS_ISIT));
 
-                    Player p = new Player(parseID, hwID, name, email, isIt==1 ? true : false);
+                    Player p = new Player(parseID, hwID, name, email, isIt == 1 ? true : false);
                     players.add(p);
                 } while (c.moveToNext());
             }

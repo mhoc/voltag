@@ -1,10 +1,10 @@
 package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
+import android.app.ListFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.app.ListFragment;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,7 +53,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
     VoltagDB db;
     ListView theList;
     private NfcAdapter mNfcAdapter;
-    private  ImageView iv;
+    private ImageView iv;
     private TextView tv;
 
     private LruCache<String, Bitmap> mMemoryCache;
@@ -65,28 +65,25 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         initMemoryCache();
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater){
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         menuInflater.inflate(R.menu.game_lobby_menu, menu);
     }
 
     @Override
-    public void onAttach(Activity activity)
-    {
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
         db = VoltagDB.getDB(getActivity());
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
         clearCache();
     }
@@ -99,8 +96,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
     }
 
     @Override
-    public void onViewCreated(final View view, Bundle savedInstanceState)
-    {
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
         Log.d("GameLobbyFragment", "onViewCreated()");
         theList = (ListView) view.findViewById(android.R.id.list);
         iv = (ImageView) view.findViewById(R.id.imageView);
@@ -108,7 +104,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
         tv_it = (TextView) view.findViewById(R.id.gamelobby_tv_whosit);
         String gameName;
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-        gameName = settings.getString(MainActivity.PREF_CURRENT_GAME_NAME,"");
+        gameName = settings.getString(MainActivity.PREF_CURRENT_GAME_NAME, "");
 
         tv.setText(gameName);
 
@@ -117,10 +113,10 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
         task.execute();
     }
 
-    public Player getWhoIsIt(List<Player> list){
+    public Player getWhoIsIt(List<Player> list) {
         Player it = null;
-        for ( Player p : list){
-            if ( p.getIsIt() ){
+        for (Player p : list) {
+            if (p.getIsIt()) {
                 Log.d("tylor", "It: " + p.getUserName());
                 it = p;
             }
@@ -144,9 +140,9 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
                 prefs.edit().putString(MainActivity.PREF_USER_EMAIL, "").commit();
                 prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, false).commit();
 
-                String nameA = prefs.getString(MainActivity.PREF_USER_NAME,"");
+                String nameA = prefs.getString(MainActivity.PREF_USER_NAME, "");
                 ParsePush pushA = new ParsePush();
-                pushA.setChannel(prefs.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
+                pushA.setChannel(prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
                 pushA.setMessage(nameA + " has left the game");
                 Activity a = getActivity();
                 pushA.sendInBackground(new SendCallback() {
@@ -163,10 +159,10 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
 
             case R.id.exit_game:
 
-                final SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME,0);
-                String name = _settings.getString(MainActivity.PREF_USER_NAME,"");
+                final SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+                String name = _settings.getString(MainActivity.PREF_USER_NAME, "");
                 ParsePush push = new ParsePush();
-                push.setChannel(_settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
+                push.setChannel(_settings.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
                 push.setMessage(name + " has left the game");
                 final Activity aA = getActivity();
 
@@ -190,7 +186,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
             case R.id.share:
                 String gameId = null;
                 SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-                gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
+                gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
 
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
@@ -208,19 +204,18 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
     }
 
     public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        assert(mMemoryCache != null);
+        assert (mMemoryCache != null);
         if (getBitmapFromMemCache(key) == null) {
             mMemoryCache.put(key, bitmap);
         }
     }
 
     public Bitmap getBitmapFromMemCache(String key) {
-        assert(mMemoryCache != null);
+        assert (mMemoryCache != null);
         return mMemoryCache.get(key);
     }
 
-    public void initMemoryCache()
-    {
+    public void initMemoryCache() {
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
         // Use 1/8th of the available memory for this memory cache.
@@ -236,8 +231,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
         };
     }
 
-    public void clearCache()
-    {
+    public void clearCache() {
         mMemoryCache.evictAll();
     }
 

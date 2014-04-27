@@ -1,9 +1,9 @@
 package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,8 +42,8 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
     private EditText emailBox;
     private EditText nameBox;
-    private  Button  regButton;
-    private VoltagDB  db;
+    private Button regButton;
+    private VoltagDB db;
 
 
     /**
@@ -63,6 +63,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         fragment.setArguments(args);
         return fragment;
     }
+
     public RegistrationFragment() {
         // Required empty public constructor
     }
@@ -83,9 +84,9 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_registration, container, false);
-        nameBox = (EditText)v.findViewById(R.id.etxt_email);
-        emailBox = (EditText)v.findViewById(R.id.etxt_displayName);
-        regButton = (Button)v.findViewById(R.id.btn_register);
+        nameBox = (EditText) v.findViewById(R.id.etxt_email);
+        emailBox = (EditText) v.findViewById(R.id.etxt_displayName);
+        regButton = (Button) v.findViewById(R.id.btn_register);
         regButton.setOnClickListener(this);
 
 
@@ -113,8 +114,8 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
         String name = emailBox.getText().toString();
         String email = nameBox.getText().toString();
-        String android_id = Settings.Secure.getString(getActivity().getContentResolver(),Settings.Secure.ANDROID_ID);
-        Player p = new Player(null,android_id,name,email,false);
+        String android_id = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
+        Player p = new Player(null, android_id, name, email, false);
 
         RegisterPlayerTask task = new RegisterPlayerTask(getActivity(), p);
         task.setListener(this);

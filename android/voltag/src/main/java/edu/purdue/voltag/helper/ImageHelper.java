@@ -3,14 +3,15 @@ package edu.purdue.voltag.helper;
 /**
  * Created by tylorgarrett on 4/19/14.
  */
+
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Bitmap.Config;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
@@ -44,16 +45,12 @@ public class ImageHelper {
     }
 
     public static void loadBitmapAsAsyncTask(Player player,
-                                             ImageView imageView, BitmapCacheHost host)
-    {
+                                             ImageView imageView, BitmapCacheHost host) {
         final Bitmap bitmap = host.getBitmapFromMemCache(player.getEmail());
 
-        if(bitmap != null)
-        {
+        if (bitmap != null) {
             imageView.setImageBitmap(bitmap);
-        }
-        else if (cancelPotentialWork(player, imageView))
-        {
+        } else if (cancelPotentialWork(player, imageView)) {
             BitmapWorkerTask task = new BitmapWorkerTask(host, imageView);
             AsyncDrawable downloadedDrawable = new AsyncDrawable(task);
             imageView.setImageDrawable(downloadedDrawable);
@@ -63,18 +60,14 @@ public class ImageHelper {
     }
 
     private static boolean cancelPotentialWork(Player player,
-                                               ImageView imageView)
-    {
+                                               ImageView imageView) {
         BitmapWorkerTask bitmapLoaderTask = getBitmapWorkerTask(imageView);
 
-        if (bitmapLoaderTask != null)
-        {
+        if (bitmapLoaderTask != null) {
             String bitmapPath = bitmapLoaderTask.player.getEmail();
-            if ((bitmapPath == null) || (!bitmapPath.equals(player.getEmail())))
-            {
+            if ((bitmapPath == null) || (!bitmapPath.equals(player.getEmail()))) {
                 bitmapLoaderTask.cancel(true);
-            } else
-            {
+            } else {
                 // The same URL is already being downloaded.
                 return false;
             }
@@ -82,13 +75,10 @@ public class ImageHelper {
         return true;
     }
 
-    public static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView)
-    {
-        if (imageView != null)
-        {
+    public static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
+        if (imageView != null) {
             Drawable drawable = imageView.getDrawable();
-            if (drawable instanceof AsyncDrawable)
-            {
+            if (drawable instanceof AsyncDrawable) {
                 AsyncDrawable downloadedDrawable = (AsyncDrawable) drawable;
                 return downloadedDrawable.getBitmapWorkerTask();
             }

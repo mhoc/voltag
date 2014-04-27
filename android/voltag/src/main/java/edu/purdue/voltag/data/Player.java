@@ -2,8 +2,6 @@ package edu.purdue.voltag.data;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -79,13 +77,12 @@ public class Player {
         return "";
     }
 
-    public Bitmap getGravitar(int size)
-    {
+    public Bitmap getGravitar(int size) {
         final String baseUrl = "http://www.gravatar.com/avatar/";
         final String processedAddress = getEmail();
 
         final String hashCode = getEmailMD5();
-        final String url = baseUrl + hashCode+"?s=" + size + "&d=blank";
+        final String url = baseUrl + hashCode + "?s=" + size + "&d=blank";
 
         HttpURLConnection httpURLConnection = null;
         try {
