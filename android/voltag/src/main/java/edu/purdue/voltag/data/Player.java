@@ -9,8 +9,8 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import edu.purdue.voltag.helper.ImageHelper;
 import edu.purdue.voltag.bitmap.ImageRenderer;
+import edu.purdue.voltag.helper.ImageHelper;
 
 /**
  * Created by mike on 4/19/14.
@@ -50,6 +50,10 @@ public class Player implements ImageRenderer {
 
     public boolean getIsIt() {
         return this.isIt;
+    }
+
+    public void setIsIt(boolean isIt) {
+        this.isIt = isIt;
     }
 
     private String getEmailMD5() {
@@ -97,10 +101,6 @@ public class Player implements ImageRenderer {
             httpURLConnection.disconnect();
         }
         return null;
-    }
-
-    public void setIsIt(boolean isIt) {
-        this.isIt = isIt;
     }
 
     @Override

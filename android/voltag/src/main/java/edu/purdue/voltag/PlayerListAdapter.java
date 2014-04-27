@@ -10,9 +10,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.bitmap.BitmapCacheHost;
 import edu.purdue.voltag.bitmap.CachedAsyncBitmapLoader;
+import edu.purdue.voltag.data.Player;
 
 /**
  * Created by david on 4/19/14.

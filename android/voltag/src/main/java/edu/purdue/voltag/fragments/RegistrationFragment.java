@@ -46,6 +46,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     private VoltagDB db;
 
 
+    public RegistrationFragment() {
+        // Required empty public constructor
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -62,10 +66,6 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public RegistrationFragment() {
-        // Required empty public constructor
     }
 
     @Override

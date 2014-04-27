@@ -32,6 +32,10 @@ public class GameChoiceFragment extends Fragment implements View.OnClickListener
     private Button newGameButton;
     private Button exisitngGameButton;
 
+    public GameChoiceFragment() {
+        // Required empty public constructor
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -48,10 +52,6 @@ public class GameChoiceFragment extends Fragment implements View.OnClickListener
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public GameChoiceFragment() {
-        // Required empty public constructor
     }
 
     @Override

@@ -12,19 +12,12 @@ import java.util.List;
 
 public class VoltagDB extends SQLiteOpenHelper {
 
-    /**
-     * Database information
-     */
-    private static VoltagDB db_instance;
     public static final String DB_NAME = "voltag_db";
     public static final int DB_VERSION = 1;
-    private Context c;
-
     /**
      * Tables
      */
     public static final String TABLE_PLAYERS = "t_players";
-
     /**
      * Table - Players
      */
@@ -33,17 +26,22 @@ public class VoltagDB extends SQLiteOpenHelper {
     public static final String PLAYERS_NAME = "player_name";
     public static final String PLAYERS_EMAIL = "player_email";
     public static final String PLAYERS_ISIT = "player_isit";
+    /**
+     * Database information
+     */
+    private static VoltagDB db_instance;
+    private Context c;
+
+    private VoltagDB(Context c) {
+        super(c, DB_NAME, null, DB_VERSION);
+        this.c = c;
+    }
 
     public static VoltagDB getDB(Context c) {
         if (db_instance == null) {
             db_instance = new VoltagDB(c);
         }
         return db_instance;
-    }
-
-    private VoltagDB(Context c) {
-        super(c, DB_NAME, null, DB_VERSION);
-        this.c = c;
     }
 
     @Override

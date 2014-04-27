@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 /**
  * Interface for contexts that implement a cache for storing bitmaps for use in CachedAsyncBitmapLoader
- *
+ * <p/>
  * The init and clear should be called upon the creation and destruction of the context that is being shown.
  */
 public interface BitmapCacheHost {
