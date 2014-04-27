@@ -35,7 +35,7 @@ public class LeaveGameTask extends AsyncTask<Void, Void, Void> {
         super.onPreExecute();
 
         // Set shared preferences
-        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, "").commit();
         prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_NAME, "").commit();
     }
@@ -45,7 +45,7 @@ public class LeaveGameTask extends AsyncTask<Void, Void, Void> {
         Log.d(MainActivity.LOG_TAG, "Dropping player from game on Parse.");
 
         // Set up shared preferences
-        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
 
         // Get current game ID
         String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");

@@ -41,7 +41,7 @@ public class RegisterPlayerTask extends AsyncTask<Void, Void, Void> {
         super.onPreExecute();
 
         // Set the player's name and email to the shared preferences
-        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         prefs.edit().putString(MainActivity.PREF_USER_NAME, player.getUserName()).commit();
         prefs.edit().putString(MainActivity.PREF_USER_EMAIL, player.getEmail()).commit();
     }
@@ -51,7 +51,7 @@ public class RegisterPlayerTask extends AsyncTask<Void, Void, Void> {
         Log.d(MainActivity.LOG_TAG, "Creating a new player on parse.");
 
         // Prepare shared preferences
-        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
 
         // Check to see if the player is currently logged in by email
         ParseQuery<ParseObject> userQuery = ParseQuery.getQuery(ParseConstants.PARSE_CLASS_PLAYER);

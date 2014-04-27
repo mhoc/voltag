@@ -32,7 +32,7 @@ public class DeletePlayerTask extends AsyncTask<Void, Void, Void> {
         Log.d(MainActivity.LOG_TAG, "Deleting player from parse.");
 
         // Prepare shared preferences
-        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
 
         // Get player ID
         String playerID = prefs.getString(MainActivity.PREF_USER_ID, "");

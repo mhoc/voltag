@@ -1,27 +1,19 @@
 package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.provider.Settings;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.parse.Parse;
 
 import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
-import edu.purdue.voltag.data.ParseConstants;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.interfaces.OnPlayerRegisteredListener;
@@ -131,7 +123,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         Toast.makeText(getActivity(), "You are registered", Toast.LENGTH_LONG);
         regButton.setEnabled(false);
 
-        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean(MainActivity.PREF_ISREGISTERED, true).commit();
         editor.putString(MainActivity.PREF_USER_NAME, name).commit();

@@ -17,7 +17,6 @@ import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.Game;
 import edu.purdue.voltag.data.VoltagDB;
-import edu.purdue.voltag.interfaces.OnEnterLobbyListener;
 import edu.purdue.voltag.interfaces.OnGameCreatedListener;
 import edu.purdue.voltag.tasks.CreateGameTask;
 
@@ -63,7 +62,7 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
     public void onClick(View view) {
         String gameName = gameNameEditText.getText().toString();
 
-        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME,0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(MainActivity.PREF_CURRENT_GAME_NAME,gameName);
         editor.commit();
@@ -79,7 +78,7 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
     @Override
     public void onGameCreated(Game g) {
         Log.d("debug","gameId=" + g.getID());
-        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME,0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(MainActivity.PREF_CURRENT_GAME_ID, g.getID());
         editor.putBoolean(MainActivity.PREF_ISIT, true);

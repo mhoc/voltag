@@ -37,7 +37,7 @@ public class RefreshPlayersTask extends AsyncTask<Void, Void, Void> {
         Log.d(MainActivity.LOG_TAG, "Refreshing database.");
 
         // Prepare the shared preferences
-        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
 
         // Get the current game ID
         String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
