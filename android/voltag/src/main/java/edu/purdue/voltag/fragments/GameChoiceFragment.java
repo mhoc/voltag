@@ -95,25 +95,12 @@ public class GameChoiceFragment extends Fragment implements View.OnClickListener
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_new_game:
-                getFragmentManager().beginTransaction().replace(android.R.id.content, new CreateGameFragment()).commit();
+                getFragmentManager().beginTransaction().addToBackStack("CreateGameFragment").replace(android.R.id.content, new CreateGameFragment()).commit();
                 break;
             case R.id.btn_existing_game:
-                getFragmentManager().beginTransaction().replace(android.R.id.content, new JoinGameFragment()).commit();
+                getFragmentManager().beginTransaction().addToBackStack("JoinGameFragment").replace(android.R.id.content, new JoinGameFragment()).commit();
                 break;
         }
 
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-
-
 }
