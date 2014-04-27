@@ -1,11 +1,16 @@
 package edu.purdue.voltag.bitmap;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.widget.ImageView;
 
+import java.lang.ref.WeakReference;
+
 /**
- * Created by david on 4/27/14.
+ * Implemented by David Tschida to allow long running loading if bitmaps in a ListView.
  */
 public final class CachedAsyncBitmapLoader {
 
@@ -64,4 +69,54 @@ public final class CachedAsyncBitmapLoader {
     }
 
 
+    private static class BitmapWorkerTask extends AsyncTask<ImageRenderer, Void, Bitmap> {
+        private final WeakReference<ImageView> imageViewReference;
+        public ImageRenderer imageOwner = null;
+        private BitmapCacheHost cacheHost;
+        private int sizeofImage;
+
+        public BitmapWorkerTask(BitmapCacheHost cacheHost, ImageView imageView, int size) {
+            this.cacheHost = cacheHost;
+            imageViewReference = new WeakReference<ImageView>(imageView);
+            this.sizeofImage = size;
+        }
+
+        @Override
+        protected Bitmap doInBackground(ImageRenderer... imageOwners) {
+            imageOwner = imageOwners[0];
+            Bitmap bitmap = imageOwner.renderBitmap(sizeofImage);
+            cacheHost.addBitmapToMemoryCache(imageOwner.getUniqueImageId(), bitmap);
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (isCancelled()) {
+                bitmap = null;
+            }
+
+            if (imageViewReference != null) {
+                ImageView imageView = imageViewReference.get();
+                BitmapWorkerTask bitmapDownloaderTask = getBitmapWorkerTask(imageView);
+                // Change bitmap only if this process is still associated with it
+                if (this == bitmapDownloaderTask) {
+                    imageView.setImageBitmap(bitmap);
+                }
+            }
+        }
+    }
+
+    private static class AsyncDrawable extends ColorDrawable {
+        private final WeakReference<BitmapWorkerTask> bitmapWorkerTaskReference;
+
+        public AsyncDrawable(BitmapWorkerTask bitmapWorkerTask) {
+            super(Color.TRANSPARENT);
+            bitmapWorkerTaskReference =
+                    new WeakReference<BitmapWorkerTask>(bitmapWorkerTask);
+        }
+
+        public BitmapWorkerTask getBitmapWorkerTask() {
+            return bitmapWorkerTaskReference.get();
+        }
+    }
 }
