@@ -90,26 +90,27 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()){
+
             case R.id.joingame_bu_join:
-                String gameName = gameNameEditText.getText().toString();
-                SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+
+                final String gameName = gameNameEditText.getText().toString();
+                final SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString(MainActivity.PREF_CURRENT_GAME_ID,gameName);
                 editor.commit();
-                PushService.subscribe(getActivity(), gameName, MainActivity.class);
-                ParsePush push = new ParsePush();
-                push.setChannel(settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
-                String name = settings.getString(MainActivity.PREFS_NAME,"");
-                push.setMessage(name + " has joined the game");
-                push.sendInBackground();
+
 
                 final Activity a = getActivity();
                 AddPlayerToGameTask task = new AddPlayerToGameTask(getActivity(), gameName);
                 task.setListener(new OnJoinedGameListener() {
                     public void onJoinedGame(Game g) {
-                        if (g == null) {
-                            return;
-                        }
+                        PushService.subscribe(getActivity(), gameName, MainActivity.class);
+                        ParsePush push = new ParsePush();
+                        push.setChannel(settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
+                        String name = settings.getString(MainActivity.PREFS_NAME,"");
+                        push.setMessage(name + " has joined the game");
+                        push.sendInBackground();
+
                         a.runOnUiThread(new Runnable() {
                             public void run() {
                                 getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();

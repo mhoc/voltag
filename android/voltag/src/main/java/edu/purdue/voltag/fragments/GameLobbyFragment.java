@@ -8,6 +8,8 @@ import android.app.ListFragment;
 import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
@@ -243,50 +245,28 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
 
     @Override
     public void onDatabaseRefresh() {
-        // Note that ID is just an empty string during this call
-
         Log.d("Lobby", "Database has refreshed!!");
-        AsyncTask<Void, Void, List<Player>> addAdapter = new AsyncTask<Void, Void, List<Player>>() {
 
-            @Override
-            protected List<Player> doInBackground(Void... params) {
-                Log.d("PlayerLoader", "doInBackground()");
-                //List<Player> players = db.getPlayersInCurrentGame();
-                players = db.getPlayersInCurrentGame();
+        // Get the players in the current game
+        final List<Player> players = db.getPlayersInCurrentGame();
 
-                return players;
-            }
+        // Create the adapter
+        PlayerListAdapter adapt = new PlayerListAdapter(getActivity(), R.layout.player_list_item, R.id.name, players, GameLobbyFragment.this);
+        theList.setAdapter(adapt);
 
-            @Override
-            protected void onPostExecute(List<Player> playersList)
-            {
-                Log.d("PlayerLoader", "onPostExecute()");
-                PlayerListAdapter adapt = new PlayerListAdapter(getActivity(),
-                        R.layout.player_list_item, R.id.name, players, GameLobbyFragment.this);
-                theList.setAdapter(adapt);
-
-
-
-                new AsyncTask<Void, Void, Bitmap>() {
-
-                    Player it;
-
-                    @Override
-                    protected Bitmap doInBackground(Void... params) {
-                        it = getWhoIsIt(players);
-                        return it.getGravitar(MainActivity.IT_SIZE);
-                    }
-
-                    @Override
-                    protected void onPostExecute(Bitmap bitmap) {
-                        //ImageView iv = (ImageView) view.findViewById(R.id.imageView);
-                        iv.setImageBitmap(bitmap);
-
+        // Get the player's bitmap
+        new Thread(new Runnable() {
+            public void run() {
+                final Player it = getWhoIsIt(players);
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    public void run() {
+                        iv.setImageBitmap(it.getGravitar(MainActivity.IT_SIZE));
                         tv_it.setText(it.getUserName());
                     }
-                }.execute();
+                });
             }
-        };
-        addAdapter.execute();
+        }).start();
+
     }
 }
