@@ -24,7 +24,8 @@ import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.ParseConstants;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
-import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
+import edu.purdue.voltag.interfaces.OnPlayerRegisteredListener;
+import edu.purdue.voltag.tasks.RegisterPlayerTask;
 
 
 /*
@@ -36,7 +37,8 @@ import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
  * create an instance of this fragment.
  *
  */
-public class RegistrationFragment extends Fragment implements View.OnClickListener, OnAsyncCompletedListener {
+public class RegistrationFragment extends Fragment implements View.OnClickListener, OnPlayerRegisteredListener {
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -121,23 +123,25 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         String email = nameBox.getText().toString();
         String android_id = Settings.Secure.getString(getActivity().getContentResolver(),Settings.Secure.ANDROID_ID);
         Player p = new Player(null,android_id,name,email,false);
-        db.createPlayerOnParse(p,this);
+
+        RegisterPlayerTask task = new RegisterPlayerTask(getActivity(), p);
+        task.setListener(this);
+        task.execute();
+
         Toast.makeText(getActivity(), "You are registered", Toast.LENGTH_LONG);
         regButton.setEnabled(false);
 
-        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean(MainActivity.PREF_ISREGISTERED,true).commit();
+        editor.putBoolean(MainActivity.PREF_ISREGISTERED, true).commit();
         editor.putString(MainActivity.PREFS_NAME, name).commit();
-
-
 
         getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
 
     }
 
     @Override
-    public void done(String userID) {
-        
+    public void onPlayerRegistered(Player p) {
+
     }
 }

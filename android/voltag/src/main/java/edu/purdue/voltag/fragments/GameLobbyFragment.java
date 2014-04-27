@@ -32,9 +32,12 @@ import edu.purdue.voltag.PlayerListAdapter;
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
-import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
+import edu.purdue.voltag.interfaces.OnDatabaseRefreshListener;
 import edu.purdue.voltag.lobby.BitmapCacheHost;
 import edu.purdue.voltag.lobby.BitmapWorkerTask;
+import edu.purdue.voltag.tasks.DeletePlayerTask;
+import edu.purdue.voltag.tasks.LeaveGameTask;
+import edu.purdue.voltag.tasks.RefreshPlayersTask;
 
 /*
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -45,7 +48,7 @@ import edu.purdue.voltag.lobby.BitmapWorkerTask;
  * create an instance of this fragment.
  *
  */
-public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedListener, BitmapCacheHost {
+public class GameLobbyFragment extends ListFragment implements OnDatabaseRefreshListener, BitmapCacheHost {
 
     VoltagDB db;
     ListView theList;
@@ -109,7 +112,9 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
 
         tv.setText(gameName);
 
-        db.refreshPlayersTable(this);
+        RefreshPlayersTask task = new RefreshPlayersTask(getActivity());
+        task.setListener(this);
+        task.execute();
     }
 
     public Player getWhoIsIt(List<Player> list){
@@ -125,56 +130,6 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     }
 
     @Override
-    public void done(String id) {
-        // Note that ID is just an empty string during this call
-
-        Log.d("Lobby", "Database has refreshed!!");
-        AsyncTask<Void, Void, List<Player>> addAdapter = new AsyncTask<Void, Void, List<Player>>() {
-
-            @Override
-            protected List<Player> doInBackground(Void... params) {
-                Log.d("PlayerLoader", "doInBackground()");
-                //List<Player> players = db.getPlayersInCurrentGame();
-                players = db.getPlayersInCurrentGame();
-
-                return players;
-            }
-
-            @Override
-            protected void onPostExecute(List<Player> playersList)
-            {
-                Log.d("PlayerLoader", "onPostExecute()");
-                PlayerListAdapter adapt = new PlayerListAdapter(getActivity(),
-                        R.layout.player_list_item, R.id.name, players, GameLobbyFragment.this);
-                theList.setAdapter(adapt);
-
-
-
-                new AsyncTask<Void, Void, Bitmap>() {
-
-                    Player it;
-
-                    @Override
-                    protected Bitmap doInBackground(Void... params) {
-                        it = getWhoIsIt(players);
-                        return it.getGravitar(MainActivity.IT_SIZE);
-                    }
-
-                    @Override
-                    protected void onPostExecute(Bitmap bitmap) {
-                        //ImageView iv = (ImageView) view.findViewById(R.id.imageView);
-                        iv.setImageBitmap(bitmap);
-
-                        tv_it.setText(it.getUserName());
-                    }
-                }.execute();
-            }
-        };
-        addAdapter.execute();
-
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         final SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
@@ -184,7 +139,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
         switch (id) {
 
             case R.id.drop_registration:
-                db.dropPlayerRegistrationOnParse(null);
+                new DeletePlayerTask(getActivity()).execute();
                 prefs.edit().putString(MainActivity.PREF_USER_ID, "").commit();
                 prefs.edit().putString(MainActivity.PREF_USER_EMAIL, "").commit();
                 prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, false).commit();
@@ -201,7 +156,6 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                     }
                 });
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
-                db.removePlayerFromGameOnParse(null);
 
                 prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, "").commit();
 
@@ -225,7 +179,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
                     }
                 });
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
-                db.removePlayerFromGameOnParse(null);
+                new LeaveGameTask(getActivity()).execute();
 
                 SharedPreferences.Editor editor = _settings.edit();
                 editor.putString(MainActivity.PREF_CURRENT_GAME_ID, "");
@@ -285,5 +239,54 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
     public void clearCache()
     {
         mMemoryCache.evictAll();
+    }
+
+    @Override
+    public void onDatabaseRefresh() {
+        // Note that ID is just an empty string during this call
+
+        Log.d("Lobby", "Database has refreshed!!");
+        AsyncTask<Void, Void, List<Player>> addAdapter = new AsyncTask<Void, Void, List<Player>>() {
+
+            @Override
+            protected List<Player> doInBackground(Void... params) {
+                Log.d("PlayerLoader", "doInBackground()");
+                //List<Player> players = db.getPlayersInCurrentGame();
+                players = db.getPlayersInCurrentGame();
+
+                return players;
+            }
+
+            @Override
+            protected void onPostExecute(List<Player> playersList)
+            {
+                Log.d("PlayerLoader", "onPostExecute()");
+                PlayerListAdapter adapt = new PlayerListAdapter(getActivity(),
+                        R.layout.player_list_item, R.id.name, players, GameLobbyFragment.this);
+                theList.setAdapter(adapt);
+
+
+
+                new AsyncTask<Void, Void, Bitmap>() {
+
+                    Player it;
+
+                    @Override
+                    protected Bitmap doInBackground(Void... params) {
+                        it = getWhoIsIt(players);
+                        return it.getGravitar(MainActivity.IT_SIZE);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Bitmap bitmap) {
+                        //ImageView iv = (ImageView) view.findViewById(R.id.imageView);
+                        iv.setImageBitmap(bitmap);
+
+                        tv_it.setText(it.getUserName());
+                    }
+                }.execute();
+            }
+        };
+        addAdapter.execute();
     }
 }

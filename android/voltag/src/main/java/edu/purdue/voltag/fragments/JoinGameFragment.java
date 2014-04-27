@@ -34,8 +34,9 @@ import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.Game;
 import edu.purdue.voltag.data.VoltagDB;
-import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
 import edu.purdue.voltag.interfaces.OnEnterLobbyListener;
+import edu.purdue.voltag.interfaces.OnJoinedGameListener;
+import edu.purdue.voltag.tasks.AddPlayerToGameTask;
 
 /*
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -77,7 +78,7 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
         gameNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if(i == EditorInfo.IME_ACTION_GO){
+                if (i == EditorInfo.IME_ACTION_GO) {
                     joinGameButton.performClick();
                 }
                 return false;
@@ -101,18 +102,23 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
                 String name = settings.getString(MainActivity.PREFS_NAME,"");
                 push.setMessage(name + " has joined the game");
                 push.sendInBackground();
-                db.addPlayerToGameOnParse(gameName, new OnEnterLobbyListener() {
-                    public void onLobbyEnter(Game g) {
+
+                final Activity a = getActivity();
+                AddPlayerToGameTask task = new AddPlayerToGameTask(getActivity(), gameName);
+                task.setListener(new OnJoinedGameListener() {
+                    public void onJoinedGame(Game g) {
                         if (g == null) {
                             return;
                         }
-                        getActivity().runOnUiThread(new Runnable() {
+                        a.runOnUiThread(new Runnable() {
                             public void run() {
                                 getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
                             }
                         });
                     }
                 });
+
+                break;
         }
     }
 }

@@ -28,7 +28,9 @@ import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.fragments.GameChoiceFragment;
 import edu.purdue.voltag.fragments.GameLobbyFragment;
 import edu.purdue.voltag.fragments.RegistrationFragment;
-import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
+import edu.purdue.voltag.interfaces.OnPlayerTaggedListener;
+import edu.purdue.voltag.tasks.DeletePlayerTask;
+import edu.purdue.voltag.tasks.TagPlayerTask;
 
 import static android.nfc.NdefRecord.createMime;
 
@@ -144,10 +146,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                 SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, 0);
                 VoltagDB db = VoltagDB.getDB(this);
 
-                db.dropPlayerRegistrationOnParse(null);
-                prefs.edit().putString(MainActivity.PREF_USER_ID, "").commit();
-                prefs.edit().putString(MainActivity.PREF_USER_EMAIL, "").commit();
-                prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, false).commit();
+                new DeletePlayerTask(this).execute();
 
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
 
@@ -247,9 +246,10 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         String message = new String(msg.getRecords()[0].getPayload());
         Log.d("debug","message="+message);
         if(message.equals("it")){
-            db.tagThisPlayerOnParse( new OnAsyncCompletedListener() {
+            TagPlayerTask task = new TagPlayerTask(this);
+            task.setListener(new OnPlayerTaggedListener() {
                 @Override
-                public void done(String data) {
+                public void onPlayerTagged() {
                     SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putBoolean(MainActivity.PREF_ISIT,true);
