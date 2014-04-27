@@ -105,7 +105,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     public void onResume() {
         super.onResume();
-
+        //Log.d("debug-intent",getIntent().getAction());
         // Check to see that the Activity started due to an Android Beam
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processIntent(getIntent());
@@ -271,13 +271,6 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                     String name = settings.getString(MainActivity.PREFS_NAME,"");
                     push.setMessage( name+ " is now it!");
                     push.sendInBackground();
-
-                    FragmentManager.BackStackEntry backStack = getFragmentManager().getBackStackEntryAt(getFragmentManager().getBackStackEntryCount()-1);
-                    String str = backStack.getName();
-                    Fragment fragment =getFragmentManager().findFragmentByTag(str);
-                    if(fragment instanceof  GameLobbyFragment){
-                        Log.d("debug and test","fragment is instanceof GameLobbyFragment");
-                    }
                 }
             });
 
