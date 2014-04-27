@@ -38,7 +38,7 @@ public class AddPlayerToGameTask extends AsyncTask<Void, Void, Void> {
         super.onPreExecute();
 
         // Set shared preferences
-        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, gameID).commit();
     }
 
@@ -47,7 +47,7 @@ public class AddPlayerToGameTask extends AsyncTask<Void, Void, Void> {
         Log.d(MainActivity.LOG_TAG, "Adding player to existing game on Parse.");
 
         // Prepare shared preferences
-        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
 
         // Get the user's ID
         String userID = prefs.getString(MainActivity.PREF_USER_ID, "");

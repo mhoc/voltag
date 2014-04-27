@@ -12,7 +12,6 @@ import com.parse.ParseQuery;
 
 import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.data.ParseConstants;
-import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.interfaces.OnPlayerTaggedListener;
 
 public class TagPlayerTask extends AsyncTask<Void, Void, Void> {
@@ -33,7 +32,7 @@ public class TagPlayerTask extends AsyncTask<Void, Void, Void> {
         Log.d(MainActivity.LOG_TAG, "Tagging player on Parse.");
 
         // Prepare shared preferences
-        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
 
         // Determine if they are already it. If so, fail.
         boolean isIt = prefs.getBoolean(MainActivity.PREF_ISIT, false);

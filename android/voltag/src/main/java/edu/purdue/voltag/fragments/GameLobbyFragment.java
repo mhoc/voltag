@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.app.ListFragment;
 import android.nfc.NfcAdapter;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -36,7 +35,6 @@ import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.interfaces.OnDatabaseRefreshListener;
 import edu.purdue.voltag.lobby.BitmapCacheHost;
-import edu.purdue.voltag.lobby.BitmapWorkerTask;
 import edu.purdue.voltag.tasks.DeletePlayerTask;
 import edu.purdue.voltag.tasks.LeaveGameTask;
 import edu.purdue.voltag.tasks.RefreshPlayersTask;
@@ -109,7 +107,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
         tv = (TextView) view.findViewById(R.id.gamelobby_tv_lobbyid);
         tv_it = (TextView) view.findViewById(R.id.gamelobby_tv_whosit);
         String gameName;
-        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         gameName = settings.getString(MainActivity.PREF_CURRENT_GAME_NAME,"");
 
         tv.setText(gameName);
@@ -134,7 +132,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        final SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        final SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         final VoltagDB db = VoltagDB.getDB(getActivity());
 
         int id = item.getItemId();
@@ -146,7 +144,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
                 prefs.edit().putString(MainActivity.PREF_USER_EMAIL, "").commit();
                 prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, false).commit();
 
-                String nameA = prefs.getString(MainActivity.PREFS_NAME,"");
+                String nameA = prefs.getString(MainActivity.PREF_USER_NAME,"");
                 ParsePush pushA = new ParsePush();
                 pushA.setChannel(prefs.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
                 pushA.setMessage(nameA + " has left the game");
@@ -165,8 +163,8 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
 
             case R.id.exit_game:
 
-                final SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
-                String name = _settings.getString(MainActivity.PREFS_NAME,"");
+                final SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME,0);
+                String name = _settings.getString(MainActivity.PREF_USER_NAME,"");
                 ParsePush push = new ParsePush();
                 push.setChannel(_settings.getString(MainActivity.PREF_CURRENT_GAME_ID,""));
                 push.setMessage(name + " has left the game");
@@ -191,7 +189,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
 
             case R.id.share:
                 String gameId = null;
-                SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
                 gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
 
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);

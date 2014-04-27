@@ -35,7 +35,7 @@ public class CreateGameTask extends AsyncTask<Void, Void, Void> {
         super.onPreExecute();
 
         // Set the information in the shared preferences
-        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_NAME, gameName).commit();
     }
 
@@ -44,7 +44,7 @@ public class CreateGameTask extends AsyncTask<Void, Void, Void> {
         Log.d(MainActivity.LOG_TAG, "Creating a new game on Parse.");
 
         // Prepare the shared preferences
-        SharedPreferences prefs = c.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences prefs = c.getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
 
         // Get the user's ID
         String userID = prefs.getString(MainActivity.PREF_USER_ID, "");

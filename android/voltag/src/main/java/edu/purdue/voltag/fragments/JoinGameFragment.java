@@ -2,7 +2,6 @@ package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.KeyEvent;
@@ -12,29 +11,16 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.content.Intent;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
-import android.nfc.NfcAdapter.CreateNdefMessageCallback;
-import android.nfc.NfcEvent;
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.ParsePush;
 import com.parse.PushService;
-
-import java.nio.charset.Charset;
-import static android.nfc.NdefRecord.createMime;
 
 import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.Game;
 import edu.purdue.voltag.data.VoltagDB;
-import edu.purdue.voltag.interfaces.OnEnterLobbyListener;
 import edu.purdue.voltag.interfaces.OnJoinedGameListener;
 import edu.purdue.voltag.tasks.AddPlayerToGameTask;
 
@@ -94,7 +80,7 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
             case R.id.joingame_bu_join:
 
                 final String gameName = gameNameEditText.getText().toString();
-                final SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME,0);
+                final SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME,0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString(MainActivity.PREF_CURRENT_GAME_ID,gameName);
                 editor.commit();

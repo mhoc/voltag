@@ -2,8 +2,6 @@ package edu.purdue.voltag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,7 +35,7 @@ import static android.nfc.NdefRecord.createMime;
 public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback, View.OnClickListener {
 
     public static final String LOG_TAG = "voltag_log";
-    public static final String PREFS_NAME = "voltag_prefs";
+    public static final String SHARED_PREFS_NAME = "voltag_prefs";
     public static final String PREF_ISIT = "player_is_it";
     public static final String PREF_CURRENT_GAME_ID = "current_game_id";
     public static final String PREF_CURRENT_GAME_NAME = "current_game_name";
@@ -85,7 +83,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         Button button = (Button) this.findViewById(R.id.btn_beginButton);
         button.setOnClickListener(this);
         String gameId;
-        SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
+        SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME,0);
         gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
         if(!(gameId.equals(""))){
             closeSplash();
@@ -109,7 +107,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     public void onClick(View view) {
 
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFS_NAME,0);
         boolean isRegistered = settings.getBoolean(PREF_ISREGISTERED,false);
 
         closeSplash();
@@ -143,7 +141,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
             case R.id.drop_registration_main:
 
-                SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
                 VoltagDB db = VoltagDB.getDB(this);
 
                 new DeletePlayerTask(this).execute();
@@ -187,7 +185,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
-        SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         Boolean isIt = settings.getBoolean(MainActivity.PREF_ISIT,false);
         if(isIt) {
             String text = ("it");
@@ -251,16 +249,16 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             task.setListener(new OnPlayerTaggedListener() {
                 @Override
                 public void onPlayerTagged() {
-                    SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
+                    SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
                     SharedPreferences.Editor editor = settings.edit();
-                    editor.putBoolean(MainActivity.PREF_ISIT,true);
+                    editor.putBoolean(MainActivity.PREF_ISIT, true);
                     editor.commit();
                     ParsePush push = new ParsePush();
-                    String test = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
-                    Log.d("debug","sending push to channels " + test);
+                    String test = settings.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+                    Log.d("debug", "sending push to channels " + test);
                     push.setChannel(test);
-                    String name = settings.getString(MainActivity.PREF_USER_NAME,"");
-                    push.setMessage( name+ " is now it!");
+                    String name = settings.getString(MainActivity.PREF_USER_NAME, "");
+                    push.setMessage(name + " is now it!");
                     push.sendInBackground();
                 }
             });
