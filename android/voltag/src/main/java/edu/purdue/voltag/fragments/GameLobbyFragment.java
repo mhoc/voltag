@@ -259,9 +259,10 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
             public void run() {
                 final Player it = getWhoIsIt(players);
                 Handler handler = new Handler(Looper.getMainLooper());
+                final Bitmap b = it.getGravitar(MainActivity.IT_SIZE);
                 handler.post(new Runnable() {
                     public void run() {
-                        iv.setImageBitmap(it.getGravitar(MainActivity.IT_SIZE));
+                        iv.setImageBitmap(b);
                         tv_it.setText(it.getUserName());
                     }
                 });

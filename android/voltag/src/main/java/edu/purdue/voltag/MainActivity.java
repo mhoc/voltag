@@ -247,6 +247,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         Log.d("debug","message="+message);
         if(message.equals("it")){
             TagPlayerTask task = new TagPlayerTask(this);
+            task.execute();
             task.setListener(new OnPlayerTaggedListener() {
                 @Override
                 public void onPlayerTagged() {
@@ -258,7 +259,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                     String test = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
                     Log.d("debug","sending push to channels " + test);
                     push.setChannel(test);
-                    String name = settings.getString(MainActivity.PREFS_NAME,"");
+                    String name = settings.getString(MainActivity.PREF_USER_NAME,"");
                     push.setMessage( name+ " is now it!");
                     push.sendInBackground();
                 }
