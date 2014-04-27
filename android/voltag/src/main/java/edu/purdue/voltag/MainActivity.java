@@ -244,8 +244,8 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         String message = new String(msg.getRecords()[0].getPayload());
         Log.d("debug","message="+message);
         if(message.equals("it")){
+            Log.d("debug","is tagged");
             TagPlayerTask task = new TagPlayerTask(this);
-            task.execute();
             task.setListener(new OnPlayerTaggedListener() {
                 @Override
                 public void onPlayerTagged() {
@@ -262,6 +262,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                     push.sendInBackground();
                 }
             });
+            task.execute();
 
         }
         // record 0 contains the MIME type, record 1 is the AAR, if present

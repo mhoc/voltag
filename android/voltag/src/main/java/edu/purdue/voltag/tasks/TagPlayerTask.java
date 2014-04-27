@@ -100,10 +100,14 @@ public class TagPlayerTask extends AsyncTask<Void, Void, Void> {
 
         // Save the game and tag
         try {
+            Log.d("debug","before tag save");
             tag.save();
+            Log.d("debug","after tag save,before game save");
             game.save();
+            Log.d("debug","after game save");
         } catch (ParseException e) {
             Log.d(MainActivity.LOG_TAG, "Error: Could not save either the Tag or the Game");
+            e.printStackTrace();
             return null;
         }
 
