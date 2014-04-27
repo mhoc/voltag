@@ -34,7 +34,7 @@ import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.interfaces.OnDatabaseRefreshListener;
-import edu.purdue.voltag.lobby.BitmapCacheHost;
+import edu.purdue.voltag.bitmap.BitmapCacheHost;
 import edu.purdue.voltag.tasks.DeletePlayerTask;
 import edu.purdue.voltag.tasks.LeaveGameTask;
 import edu.purdue.voltag.tasks.RefreshPlayersTask;

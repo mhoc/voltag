@@ -1,4 +1,4 @@
-package edu.purdue.voltag.lobby;
+package edu.purdue.voltag.bitmap;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;

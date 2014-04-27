@@ -8,18 +8,10 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
-import android.widget.ImageView;
-
-import edu.purdue.voltag.data.Player;
-import edu.purdue.voltag.lobby.AsyncDrawable;
-import edu.purdue.voltag.lobby.BitmapCacheHost;
-import edu.purdue.voltag.lobby.BitmapWorkerTask;
 
 public class ImageHelper {
 

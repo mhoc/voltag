@@ -10,7 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import edu.purdue.voltag.helper.ImageHelper;
-import edu.purdue.voltag.lobby.ImageRenderer;
+import edu.purdue.voltag.bitmap.ImageRenderer;
 
 /**
  * Created by mike on 4/19/14.

@@ -11,8 +11,8 @@ import android.widget.TextView;
 import java.util.List;
 
 import edu.purdue.voltag.data.Player;
-import edu.purdue.voltag.lobby.BitmapCacheHost;
-import edu.purdue.voltag.lobby.CachedAsyncBitmapLoader;
+import edu.purdue.voltag.bitmap.BitmapCacheHost;
+import edu.purdue.voltag.bitmap.CachedAsyncBitmapLoader;
 
 /**
  * Created by david on 4/19/14.
