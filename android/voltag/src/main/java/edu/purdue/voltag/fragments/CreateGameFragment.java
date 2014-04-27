@@ -87,8 +87,14 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
         startActivity(Intent.createChooser(sharingIntent, "Share via"));
         //getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
+            }
+        });
         PushService.subscribe(getActivity(), g.getID(), MainActivity.class);
-        getFragmentManager().popBackStack();
+        //getFragmentManager().popBackStack();
 
     }
 }
