@@ -5,15 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.app.ListFragment;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
-import android.nfc.NfcEvent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.LruCache;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,16 +19,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.PushService;
 import com.parse.SendCallback;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.PlayerListAdapter;
@@ -41,8 +34,6 @@ import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
 import edu.purdue.voltag.lobby.BitmapCacheHost;
-
-import static android.nfc.NdefRecord.createMime;
 
 /*
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -202,7 +193,7 @@ public class GameLobbyFragment extends ListFragment implements OnAsyncCompletedL
             case R.id.drop_registration:
                 db.dropPlayerRegistrationOnParse(null);
                 prefs.edit().putString(MainActivity.PREF_USER_ID, "").commit();
-                prefs.edit().putString(MainActivity.PREF_EMAIL, "").commit();
+                prefs.edit().putString(MainActivity.PREF_USER_EMAIL, "").commit();
                 prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, false).commit();
 
                 String nameA = prefs.getString(MainActivity.PREFS_NAME,"");

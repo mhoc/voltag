@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,34 +11,24 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.Parse;
 import com.parse.ParsePush;
 import com.parse.PushService;
 
-import edu.purdue.voltag.data.ParseConstants;
 import edu.purdue.voltag.data.VoltagDB;
-import edu.purdue.voltag.fragments.CreateGameFragment;
 import edu.purdue.voltag.fragments.GameChoiceFragment;
 import edu.purdue.voltag.fragments.GameLobbyFragment;
 import edu.purdue.voltag.fragments.RegistrationFragment;
 import edu.purdue.voltag.interfaces.OnAsyncCompletedListener;
-import edu.purdue.voltag.lobby.BitmapCacheHost;
 
 import static android.nfc.NdefRecord.createMime;
 
@@ -51,7 +40,8 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     public static final String PREF_CURRENT_GAME_ID = "current_game_id";
     public static final String PREF_CURRENT_GAME_NAME = "current_game_name";
     public static final String PREF_USER_ID = "user_id";
-    public static final String PREF_EMAIL = "user_email";
+    public static final String PREF_USER_EMAIL = "user_email";
+    public static final String PREF_USER_NAME = "user_name";
     public static final String PREF_ISREGISTERED = "is_registered";
     public static int ITEM_SIZE;
     public static int IT_SIZE;
@@ -156,7 +146,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
                 db.dropPlayerRegistrationOnParse(null);
                 prefs.edit().putString(MainActivity.PREF_USER_ID, "").commit();
-                prefs.edit().putString(MainActivity.PREF_EMAIL, "").commit();
+                prefs.edit().putString(MainActivity.PREF_USER_EMAIL, "").commit();
                 prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, false).commit();
 
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
