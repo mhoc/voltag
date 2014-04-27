@@ -61,6 +61,7 @@ public class CreateGameTask extends AsyncTask<Void, Void, Void> {
         } catch (ParseException e) {
             Log.d(MainActivity.LOG_TAG, "Error: User creating game does not exist on Parse.");
             e.printStackTrace();
+            return null;
         }
 
         // Create the game

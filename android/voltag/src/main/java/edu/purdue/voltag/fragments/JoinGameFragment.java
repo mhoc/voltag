@@ -117,6 +117,7 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
                         });
                     }
                 });
+                task.execute();
 
                 break;
         }
