@@ -11,8 +11,8 @@ import android.widget.TextView;
 import java.util.List;
 
 import edu.purdue.voltag.data.Player;
-import edu.purdue.voltag.helper.ImageHelper;
 import edu.purdue.voltag.lobby.BitmapCacheHost;
+import edu.purdue.voltag.lobby.CachedAsyncBitmapLoader;
 
 /**
  * Created by david on 4/19/14.
@@ -47,7 +47,7 @@ public class PlayerListAdapter extends ArrayAdapter<Player> {
 
         ImageView iv = (ImageView) v.findViewById(R.id.face);
 
-        ImageHelper.loadBitmapAsAsyncTask(getItem(position), iv, host);
+        CachedAsyncBitmapLoader.loadBitmapAsCachedAsyncTask(getItem(position), iv, host, MainActivity.ITEM_SIZE);
 
         return v;
     }

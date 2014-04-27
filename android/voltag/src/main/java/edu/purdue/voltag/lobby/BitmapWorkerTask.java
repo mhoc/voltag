@@ -6,25 +6,23 @@ import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
 
-import edu.purdue.voltag.MainActivity;
-import edu.purdue.voltag.data.Player;
-import edu.purdue.voltag.helper.ImageHelper;
-
-public class BitmapWorkerTask extends AsyncTask<Player, Void, Bitmap> {
+public class BitmapWorkerTask extends AsyncTask<ImageRenderer, Void, Bitmap> {
     private final WeakReference<ImageView> imageViewReference;
-    public Player player = null;
+    public ImageRenderer imageOwner = null;
     private BitmapCacheHost cacheHost;
+    private int sizeofImage;
 
-    public BitmapWorkerTask(BitmapCacheHost cacheHost, ImageView imageView) {
+    public BitmapWorkerTask(BitmapCacheHost cacheHost, ImageView imageView, int size) {
         this.cacheHost = cacheHost;
         imageViewReference = new WeakReference<ImageView>(imageView);
+        this.sizeofImage = size;
     }
 
     @Override
-    protected Bitmap doInBackground(Player... players) {
-        player = players[0];
-        Bitmap bitmap = player.getGravitar(MainActivity.ITEM_SIZE);
-        cacheHost.addBitmapToMemoryCache(player.getEmail(), bitmap);
+    protected Bitmap doInBackground(ImageRenderer... imageOwners) {
+        imageOwner = imageOwners[0];
+        Bitmap bitmap = imageOwner.renderBitmap(sizeofImage);
+        cacheHost.addBitmapToMemoryCache(imageOwner.getUniqueImageId(), bitmap);
         return bitmap;
     }
 
@@ -36,7 +34,7 @@ public class BitmapWorkerTask extends AsyncTask<Player, Void, Bitmap> {
 
         if (imageViewReference != null) {
             ImageView imageView = imageViewReference.get();
-            BitmapWorkerTask bitmapDownloaderTask = ImageHelper.getBitmapWorkerTask(imageView);
+            BitmapWorkerTask bitmapDownloaderTask = CachedAsyncBitmapLoader.getBitmapWorkerTask(imageView);
             // Change bitmap only if this process is still associated with it
             if (this == bitmapDownloaderTask) {
                 imageView.setImageBitmap(bitmap);

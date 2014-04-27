@@ -10,11 +10,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import edu.purdue.voltag.helper.ImageHelper;
+import edu.purdue.voltag.lobby.ImageRenderer;
 
 /**
  * Created by mike on 4/19/14.
  */
-public class Player {
+public class Player implements ImageRenderer {
 
     private String parseID;
     private String hardwareID;
@@ -102,4 +103,13 @@ public class Player {
         this.isIt = isIt;
     }
 
+    @Override
+    public Bitmap renderBitmap(int sizePX) {
+        return getGravitar(sizePX);
+    }
+
+    @Override
+    public String getUniqueImageId() {
+        return getEmail();
+    }
 }
