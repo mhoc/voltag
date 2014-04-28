@@ -243,25 +243,25 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
         final List<Player> players = db.getPlayersInCurrentGame();
 
         // Create the adapter
-        PlayerListAdapter adapt = new PlayerListAdapter(getActivity(), R.layout.player_list_item, R.id.name, players, GameLobbyFragment.this);
-
-        Handler handler = new Handler
-        theList.setAdapter(adapt);
+        final PlayerListAdapter adapt = new PlayerListAdapter(getActivity(), R.layout.player_list_item, R.id.name, players, GameLobbyFragment.this);
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            public void run() {
+                theList.setAdapter(adapt);
+            }
+        });
 
         // Get the player's bitmap
-        new Thread(new Runnable() {
+        final Player it = getWhoIsIt(players);
+        final Bitmap b = it.getGravitar(MainActivity.IT_SIZE);
+
+        // Post to UI
+        handler.post(new Runnable() {
             public void run() {
-                final Player it = getWhoIsIt(players);
-                Handler handler = new Handler(Looper.getMainLooper());
-                final Bitmap b = it.getGravitar(MainActivity.IT_SIZE);
-                handler.post(new Runnable() {
-                    public void run() {
-                        iv.setImageBitmap(b);
-                        tv_it.setText(it.getUserName());
-                    }
-                });
+                iv.setImageBitmap(b);
+                tv_it.setText(it.getUserName());
             }
-        }).start();
+        });
 
     }
 }
