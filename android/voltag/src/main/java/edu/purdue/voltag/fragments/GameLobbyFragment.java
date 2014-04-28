@@ -107,13 +107,13 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
         gameName = settings.getString(MainActivity.PREF_CURRENT_GAME_NAME, "");
 
         tv.setText(gameName);
-
         RefreshPlayersTask task = new RefreshPlayersTask(getActivity());
         task.setListener(this);
         task.execute();
     }
 
     public Player getWhoIsIt(List<Player> list) {
+        Log.d("debug","getWhoIsIt called");
         Player it = null;
         for (Player p : list) {
             if (p.getIsIt()) {
