@@ -223,7 +223,6 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             return msg;
         }
 
-
     }
 
     @Override
@@ -243,11 +242,9 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         NdefMessage msg = (NdefMessage) rawMsgs[0];
         String message = new String(msg.getRecords()[0].getPayload());
         Log.d("debug","message="+message);
-        if(message.equals("it")){
+        if (message.equals("it")) {
             TagPlayerTask task = new TagPlayerTask(this);
-            task.execute();
             task.setListener(new OnPlayerTaggedListener() {
-                @Override
                 public void onPlayerTagged() {
                     SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
                     SharedPreferences.Editor editor = settings.edit();
@@ -262,9 +259,9 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                     push.sendInBackground();
                 }
             });
-
+            task.execute();
         }
-        // record 0 contains the MIME type, record 1 is the AAR, if present
+
     }
 
 }

@@ -29,7 +29,7 @@ public class RefreshPlayersTask extends AsyncTask<Void, Void, Void> {
     }
 
     public void setListener(OnDatabaseRefreshListener listener) {
-        listener.onDatabaseRefresh();
+        this.listener = listener;
     }
 
     @Override

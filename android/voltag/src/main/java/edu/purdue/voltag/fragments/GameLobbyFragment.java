@@ -250,6 +250,8 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
 
         // Create the adapter
         PlayerListAdapter adapt = new PlayerListAdapter(getActivity(), R.layout.player_list_item, R.id.name, players, GameLobbyFragment.this);
+
+        Handler handler = new Handler
         theList.setAdapter(adapt);
 
         // Get the player's bitmap
