@@ -1,9 +1,9 @@
 package edu.purdue.voltag.fragments;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,8 +51,8 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_create_game, container, false);
-        gameNameEditText = (EditText)v.findViewById(R.id.creategame_et_lobbyid);
-        shareButton = (Button)v.findViewById(R.id.creategame_bu_share);
+        gameNameEditText = (EditText) v.findViewById(R.id.creategame_et_lobbyid);
+        shareButton = (Button) v.findViewById(R.id.creategame_bu_share);
         shareButton.setOnClickListener(this);
         return v;
 
@@ -62,9 +62,9 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
     public void onClick(View view) {
         String gameName = gameNameEditText.getText().toString();
 
-        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME,0);
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString(MainActivity.PREF_CURRENT_GAME_NAME,gameName);
+        editor.putString(MainActivity.PREF_CURRENT_GAME_NAME, gameName);
         editor.commit();
 
         CreateGameTask task = new CreateGameTask(getActivity(), gameName);
@@ -77,8 +77,8 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onGameCreated(Game g) {
-        Log.d("debug","gameId=" + g.getID());
-        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME,0);
+        Log.d("debug", "gameId=" + g.getID());
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(MainActivity.PREF_CURRENT_GAME_ID, g.getID());
         editor.putBoolean(MainActivity.PREF_ISIT, true);

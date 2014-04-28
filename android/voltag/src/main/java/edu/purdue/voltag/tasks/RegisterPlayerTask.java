@@ -16,11 +16,13 @@ import edu.purdue.voltag.data.ParseConstants;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.interfaces.OnPlayerRegisteredListener;
 
-/** Registers a new player on Parse.
- *  This class will send their information to Parse then set their ParseID into the shared preferences.
- *  You may register a listener which is called when the task is complete, should you desire.
- *  If a user attempts to register with an already recognized email, it gives them the same ID
- *  that Parse already has. */
+/**
+ * Registers a new player on Parse.
+ * This class will send their information to Parse then set their ParseID into the shared preferences.
+ * You may register a listener which is called when the task is complete, should you desire.
+ * If a user attempts to register with an already recognized email, it gives them the same ID
+ * that Parse already has.
+ */
 public class RegisterPlayerTask extends AsyncTask<Void, Void, Void> {
 
     private Context c;

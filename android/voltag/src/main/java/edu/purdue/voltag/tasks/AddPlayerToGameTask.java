@@ -15,9 +15,11 @@ import edu.purdue.voltag.data.Game;
 import edu.purdue.voltag.data.ParseConstants;
 import edu.purdue.voltag.interfaces.OnJoinedGameListener;
 
-/** Adds a player to a game on Parse
- *  Updates all of the local database and shared preferences
- *  Pass in a listener to be alerted when it fails. */
+/**
+ * Adds a player to a game on Parse
+ * Updates all of the local database and shared preferences
+ * Pass in a listener to be alerted when it fails.
+ */
 public class AddPlayerToGameTask extends AsyncTask<Void, Void, Void> {
 
     private Context c;

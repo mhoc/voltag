@@ -1,9 +1,10 @@
 package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.content.SharedPreferences;
+import android.nfc.NfcAdapter;
+import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.nfc.NfcAdapter;
 import android.widget.TextView;
 
 import com.parse.ParsePush;
@@ -50,8 +50,6 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
     }
 
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -75,14 +73,14 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
 
             case R.id.joingame_bu_join:
 
                 final String gameName = gameNameEditText.getText().toString();
-                final SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME,0);
+                final SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
-                editor.putString(MainActivity.PREF_CURRENT_GAME_ID,gameName);
+                editor.putString(MainActivity.PREF_CURRENT_GAME_ID, gameName);
                 editor.commit();
 
 

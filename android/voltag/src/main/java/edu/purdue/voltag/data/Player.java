@@ -2,8 +2,6 @@ package edu.purdue.voltag.data;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -11,12 +9,13 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import edu.purdue.voltag.bitmap.ImageRenderer;
 import edu.purdue.voltag.helper.ImageHelper;
 
 /**
  * Created by mike on 4/19/14.
  */
-public class Player {
+public class Player implements ImageRenderer {
 
     private String parseID;
     private String hardwareID;
@@ -53,6 +52,10 @@ public class Player {
         return this.isIt;
     }
 
+    public void setIsIt(boolean isIt) {
+        this.isIt = isIt;
+    }
+
     private String getEmailMD5() {
 
         final String MD5 = "MD5";
@@ -79,13 +82,12 @@ public class Player {
         return "";
     }
 
-    public Bitmap getGravitar(int size)
-    {
+    public Bitmap getGravitar(int size) {
         final String baseUrl = "http://www.gravatar.com/avatar/";
         final String processedAddress = getEmail();
 
         final String hashCode = getEmailMD5();
-        final String url = baseUrl + hashCode+"?s=" + size + "&d=blank";
+        final String url = baseUrl + hashCode + "?s=" + size + "&d=blank";
 
         HttpURLConnection httpURLConnection = null;
         try {
@@ -101,8 +103,13 @@ public class Player {
         return null;
     }
 
-    public void setIsIt(boolean isIt) {
-        this.isIt = isIt;
+    @Override
+    public Bitmap renderBitmap(int sizePX) {
+        return getGravitar(sizePX);
     }
 
+    @Override
+    public String getUniqueImageId() {
+        return getEmail();
+    }
 }

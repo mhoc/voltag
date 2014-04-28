@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         setContentView(R.layout.activity_main);
         new Thread(new Runnable() {
             public void run() {
-                PushService.setDefaultPushCallback(getApplicationContext(),MainActivity.class);
+                PushService.setDefaultPushCallback(getApplicationContext(), MainActivity.class);
                 Parse.setLogLevel(Parse.LOG_LEVEL_VERBOSE);
 
             }
@@ -83,9 +83,9 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         Button button = (Button) this.findViewById(R.id.btn_beginButton);
         button.setOnClickListener(this);
         String gameId;
-        SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME,0);
-        gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
-        if(!(gameId.equals(""))){
+        SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+        gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+        if (!(gameId.equals(""))) {
             closeSplash();
             getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
         }
@@ -107,15 +107,14 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     public void onClick(View view) {
 
-        SharedPreferences settings = getSharedPreferences(SHARED_PREFS_NAME,0);
-        boolean isRegistered = settings.getBoolean(PREF_ISREGISTERED,false);
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFS_NAME, 0);
+        boolean isRegistered = settings.getBoolean(PREF_ISREGISTERED, false);
 
         closeSplash();
 
         if (!isRegistered) {
             getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
-        }
-        else {
+        } else {
             getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
         }
 
@@ -128,7 +127,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -173,7 +172,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                 .setTitle(R.string.dialog_title);
 
         // Set a positive button to dismiss
-        builder.setPositiveButton( android.R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
             }
@@ -186,24 +185,22 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
         SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-        Boolean isIt = settings.getBoolean(MainActivity.PREF_ISIT,false);
-        if(isIt) {
+        Boolean isIt = settings.getBoolean(MainActivity.PREF_ISIT, false);
+        if (isIt) {
             String text = ("it");
             Log.d("debug", "sendingNFC You are it.");
             NdefMessage msg = new NdefMessage(
-                    new NdefRecord[]{ createMime(
+                    new NdefRecord[]{createMime(
                             "application/edu.purdue.voltag", text.getBytes()),
                             NdefRecord.createApplicationRecord("edu.purdue.voltag")
                     }
             );
-      
+
             SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(MainActivity.PREF_ISIT,false);
+            editor.putBoolean(MainActivity.PREF_ISIT, false);
             editor.commit();
             return msg;
-        }
-
-        else{
+        } else {
             String text = ("ignore");
             Log.d("debug", "sendingNFC ignore.");
             NdefMessage msg = new NdefMessage(
@@ -223,6 +220,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             return msg;
         }
 
+
     }
 
     @Override
@@ -231,9 +229,11 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         setIntent(intent);
     }
 
-    /** Parses the NDEF Message from the intent and prints to the TextView */
+    /**
+     * Parses the NDEF Message from the intent and prints to the TextView
+     */
     public void processIntent(Intent intent) {
-        Log.d("debug","processing sending that I am now it to server");
+        Log.d("debug", "processing sending that I am now it to server");
         Toast.makeText(this, "You are it!", Toast.LENGTH_LONG).show();
         VoltagDB db = VoltagDB.getDB(this);
         Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
@@ -241,10 +241,12 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         // only one message sent during the beam
         NdefMessage msg = (NdefMessage) rawMsgs[0];
         String message = new String(msg.getRecords()[0].getPayload());
-        Log.d("debug","message="+message);
+        Log.d("debug", "message=" + message);
         if (message.equals("it")) {
+            Log.d("debug", "is tagged");
             TagPlayerTask task = new TagPlayerTask(this);
             task.setListener(new OnPlayerTaggedListener() {
+                @Override
                 public void onPlayerTagged() {
                     SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
                     SharedPreferences.Editor editor = settings.edit();
@@ -260,8 +262,9 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                 }
             });
             task.execute();
-        }
 
+        }
+        // record 0 contains the MIME type, record 1 is the AAR, if present
     }
 
 }
