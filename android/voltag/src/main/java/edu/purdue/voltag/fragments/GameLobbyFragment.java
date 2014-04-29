@@ -248,7 +248,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
 
         // Get the player's bitmap
         final Player it = getWhoIsIt(players);
-        final Bitmap b = it.getGravitar(MainActivity.IT_SIZE);
+        final Bitmap b = it.getGravitar((int) getActivity().getResources().getDimension(R.dimen.itSize));
 
         // Post to UI
         handler.post(new Runnable() {

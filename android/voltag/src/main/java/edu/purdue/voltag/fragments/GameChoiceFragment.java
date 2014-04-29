@@ -2,14 +2,20 @@ package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
+import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
+import edu.purdue.voltag.data.Player;
 
 /*
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -67,11 +73,31 @@ public class GameChoiceFragment extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_game_choice, container, false);
+        final View v = inflater.inflate(R.layout.fragment_game_choice, container, false);
         newGameButton = (Button) v.findViewById(R.id.btn_new_game);
         exisitngGameButton = (Button) v.findViewById(R.id.btn_existing_game);
         newGameButton.setOnClickListener(this);
         exisitngGameButton.setOnClickListener(this);
+
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+        String email = settings.getString(MainActivity.PREF_USER_EMAIL, "");
+        String name = settings.getString(MainActivity.PREF_USER_NAME, "");
+        Player p = new Player(null, null, name, email, false);
+        AsyncTask<Player, Void, Bitmap> loadPlayerTask = new AsyncTask<Player, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(Player... params) {
+                return params[0].getGravitar(MainActivity.IT_SIZE);
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap img)
+            {
+                ImageView face = (ImageView) v.findViewById(R.id.userFace);
+                face.setImageBitmap(img);
+            }
+        };
+        loadPlayerTask.execute(p);
+
         return v;
     }
 

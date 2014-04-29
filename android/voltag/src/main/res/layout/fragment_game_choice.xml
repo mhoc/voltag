@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:text="Join existing game"
         android:id="@+id/btn_existing_game"
+        android:layout_below="@+id/btn_new_game"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
@@ -28,7 +29,16 @@
         android:layout_height="wrap_content"
         android:text="Create new game"
         android:id="@+id/btn_new_game"
-        android:layout_above="@+id/btn_existing_game"
+        android:layout_below="@+id/userFace"
         android:layout_marginBottom="10dp"
         android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/itSize"
+        android:id="@+id/userFace"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"/>
 </RelativeLayout>
