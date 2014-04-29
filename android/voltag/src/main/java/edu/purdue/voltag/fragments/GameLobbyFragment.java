@@ -129,7 +129,6 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
     public boolean onOptionsItemSelected(MenuItem item) {
 
         final SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-        final VoltagDB db = VoltagDB.getDB(getActivity());
 
         int id = item.getItemId();
         switch (id) {
@@ -142,27 +141,24 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
 
                 String nameA = prefs.getString(MainActivity.PREF_USER_NAME, "");
                 ParsePush pushA = new ParsePush();
-                pushA.setChannel(prefs.getString("a"+MainActivity.PREF_CURRENT_GAME_ID, ""));
+                pushA.setChannel(prefs.getString("a" + MainActivity.PREF_CURRENT_GAME_ID, ""));
                 pushA.setMessage(nameA + " has left the game");
-                Activity a = getActivity();
                 pushA.sendInBackground(new SendCallback() {
                     @Override
                     public void done(ParseException e) {
-                        PushService.unsubscribe(getActivity(), prefs.getString("a"+MainActivity.PREF_CURRENT_GAME_ID, ""));
+                        PushService.unsubscribe(getActivity(), prefs.getString("a" + MainActivity.PREF_CURRENT_GAME_ID, ""));
                     }
                 });
-                getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
+                getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameChoiceFragment()).commit();
 
                 prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, "").commit();
-
                 return true;
 
             case R.id.exit_game:
 
-                final SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-                String name = _settings.getString(MainActivity.PREF_USER_NAME, "");
+                String name = prefs.getString(MainActivity.PREF_USER_NAME, "");
                 ParsePush push = new ParsePush();
-                push.setChannel("a"+_settings.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+                push.setChannel("a"+prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
                 push.setMessage(name + " has left the game");
                 final Activity aA = getActivity();
 
@@ -174,10 +170,10 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
                         PushService.unsubscribe(aA, "a"+gameID);
                     }
                 });
-                getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
+                getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameChoiceFragment()).commit();
                 new LeaveGameTask(getActivity()).execute();
 
-                SharedPreferences.Editor editor = _settings.edit();
+                SharedPreferences.Editor editor = prefs.edit();
                 editor.putString(MainActivity.PREF_CURRENT_GAME_ID, "");
                 editor.commit();
 
@@ -185,8 +181,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
 
             case R.id.share:
                 String gameId = null;
-                SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-                gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+                gameId = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
 
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");

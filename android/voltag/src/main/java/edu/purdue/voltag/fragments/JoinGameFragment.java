@@ -97,7 +97,7 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
 
                         a.runOnUiThread(new Runnable() {
                             public void run() {
-                                getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
+                                getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameLobbyFragment()).commit();
                             }
                         });
                     }

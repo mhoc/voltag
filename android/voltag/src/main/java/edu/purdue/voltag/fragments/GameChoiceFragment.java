@@ -95,10 +95,10 @@ public class GameChoiceFragment extends Fragment implements View.OnClickListener
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_new_game:
-                getFragmentManager().beginTransaction().addToBackStack("CreateGameFragment").replace(android.R.id.content, new CreateGameFragment()).commit();
+                getFragmentManager().beginTransaction().addToBackStack("CreateGameFragment").setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new CreateGameFragment()).commit();
                 break;
             case R.id.btn_existing_game:
-                getFragmentManager().beginTransaction().addToBackStack("JoinGameFragment").replace(android.R.id.content, new JoinGameFragment()).commit();
+                getFragmentManager().beginTransaction().addToBackStack("JoinGameFragment").setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new JoinGameFragment()).commit();
                 break;
         }
 

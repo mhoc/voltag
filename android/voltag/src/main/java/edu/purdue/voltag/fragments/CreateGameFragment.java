@@ -92,7 +92,7 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
+                getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameLobbyFragment()).commit();
             }
         });
         PushService.subscribe(getActivity(), "a"+g.getID(), MainActivity.class);
