@@ -95,7 +95,7 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
             }
         });
-        PushService.subscribe(getActivity(), g.getID(), MainActivity.class);
+        PushService.subscribe(getActivity(), "a"+g.getID(), MainActivity.class);
         //getFragmentManager().popBackStack();
 
     }

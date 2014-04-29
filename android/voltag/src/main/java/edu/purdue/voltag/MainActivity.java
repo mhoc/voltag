@@ -259,6 +259,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                     String name = settings.getString(MainActivity.PREF_USER_NAME, "");
                     push.setMessage(name + " is now it!");
                     push.sendInBackground();
+
                 }
             });
             task.execute();

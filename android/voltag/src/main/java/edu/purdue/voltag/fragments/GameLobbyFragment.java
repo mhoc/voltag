@@ -142,13 +142,13 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
 
                 String nameA = prefs.getString(MainActivity.PREF_USER_NAME, "");
                 ParsePush pushA = new ParsePush();
-                pushA.setChannel(prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+                pushA.setChannel(prefs.getString("a"+MainActivity.PREF_CURRENT_GAME_ID, ""));
                 pushA.setMessage(nameA + " has left the game");
                 Activity a = getActivity();
                 pushA.sendInBackground(new SendCallback() {
                     @Override
                     public void done(ParseException e) {
-                        PushService.unsubscribe(getActivity(), prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+                        PushService.unsubscribe(getActivity(), prefs.getString("a"+MainActivity.PREF_CURRENT_GAME_ID, ""));
                     }
                 });
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
@@ -162,7 +162,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
                 final SharedPreferences _settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
                 String name = _settings.getString(MainActivity.PREF_USER_NAME, "");
                 ParsePush push = new ParsePush();
-                push.setChannel(_settings.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+                push.setChannel("a"+_settings.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
                 push.setMessage(name + " has left the game");
                 final Activity aA = getActivity();
 
@@ -171,7 +171,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
 
                 push.sendInBackground(new SendCallback() {
                     public void done(ParseException e) {
-                        PushService.unsubscribe(aA, gameID);
+                        PushService.unsubscribe(aA, "a"+gameID);
                     }
                 });
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();

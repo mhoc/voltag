@@ -90,7 +90,7 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
                     public void onJoinedGame(Game g) {
                         PushService.subscribe(getActivity(), gameName, MainActivity.class);
                         ParsePush push = new ParsePush();
-                        push.setChannel(settings.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+                        push.setChannel("a"+settings.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
                         String name = settings.getString(MainActivity.PREF_USER_NAME, "");
                         push.setMessage(name + " has joined the game");
                         push.sendInBackground();
