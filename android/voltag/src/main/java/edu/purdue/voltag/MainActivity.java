@@ -212,7 +212,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
      */
     public void processIntent(Intent intent) {
         Log.d("debug", "processing sending that I am now it to server");
-        Toast.makeText(this, "You are it!", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "You are it!", Toast.LENGTH_LONG).show();
         VoltagDB db = VoltagDB.getDB(this);
         Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
                 NfcAdapter.EXTRA_NDEF_MESSAGES);
@@ -231,7 +231,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                     editor.putBoolean(MainActivity.PREF_ISIT, true);
                     editor.commit();
                     ParsePush push = new ParsePush();
-                    String test = settings.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+                    String test = "a"+settings.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
                     Log.d("debug", "sending push to channels " + test);
                     push.setChannel(test);
                     String name = settings.getString(MainActivity.PREF_USER_NAME, "");
