@@ -88,7 +88,7 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
                 AddPlayerToGameTask task = new AddPlayerToGameTask(getActivity(), gameName);
                 task.setListener(new OnJoinedGameListener() {
                     public void onJoinedGame(Game g) {
-                        PushService.subscribe(getActivity(), gameName, MainActivity.class);
+                        PushService.subscribe(getActivity(), "a"+gameName, MainActivity.class);
                         ParsePush push = new ParsePush();
                         push.setChannel("a"+settings.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
                         String name = settings.getString(MainActivity.PREF_USER_NAME, "");
