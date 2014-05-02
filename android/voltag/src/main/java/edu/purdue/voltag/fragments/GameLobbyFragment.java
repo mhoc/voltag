@@ -172,7 +172,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
 
         // Alert other players that we've left the game
         ParsePush pushDrop = new ParsePush();
-        pushDrop.setChannel(prefs.getString("a" + MainActivity.PREF_CURRENT_GAME_ID, ""));
+        pushDrop.setChannel("a"+prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
         pushDrop.setMessage(prefs.getString(MainActivity.PREF_USER_NAME, "") + " has left the game.");
 
         // Send the push and unsubscribe them from push notifications
