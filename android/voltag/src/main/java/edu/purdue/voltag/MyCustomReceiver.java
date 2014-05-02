@@ -40,13 +40,10 @@ public class MyCustomReceiver extends BroadcastReceiver {
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(context)
                             .setSmallIcon(R.drawable.ic_launcher)
-                            .setContentText(intent.getStringExtra("alert"));
+                            .setContentText(intent.getExtras().getString("alert"));
 
             PendingIntent resultPendingIntent =
-                    PendingIntent.getActivity(
-                            context,
-                            0,
-                            i,
+                    PendingIntent.getActivity(context, 0, i,
                             PendingIntent.FLAG_UPDATE_CURRENT
                     );
 
