@@ -2,12 +2,9 @@ package edu.purdue.voltag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-<<<<<<< HEAD
 import android.content.BroadcastReceiver;
 import android.content.Context;
-=======
 import android.app.Fragment;
->>>>>>> 7c08edcb6fbeccf5860cb5633de8ccd03afe34b7
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -77,12 +74,9 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
             }
         }).start();
-<<<<<<< HEAD
         customReceiver = new MyCustomReceiver();
-=======
 
         // Set up the NFC adapter
->>>>>>> 7c08edcb6fbeccf5860cb5633de8ccd03afe34b7
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
             Toast.makeText(this, "NFC is not available", Toast.LENGTH_LONG).show();
@@ -121,12 +115,9 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     public void onResume() {
         super.onResume();
-<<<<<<< HEAD
 //        Log.d("debug-intent",getIntent().getAction());
         LocalBroadcastManager.getInstance(this).registerReceiver(customReceiver, new IntentFilter("edu.purdue.voltag.PARSE_IT_CHANGE"));
         // Check to see that the Activity started due to an Android Beam
-=======
->>>>>>> 7c08edcb6fbeccf5860cb5633de8ccd03afe34b7
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processIntent(getIntent());
         }
