@@ -162,42 +162,34 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
-        SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-        Boolean isIt = settings.getBoolean(MainActivity.PREF_ISIT, false);
+
+        // Get the preferences and whether they are it
+        SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+        Boolean isIt = prefs.getBoolean(MainActivity.PREF_ISIT, false);
+
+        // If they are it, we are tagging the other person. Send the message "it" to the other person.
         if (isIt) {
             String text = ("it");
-            Log.d("debug", "sendingNFC You are it.");
             NdefMessage msg = new NdefMessage(
                     new NdefRecord[]{createMime(
                             "application/edu.purdue.voltag", text.getBytes()),
                             NdefRecord.createApplicationRecord("edu.purdue.voltag")
                     }
             );
-
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(MainActivity.PREF_ISIT, false);
-            editor.commit();
             return msg;
+
+        // Otherwise we just send ignore.
         } else {
             String text = ("ignore");
-            Log.d("debug", "sendingNFC ignore.");
             NdefMessage msg = new NdefMessage(
                     new NdefRecord[]{createMime(
                             "application/edu.purdue.voltag", text.getBytes()),
-                            /**
-                             * The Android Application Record (AAR) is commented out. When a device
-                             * receives a push with an AAR in it, the application specified in the AAR
-                             * is guaranteed to run. The AAR overrides the tag dispatch system.
-                             * You can add it back in to guarantee that this
-                             * activity starts when receiving a beamed message. For now, this code
-                             * uses the tag dispatch system.
-                             */
                             NdefRecord.createApplicationRecord("edu.purdue.voltag")
                     }
             );
             return msg;
-        }
 
+        }
 
     }
 
@@ -207,34 +199,31 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         setIntent(intent);
     }
 
-    /**
-     * Parses the NDEF Message from the intent and prints to the TextView
-     */
     public void processIntent(Intent intent) {
-        Log.d("debug", "processing sending that I am now it to server");
-        //Toast.makeText(this, "You are it!", Toast.LENGTH_LONG).show();
-        VoltagDB db = VoltagDB.getDB(this);
-        Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
-                NfcAdapter.EXTRA_NDEF_MESSAGES);
-        // only one message sent during the beam
+
+        // Get the shared preferences
+        final SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+
+        // Get the message from the intent
+        Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
         NdefMessage msg = (NdefMessage) rawMsgs[0];
         String message = new String(msg.getRecords()[0].getPayload());
-        Log.d("debug", "message=" + message);
+        Log.d(MainActivity.LOG_TAG, "NFC tap registered. Message = " + message);
+
+        // If the message contains it, we are on the tagee's phone who just got tagged
         if (message.equals("it")) {
-            Log.d("debug", "is tagged");
+
+            // Tag the player on parse
             TagPlayerTask task = new TagPlayerTask(this);
             task.setListener(new OnPlayerTaggedListener() {
-                @Override
                 public void onPlayerTagged() {
-                    SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putBoolean(MainActivity.PREF_ISIT, true);
-                    editor.commit();
+
+                    // Push to the channel that the user has been tagged
                     ParsePush push = new ParsePush();
-                    String test = "a"+settings.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
-                    Log.d("debug", "sending push to channels " + test);
-                    push.setChannel(test);
-                    String name = settings.getString(MainActivity.PREF_USER_NAME, "");
+                    push.setChannel("a" + prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+
+                    // Get the user's name and include it
+                    String name = prefs.getString(MainActivity.PREF_USER_NAME, "");
                     push.setMessage(name + " is now it!");
                     push.sendInBackground();
 
@@ -243,7 +232,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             task.execute();
 
         }
-        // record 0 contains the MIME type, record 1 is the AAR, if present
+
     }
 
 }
