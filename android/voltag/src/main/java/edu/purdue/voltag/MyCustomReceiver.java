@@ -43,10 +43,7 @@ public class MyCustomReceiver extends BroadcastReceiver {
                             .setContentText(intent.getExtras().getString("alert"));
 
             PendingIntent resultPendingIntent =
-                    PendingIntent.getActivity(
-                            context,
-                            0,
-                            i,
+                    PendingIntent.getActivity(context, 0, i,
                             PendingIntent.FLAG_UPDATE_CURRENT
                     );
 
