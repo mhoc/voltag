@@ -61,9 +61,6 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
     private Player it;
     private TextView tv_it;
 
-    public GameLobbyFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,19 +109,6 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
         task.execute();
     }
 
-    public Player getWhoIsIt(List<Player> list) {
-        Log.d("debug","getWhoIsIt called");
-        Player it = null;
-        for (Player p : list) {
-            if (p.getIsIt()) {
-                Log.d("tylor", "It: " + p.getUserName());
-                it = p;
-            }
-            Log.d("tylor", p.getUserName());
-        }
-        return it;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -134,48 +118,31 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
         switch (id) {
 
             case R.id.drop_registration:
+
+                // Leave the game
+                leaveGame();
+
+                // Delete the player from parse
                 new DeletePlayerTask(getActivity()).execute();
-                prefs.edit().putString(MainActivity.PREF_USER_ID, "").commit();
-                prefs.edit().putString(MainActivity.PREF_USER_EMAIL, "").commit();
-                prefs.edit().putBoolean(MainActivity.PREF_ISREGISTERED, false).commit();
 
-                String nameA = prefs.getString(MainActivity.PREF_USER_NAME, "");
-                ParsePush pushA = new ParsePush();
-                pushA.setChannel(prefs.getString("a" + MainActivity.PREF_CURRENT_GAME_ID, ""));
-                pushA.setMessage(nameA + " has left the game");
-                pushA.sendInBackground(new SendCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        PushService.unsubscribe(getActivity(), prefs.getString("a" + MainActivity.PREF_CURRENT_GAME_ID, ""));
-                    }
-                });
-                getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameChoiceFragment()).commit();
+                // Switch the fragment back to the registration fragment
+                getFragmentManager().beginTransaction()
+                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                        .replace(android.R.id.content, new RegistrationFragment())
+                        .commit();
 
-                prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, "").commit();
                 return true;
 
             case R.id.exit_game:
 
-                String name = prefs.getString(MainActivity.PREF_USER_NAME, "");
-                ParsePush push = new ParsePush();
-                push.setChannel("a"+prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
-                push.setMessage(name + " has left the game");
-                final Activity aA = getActivity();
+                // Leave the game
+                leaveGame();
 
-                // Save the game ID so we can remove it later
-                final String gameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
-
-                push.sendInBackground(new SendCallback() {
-                    public void done(ParseException e) {
-                        PushService.unsubscribe(aA, "a"+gameID);
-                    }
-                });
-                getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameChoiceFragment()).commit();
-                new LeaveGameTask(getActivity()).execute();
-
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(MainActivity.PREF_CURRENT_GAME_ID, "");
-                editor.commit();
+                // Switch fragment to game choosing fragming
+                getFragmentManager().beginTransaction()
+                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                        .replace(android.R.id.content, new GameChoiceFragment())
+                        .commit();
 
                 return true;
 
@@ -196,6 +163,29 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
                 return false;
 
         }
+    }
+
+    private void leaveGame() {
+
+        // Get preferences
+        final SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+
+        // Alert other players that we've left the game
+        ParsePush pushDrop = new ParsePush();
+        pushDrop.setChannel(prefs.getString("a" + MainActivity.PREF_CURRENT_GAME_ID, ""));
+        pushDrop.setMessage(prefs.getString(MainActivity.PREF_USER_NAME, "") + " has left the game.");
+
+        // Send the push and unsubscribe them from push notifications
+        pushDrop.sendInBackground(new SendCallback() {
+            @Override
+            public void done(ParseException e) {
+                PushService.unsubscribe(getActivity(), prefs.getString("a" + MainActivity.PREF_CURRENT_GAME_ID, ""));
+            }
+        });
+
+        // Execute task
+        new LeaveGameTask(getActivity()).execute();
+
     }
 
     public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
@@ -228,6 +218,19 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
 
     public void clearCache() {
         mMemoryCache.evictAll();
+    }
+
+    public Player getWhoIsIt(List<Player> list) {
+        Log.d("debug","getWhoIsIt called");
+        Player it = null;
+        for (Player p : list) {
+            if (p.getIsIt()) {
+                Log.d("tylor", "It: " + p.getUserName());
+                it = p;
+            }
+            Log.d("tylor", p.getUserName());
+        }
+        return it;
     }
 
     @Override
