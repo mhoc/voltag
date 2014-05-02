@@ -110,7 +110,9 @@ public class TagPlayerTask extends AsyncTask<Void, Void, Void> {
             e.printStackTrace();
             return null;
         }
-
+        // Michael wanted this comment, so setting the player to it, there ya Michael
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putBoolean(MainActivity.PREF_ISIT,true).commit();
         // Alert the listener
         if (listener != null) {
             listener.onPlayerTagged();

@@ -181,7 +181,6 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
-
         // Get the preferences and whether they are it
         SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         Boolean isIt = prefs.getBoolean(MainActivity.PREF_ISIT, false);
@@ -189,6 +188,10 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         // If they are it, we are tagging the other person. Send the message "it" to the other person.
         if (isIt) {
             String text = ("it");
+            Log.d("ndefMessage","sending it");
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean(MainActivity.PREF_ISIT,false);
+            editor.commit();
             NdefMessage msg = new NdefMessage(
                     new NdefRecord[]{createMime(
                             "application/edu.purdue.voltag", text.getBytes()),
@@ -200,6 +203,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         // Otherwise we just send ignore.
         } else {
             String text = ("ignore");
+            Log.d("ndefMessage", "sending ignore");
             NdefMessage msg = new NdefMessage(
                     new NdefRecord[]{createMime(
                             "application/edu.purdue.voltag", text.getBytes()),
@@ -246,7 +250,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                     JSONObject data = null;
                     String name = prefs.getString(MainActivity.PREF_USER_NAME, "")+" is it ";
                     try {
-                         data = new JSONObject("{\"action\": \"com.example.UPDATE_STATUS\",\"alert\":\"+name+\"}");
+                         data = new JSONObject("{\"action\": \"com.example.UPDATE_STATUS\",\"alert\":\""+name+"\"}");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -267,6 +271,10 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             });
             task.execute();
 
+        } else  if(!(message.equals("ignore"))){
+            Log.d("settings","setting is it to false");
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean(MainActivity.PREF_ISIT,false);
         }
 
     }
