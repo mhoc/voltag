@@ -2,8 +2,11 @@ package edu.purdue.voltag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -13,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +27,9 @@ import android.widget.Toast;
 import com.parse.Parse;
 import com.parse.ParsePush;
 import com.parse.PushService;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.fragments.GameChoiceFragment;
@@ -49,6 +56,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     public static int IT_SIZE;
 
     private NfcAdapter mNfcAdapter;
+    private MyCustomReceiver customReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +69,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
             }
         }).start();
-
+        customReceiver = new MyCustomReceiver();
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
             Toast.makeText(this, "NFC is not available", Toast.LENGTH_LONG).show();
@@ -97,7 +105,8 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     public void onResume() {
         super.onResume();
-        //Log.d("debug-intent",getIntent().getAction());
+//        Log.d("debug-intent",getIntent().getAction());
+        LocalBroadcastManager.getInstance(this).registerReceiver(customReceiver, new IntentFilter("edu.purdue.voltag.PARSE_IT_CHANGE"));
         // Check to see that the Activity started due to an Android Beam
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processIntent(getIntent());
@@ -219,6 +228,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
     @Override
     public void onNewIntent(Intent intent) {
+        Log.d("new Intent", intent.getAction());
         // onResume gets called after this to handle the intent
         setIntent(intent);
     }
@@ -249,15 +259,22 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                     ParsePush push = new ParsePush();
                     String test = "a"+settings.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
                     Log.d("debug", "sending push to channels " + test);
+                    JSONObject data = null;
+                    try {
+                         data = new JSONObject("{\"action\": \"com.example.UPDATE_STATUS\"}");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     push.setChannel(test);
                     String name = settings.getString(MainActivity.PREF_USER_NAME, "");
                     push.setMessage(name + " is now it!");
+                    push.setData(data);
                     push.sendInBackground();
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameLobbyFragment()).commit();
+                            //getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameLobbyFragment()).commit();
                         }
                     });
 
@@ -269,5 +286,6 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         }
         // record 0 contains the MIME type, record 1 is the AAR, if present
     }
+
 
 }
