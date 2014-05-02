@@ -2,9 +2,12 @@ package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,31 +37,22 @@ import edu.purdue.voltag.tasks.AddPlayerToGameTask;
  *
  */
 public class JoinGameFragment extends Fragment implements View.OnClickListener {
+
     private Button joinGameButton;
     private EditText gameNameEditText;
-    private VoltagDB db;
-    private NfcAdapter mNfcAdapter;
-
-    public JoinGameFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        db = VoltagDB.getDB(getActivity());
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_join_game, container, false);
+
+        // Set up widgets
         joinGameButton = (Button) v.findViewById(R.id.joingame_bu_join);
         gameNameEditText = (EditText) v.findViewById(R.id.joingame_et_lobbyid);
         joinGameButton.setOnClickListener(this);
 
-
+        // Set a listener for when the user clicks the enter button to submit.
         gameNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -68,6 +62,7 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
                 return false;
             }
         });
+
         return v;
     }
 
@@ -77,31 +72,44 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
 
             case R.id.joingame_bu_join:
 
-                final String gameName = gameNameEditText.getText().toString();
-                final SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putString(MainActivity.PREF_CURRENT_GAME_ID, gameName);
-                editor.commit();
+                // Create the preferences
+                final SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
 
+                // Get the game name the user entered in
+                final String gameID = gameNameEditText.getText().toString();
 
-                final Activity a = getActivity();
-                AddPlayerToGameTask task = new AddPlayerToGameTask(getActivity(), gameName);
+                // Create an add player task
+                AddPlayerToGameTask task = new AddPlayerToGameTask(getActivity(), gameID);
+
+                // Set the listener by saving the context of the click
+                final Context c = getActivity();
                 task.setListener(new OnJoinedGameListener() {
                     public void onJoinedGame(Game g) {
-                        PushService.subscribe(getActivity(), "a"+gameName, MainActivity.class);
+
+                        // Subscribe the user to the channel by this name and create the push
+                        PushService.subscribe(c, "a" + gameID, MainActivity.class);
                         ParsePush push = new ParsePush();
-                        push.setChannel("a"+settings.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
-                        String name = settings.getString(MainActivity.PREF_USER_NAME, "");
+                        push.setChannel("a" + prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+
+                        // Get the user's name
+                        String name = prefs.getString(MainActivity.PREF_USER_NAME, "");
                         push.setMessage(name + " has joined the game");
                         push.sendInBackground();
 
-                        a.runOnUiThread(new Runnable() {
+                        // Execute a fragment transaction on the main thread
+                        Handler mainHandler = new Handler(Looper.getMainLooper());
+                        mainHandler.post(new Runnable() {
                             public void run() {
-                                getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameLobbyFragment()).commit();
+                                getFragmentManager().beginTransaction()
+                                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                                        .replace(android.R.id.content, new GameLobbyFragment())
+                                        .commit();
                             }
                         });
                     }
                 });
+
+                // Execute the task
                 task.execute();
 
                 break;
