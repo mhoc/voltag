@@ -179,7 +179,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
         pushDrop.sendInBackground(new SendCallback() {
             @Override
             public void done(ParseException e) {
-                PushService.unsubscribe(getActivity(), prefs.getString("a" + MainActivity.PREF_CURRENT_GAME_ID, ""));
+                PushService.unsubscribe(getActivity(), "a"+prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
             }
         });
 
