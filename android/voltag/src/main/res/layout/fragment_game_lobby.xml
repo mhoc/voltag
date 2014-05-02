@@ -28,9 +28,21 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/imageView"
         android:paddingBottom="10dp"
-        android:text="ImItYeezy3000"
+        android:text="ReVolter"
         android:gravity="center_horizontal"
         android:textSize="25sp"
+        />
+
+    <TextView
+        android:id="@+id/rebels"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_below="@id/gamelobby_tv_whosit"
+        android:textSize="30sp"
+        android:paddingBottom="20dp"
+        android:text="Resistance"
+        android:textColor="@android:color/holo_red_dark"
         />
 
     <ListView
@@ -38,6 +50,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/gamelobby_tv_whosit" />
+        android:layout_below="@+id/rebels" />
 
 </RelativeLayout>
