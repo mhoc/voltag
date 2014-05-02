@@ -10,6 +10,8 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
@@ -251,6 +253,14 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                     String name = settings.getString(MainActivity.PREF_USER_NAME, "");
                     push.setMessage(name + " is now it!");
                     push.sendInBackground();
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameLobbyFragment()).commit();
+                        }
+                    });
+
 
                 }
             });
