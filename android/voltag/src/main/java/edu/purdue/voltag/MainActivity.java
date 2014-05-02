@@ -44,15 +44,19 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     public static final String PREF_USER_EMAIL = "user_email";
     public static final String PREF_USER_NAME = "user_name";
     public static final String PREF_ISREGISTERED = "is_registered";
-    public static int ITEM_SIZE;
-    public static int IT_SIZE;
+    public static int PROFILE_PICTURE_SMALL_SIZE;
+    public static int PROFILE_PICTURE_LARGE_SIZE;
 
     private NfcAdapter mNfcAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Inflate the content view
         setContentView(R.layout.activity_main);
+
+        // Spawn a thread to set some parse variables.
         new Thread(new Runnable() {
             public void run() {
                 PushService.setDefaultPushCallback(getApplicationContext(), MainActivity.class);
@@ -61,34 +65,38 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             }
         }).start();
 
+        // Set up the NFC adapter
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
             Toast.makeText(this, "NFC is not available", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
-
-        Button buBegin = (Button) findViewById(R.id.btn_beginButton);
-        buBegin.setOnClickListener(this);
-
         mNfcAdapter.setNdefPushMessageCallback(this, this);
 
-        IT_SIZE = (int) getResources().getDimension(R.dimen.itSize);
-        ITEM_SIZE = (int) getResources().getDimension(R.dimen.itemSize);
+        // Get the dimensions for the picture
+        PROFILE_PICTURE_LARGE_SIZE = (int) getResources().getDimension(R.dimen.itSize);
+        PROFILE_PICTURE_SMALL_SIZE = (int) getResources().getDimension(R.dimen.itemSize);
     }
 
     @Override
     public void onStart() {
-
         super.onStart();
+
+        // Set up the button
         Button button = (Button) this.findViewById(R.id.btn_beginButton);
         button.setOnClickListener(this);
-        String gameId;
-        SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-        gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+
+        // Get the current game ID
+        SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+        String gameId = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+
         if (!(gameId.equals(""))) {
             closeSplash();
-            getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameLobbyFragment()).commit();
+            getFragmentManager().beginTransaction()
+                    .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                    .replace(android.R.id.content, new GameLobbyFragment())
+                    .commit();
         }
 
     }
@@ -96,12 +104,9 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     public void onResume() {
         super.onResume();
-        //Log.d("debug-intent",getIntent().getAction());
-        // Check to see that the Activity started due to an Android Beam
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processIntent(getIntent());
         }
-
     }
 
 
