@@ -244,13 +244,13 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                     String test = "a"+prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
                     Log.d("debug", "sending push to channels " + test);
                     JSONObject data = null;
+                    String name = prefs.getString(MainActivity.PREF_USER_NAME, "")+" is it ";
                     try {
-                         data = new JSONObject("{\"action\": \"com.example.UPDATE_STATUS\"}");
+                         data = new JSONObject("{\"action\": \"com.example.UPDATE_STATUS\",\"alert\":\"+name+\"}");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     push.setChannel(test);
-                    String name = prefs.getString(MainActivity.PREF_USER_NAME, "");
                     push.setMessage(name + " is now it!");
                     push.setData(data);
                     push.sendInBackground();
