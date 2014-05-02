@@ -47,7 +47,7 @@ public class PlayerListAdapter extends ArrayAdapter<Player> {
 
         ImageView iv = (ImageView) v.findViewById(R.id.face);
 
-        CachedAsyncBitmapLoader.loadBitmapAsCachedAsyncTask(getItem(position), iv, host, MainActivity.ITEM_SIZE);
+        CachedAsyncBitmapLoader.loadBitmapAsCachedAsyncTask(getItem(position), iv, host, MainActivity.PROFILE_PICTURE_SMALL_SIZE);
 
         return v;
     }

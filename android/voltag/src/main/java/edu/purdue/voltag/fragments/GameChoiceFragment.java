@@ -86,7 +86,7 @@ public class GameChoiceFragment extends Fragment implements View.OnClickListener
         AsyncTask<Player, Void, Bitmap> loadPlayerTask = new AsyncTask<Player, Void, Bitmap>() {
             @Override
             protected Bitmap doInBackground(Player... params) {
-                return params[0].getGravitar(MainActivity.IT_SIZE);
+                return params[0].getGravitar(MainActivity.PROFILE_PICTURE_LARGE_SIZE);
             }
 
             @Override
