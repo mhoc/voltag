@@ -2,6 +2,7 @@ package edu.purdue.voltag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -107,15 +108,28 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     public void onClick(View view) {
 
+        // Get the shared preferences and whether they are registered
         SharedPreferences settings = getSharedPreferences(SHARED_PREFS_NAME, 0);
         boolean isRegistered = settings.getBoolean(PREF_ISREGISTERED, false);
 
-        closeSplash();
+        switch (view.getId()) {
 
-        if (!isRegistered) {
-            getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new RegistrationFragment()).commit();
-        } else {
-            getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameChoiceFragment()).commit();
+            case R.id.btn_beginButton:
+
+                // Close the splash screen
+                closeSplash();
+
+                // Choose which fragment to inflate
+                Fragment toInflate = isRegistered ? new GameChoiceFragment() : new RegistrationFragment();
+
+                // Inflate the fragment
+                getFragmentManager().beginTransaction()
+                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                        .replace(android.R.id.content, toInflate)
+                        .commit();
+
+                break;
+
         }
 
     }
@@ -123,34 +137,6 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     private void closeSplash() {
         View v = findViewById(R.id.splash);
         v.setVisibility(View.GONE);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-
-            case R.id.drop_registration_main:
-
-                SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-                VoltagDB db = VoltagDB.getDB(this);
-
-                new DeletePlayerTask(this).execute();
-
-                getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new RegistrationFragment()).commit();
-
-                break;
-
-            case R.id.action_settings:
-                return true;
-
-            case R.id.action_about:
-                showAboutDialog();
-                return true;
-
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void showAboutDialog() {
