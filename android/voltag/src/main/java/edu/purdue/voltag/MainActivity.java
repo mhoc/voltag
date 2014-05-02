@@ -87,7 +87,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
         if (!(gameId.equals(""))) {
             closeSplash();
-            getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
+            getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameLobbyFragment()).commit();
         }
 
     }
@@ -113,9 +113,9 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         closeSplash();
 
         if (!isRegistered) {
-            getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
+            getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new RegistrationFragment()).commit();
         } else {
-            getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
+            getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameChoiceFragment()).commit();
         }
 
     }
@@ -145,7 +145,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
                 new DeletePlayerTask(this).execute();
 
-                getFragmentManager().beginTransaction().replace(android.R.id.content, new RegistrationFragment()).commit();
+                getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new RegistrationFragment()).commit();
 
                 break;
 

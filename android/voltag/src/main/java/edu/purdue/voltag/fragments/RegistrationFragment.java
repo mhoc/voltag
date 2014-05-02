@@ -2,12 +2,14 @@ package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -108,9 +110,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     @Override
     public void onClick(View view) {
 
-        /*InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
                 Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(nameBox.getWindowToken(), 0);*/
+        imm.hideSoftInputFromWindow(nameBox.getWindowToken(), 0);
+
 
         String name = emailBox.getText().toString();
         String email = nameBox.getText().toString();
@@ -128,7 +131,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean(MainActivity.PREF_ISREGISTERED, true).commit();
         editor.putString(MainActivity.PREF_USER_NAME, name).commit();
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new GameChoiceFragment()).commit();
+        getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameChoiceFragment()).commit();
 
     }
 

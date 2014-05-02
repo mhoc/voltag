@@ -87,7 +87,7 @@ public class Player implements ImageRenderer {
         final String processedAddress = getEmail();
 
         final String hashCode = getEmailMD5();
-        final String url = baseUrl + hashCode + "?s=" + size + "&d=blank";
+        final String url = baseUrl + hashCode + "?s=" + size;
 
         HttpURLConnection httpURLConnection = null;
         try {
