@@ -2,8 +2,12 @@ package edu.purdue.voltag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+<<<<<<< HEAD
 import android.content.BroadcastReceiver;
 import android.content.Context;
+=======
+import android.app.Fragment;
+>>>>>>> 7c08edcb6fbeccf5860cb5633de8ccd03afe34b7
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -52,8 +56,8 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     public static final String PREF_USER_EMAIL = "user_email";
     public static final String PREF_USER_NAME = "user_name";
     public static final String PREF_ISREGISTERED = "is_registered";
-    public static int ITEM_SIZE;
-    public static int IT_SIZE;
+    public static int PROFILE_PICTURE_SMALL_SIZE;
+    public static int PROFILE_PICTURE_LARGE_SIZE;
 
     private NfcAdapter mNfcAdapter;
     private MyCustomReceiver customReceiver;
@@ -61,7 +65,11 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Inflate the content view
         setContentView(R.layout.activity_main);
+
+        // Spawn a thread to set some parse variables.
         new Thread(new Runnable() {
             public void run() {
                 PushService.setDefaultPushCallback(getApplicationContext(), MainActivity.class);
@@ -69,35 +77,43 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
             }
         }).start();
+<<<<<<< HEAD
         customReceiver = new MyCustomReceiver();
+=======
+
+        // Set up the NFC adapter
+>>>>>>> 7c08edcb6fbeccf5860cb5633de8ccd03afe34b7
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
             Toast.makeText(this, "NFC is not available", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
-
-        Button buBegin = (Button) findViewById(R.id.btn_beginButton);
-        buBegin.setOnClickListener(this);
-
         mNfcAdapter.setNdefPushMessageCallback(this, this);
 
-        IT_SIZE = (int) getResources().getDimension(R.dimen.itSize);
-        ITEM_SIZE = (int) getResources().getDimension(R.dimen.itemSize);
+        // Get the dimensions for the picture
+        PROFILE_PICTURE_LARGE_SIZE = (int) getResources().getDimension(R.dimen.itSize);
+        PROFILE_PICTURE_SMALL_SIZE = (int) getResources().getDimension(R.dimen.itemSize);
     }
 
     @Override
     public void onStart() {
-
         super.onStart();
+
+        // Set up the button
         Button button = (Button) this.findViewById(R.id.btn_beginButton);
         button.setOnClickListener(this);
-        String gameId;
-        SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-        gameId = settings.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+
+        // Get the current game ID
+        SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+        String gameId = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+
         if (!(gameId.equals(""))) {
             closeSplash();
-            getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameLobbyFragment()).commit();
+            getFragmentManager().beginTransaction()
+                    .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                    .replace(android.R.id.content, new GameLobbyFragment())
+                    .commit();
         }
 
     }
@@ -105,28 +121,43 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     @Override
     public void onResume() {
         super.onResume();
+<<<<<<< HEAD
 //        Log.d("debug-intent",getIntent().getAction());
         LocalBroadcastManager.getInstance(this).registerReceiver(customReceiver, new IntentFilter("edu.purdue.voltag.PARSE_IT_CHANGE"));
         // Check to see that the Activity started due to an Android Beam
+=======
+>>>>>>> 7c08edcb6fbeccf5860cb5633de8ccd03afe34b7
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processIntent(getIntent());
         }
-
     }
 
 
     @Override
     public void onClick(View view) {
 
+        // Get the shared preferences and whether they are registered
         SharedPreferences settings = getSharedPreferences(SHARED_PREFS_NAME, 0);
         boolean isRegistered = settings.getBoolean(PREF_ISREGISTERED, false);
 
-        closeSplash();
+        switch (view.getId()) {
 
-        if (!isRegistered) {
-            getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new RegistrationFragment()).commit();
-        } else {
-            getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameChoiceFragment()).commit();
+            case R.id.btn_beginButton:
+
+                // Close the splash screen
+                closeSplash();
+
+                // Choose which fragment to inflate
+                Fragment toInflate = isRegistered ? new GameChoiceFragment() : new RegistrationFragment();
+
+                // Inflate the fragment
+                getFragmentManager().beginTransaction()
+                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                        .replace(android.R.id.content, toInflate)
+                        .commit();
+
+                break;
+
         }
 
     }
@@ -134,34 +165,6 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     private void closeSplash() {
         View v = findViewById(R.id.splash);
         v.setVisibility(View.GONE);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-
-            case R.id.drop_registration_main:
-
-                SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-                VoltagDB db = VoltagDB.getDB(this);
-
-                new DeletePlayerTask(this).execute();
-
-                getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new RegistrationFragment()).commit();
-
-                break;
-
-            case R.id.action_settings:
-                return true;
-
-            case R.id.action_about:
-                showAboutDialog();
-                return true;
-
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void showAboutDialog() {
@@ -187,42 +190,34 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
-        SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-        Boolean isIt = settings.getBoolean(MainActivity.PREF_ISIT, false);
+
+        // Get the preferences and whether they are it
+        SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+        Boolean isIt = prefs.getBoolean(MainActivity.PREF_ISIT, false);
+
+        // If they are it, we are tagging the other person. Send the message "it" to the other person.
         if (isIt) {
             String text = ("it");
-            Log.d("debug", "sendingNFC You are it.");
             NdefMessage msg = new NdefMessage(
                     new NdefRecord[]{createMime(
                             "application/edu.purdue.voltag", text.getBytes()),
                             NdefRecord.createApplicationRecord("edu.purdue.voltag")
                     }
             );
-
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(MainActivity.PREF_ISIT, false);
-            editor.commit();
             return msg;
+
+        // Otherwise we just send ignore.
         } else {
             String text = ("ignore");
-            Log.d("debug", "sendingNFC ignore.");
             NdefMessage msg = new NdefMessage(
                     new NdefRecord[]{createMime(
                             "application/edu.purdue.voltag", text.getBytes()),
-                            /**
-                             * The Android Application Record (AAR) is commented out. When a device
-                             * receives a push with an AAR in it, the application specified in the AAR
-                             * is guaranteed to run. The AAR overrides the tag dispatch system.
-                             * You can add it back in to guarantee that this
-                             * activity starts when receiving a beamed message. For now, this code
-                             * uses the tag dispatch system.
-                             */
                             NdefRecord.createApplicationRecord("edu.purdue.voltag")
                     }
             );
             return msg;
-        }
 
+        }
 
     }
 
@@ -233,31 +228,29 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         setIntent(intent);
     }
 
-    /**
-     * Parses the NDEF Message from the intent and prints to the TextView
-     */
     public void processIntent(Intent intent) {
-        Log.d("debug", "processing sending that I am now it to server");
-        //Toast.makeText(this, "You are it!", Toast.LENGTH_LONG).show();
-        VoltagDB db = VoltagDB.getDB(this);
-        Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
-                NfcAdapter.EXTRA_NDEF_MESSAGES);
-        // only one message sent during the beam
+
+        // Get the shared preferences
+        final SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+
+        // Get the message from the intent
+        Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
         NdefMessage msg = (NdefMessage) rawMsgs[0];
         String message = new String(msg.getRecords()[0].getPayload());
-        Log.d("debug", "message=" + message);
+        Log.d(MainActivity.LOG_TAG, "NFC tap registered. Message = " + message);
+
+        // If the message contains it, we are on the tagee's phone who just got tagged
         if (message.equals("it")) {
-            Log.d("debug", "is tagged");
+
+            // Tag the player on parse
             TagPlayerTask task = new TagPlayerTask(this);
             task.setListener(new OnPlayerTaggedListener() {
-                @Override
                 public void onPlayerTagged() {
-                    SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putBoolean(MainActivity.PREF_ISIT, true);
-                    editor.commit();
+
+                    // Push to the channel that the user has been tagged
                     ParsePush push = new ParsePush();
-                    String test = "a"+settings.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+
+                    String test = "a"+prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
                     Log.d("debug", "sending push to channels " + test);
                     JSONObject data = null;
                     try {
@@ -266,7 +259,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                         e.printStackTrace();
                     }
                     push.setChannel(test);
-                    String name = settings.getString(MainActivity.PREF_USER_NAME, "");
+                    String name = prefs.getString(MainActivity.PREF_USER_NAME, "");
                     push.setMessage(name + " is now it!");
                     push.setData(data);
                     push.sendInBackground();
@@ -284,7 +277,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             task.execute();
 
         }
-        // record 0 contains the MIME type, record 1 is the AAR, if present
+
     }
 
 
