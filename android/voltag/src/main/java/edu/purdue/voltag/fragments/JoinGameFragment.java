@@ -1,13 +1,10 @@
 package edu.purdue.voltag.fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.nfc.NfcAdapter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +20,6 @@ import com.parse.PushService;
 import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.Game;
-import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.interfaces.OnJoinedGameListener;
 import edu.purdue.voltag.tasks.AddPlayerToGameTask;
 
@@ -97,9 +93,9 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
                         push.sendInBackground();
 
                         // Execute a fragment transaction on the main thread
-                        Handler mainHandler = new Handler(Looper.getMainLooper());
-                        mainHandler.post(new Runnable() {
+                        getActivity().runOnUiThread(new Runnable() {
                             public void run() {
+                                getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                                 getFragmentManager().beginTransaction()
                                         .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                                         .replace(android.R.id.content, new GameLobbyFragment())

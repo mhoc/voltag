@@ -1,6 +1,7 @@
 package edu.purdue.voltag.fragments;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -92,6 +93,7 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameLobbyFragment()).commit();
             }
         });

@@ -2,9 +2,6 @@ package edu.purdue.voltag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -19,10 +16,6 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.parse.Parse;
@@ -32,17 +25,14 @@ import com.parse.PushService;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.purdue.voltag.data.VoltagDB;
-import edu.purdue.voltag.fragments.GameChoiceFragment;
 import edu.purdue.voltag.fragments.GameLobbyFragment;
-import edu.purdue.voltag.fragments.RegistrationFragment;
+import edu.purdue.voltag.fragments.SplashFragment;
 import edu.purdue.voltag.interfaces.OnPlayerTaggedListener;
-import edu.purdue.voltag.tasks.DeletePlayerTask;
 import edu.purdue.voltag.tasks.TagPlayerTask;
 
 import static android.nfc.NdefRecord.createMime;
 
-public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback, View.OnClickListener {
+public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback {
 
     public static final String LOG_TAG = "voltag_log";
     public static final String SHARED_PREFS_NAME = "voltag_prefs";
@@ -94,19 +84,20 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     public void onStart() {
         super.onStart();
 
-        // Set up the button
-        Button button = (Button) this.findViewById(R.id.btn_beginButton);
-        button.setOnClickListener(this);
-
         // Get the current game ID
         SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         String gameId = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
 
         if (!(gameId.equals(""))) {
-            closeSplash();
             getFragmentManager().beginTransaction()
                     .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                     .replace(android.R.id.content, new GameLobbyFragment())
+                    .commit();
+        } else
+        {
+            getFragmentManager().beginTransaction()
+                    .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                    .replace(android.R.id.content, new SplashFragment())
                     .commit();
         }
 
@@ -121,41 +112,6 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processIntent(getIntent());
         }
-    }
-
-
-    @Override
-    public void onClick(View view) {
-
-        // Get the shared preferences and whether they are registered
-        SharedPreferences settings = getSharedPreferences(SHARED_PREFS_NAME, 0);
-        boolean isRegistered = settings.getBoolean(PREF_ISREGISTERED, false);
-
-        switch (view.getId()) {
-
-            case R.id.btn_beginButton:
-
-                // Close the splash screen
-                closeSplash();
-
-                // Choose which fragment to inflate
-                Fragment toInflate = isRegistered ? new GameChoiceFragment() : new RegistrationFragment();
-
-                // Inflate the fragment
-                getFragmentManager().beginTransaction()
-                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                        .replace(android.R.id.content, toInflate)
-                        .commit();
-
-                break;
-
-        }
-
-    }
-
-    private void closeSplash() {
-        View v = findViewById(R.id.splash);
-        v.setVisibility(View.GONE);
     }
 
     private void showAboutDialog() {
