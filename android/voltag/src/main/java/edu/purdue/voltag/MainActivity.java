@@ -2,6 +2,7 @@ package edu.purdue.voltag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -16,18 +17,26 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.PushService;
+import com.parse.SendCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.purdue.voltag.fragments.GameLobbyFragment;
+import edu.purdue.voltag.fragments.RegistrationFragment;
 import edu.purdue.voltag.fragments.SplashFragment;
 import edu.purdue.voltag.interfaces.OnPlayerTaggedListener;
+import edu.purdue.voltag.tasks.DeletePlayerTask;
+import edu.purdue.voltag.tasks.LeaveGameTask;
 import edu.purdue.voltag.tasks.TagPlayerTask;
 
 import static android.nfc.NdefRecord.createMime;
@@ -177,6 +186,64 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         Log.d("new Intent", intent.getAction());
         // onResume gets called after this to handle the intent
         setIntent(intent);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.drop_registration_main:
+                SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+                String gameId = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
+                if (!(gameId.equals(""))) {
+                    leaveGame();
+                }
+
+                // Delete the player from parse
+                new DeletePlayerTask(this).execute();
+
+                getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+                // Switch the fragment back to the registration fragment
+                getFragmentManager().beginTransaction()
+                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                        .replace(android.R.id.content, new RegistrationFragment())
+                        .commit();
+
+                return true;
+        }
+        return false;
+    }
+
+    private void leaveGame() {
+
+        // Get preferences
+        final SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+
+        // Alert other players that we've left the game
+        ParsePush pushDrop = new ParsePush();
+        pushDrop.setChannel("a"+prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+        pushDrop.setMessage(prefs.getString(MainActivity.PREF_USER_NAME, "") + " has left the game.");
+
+        // Send the push and unsubscribe them from push notifications
+        pushDrop.sendInBackground(new SendCallback() {
+            @Override
+            public void done(ParseException e) {
+                PushService.unsubscribe(MainActivity.this, "a"+prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+            }
+        });
+
+        // Execute task
+        new LeaveGameTask(this).execute();
+
     }
 
     public void processIntent(Intent intent) {

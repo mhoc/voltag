@@ -11,9 +11,5 @@
         android:icon="@android:drawable/ic_menu_share"
         android:showAsAction="always"/>
 
-    <item
-        android:id="@+id/drop_registration"
-        android:title="Drop Registration"
-        android:showAsAction="never" />
 
 </menu>

@@ -35,7 +35,6 @@ import edu.purdue.voltag.bitmap.BitmapCacheHost;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
 import edu.purdue.voltag.interfaces.OnDatabaseRefreshListener;
-import edu.purdue.voltag.tasks.DeletePlayerTask;
 import edu.purdue.voltag.tasks.LeaveGameTask;
 import edu.purdue.voltag.tasks.RefreshPlayersTask;
 
@@ -116,22 +115,6 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
 
         int id = item.getItemId();
         switch (id) {
-
-            case R.id.drop_registration:
-
-                // Leave the game
-                leaveGame();
-
-                // Delete the player from parse
-                new DeletePlayerTask(getActivity()).execute();
-
-                // Switch the fragment back to the registration fragment
-                getFragmentManager().beginTransaction()
-                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                        .replace(android.R.id.content, new RegistrationFragment())
-                        .commit();
-
-                return true;
 
             case R.id.exit_game:
 
