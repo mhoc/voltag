@@ -11,14 +11,8 @@ import android.widget.Button;
 import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
 
-/*
- * A simple {@link android.support.v4.app.Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link GameChoiceFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link GameChoiceFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
+/**
+ * A fragment for the splash screen of the app.
  */
 public class SplashFragment extends Fragment implements View.OnClickListener {
 
@@ -42,7 +36,6 @@ public class SplashFragment extends Fragment implements View.OnClickListener {
 
         return v;
     }
-
     @Override
     public void onClick(View view) {
 

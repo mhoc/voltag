@@ -81,6 +81,7 @@ public class GameChoiceFragment extends Fragment implements View.OnClickListener
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         String email = settings.getString(MainActivity.PREF_USER_EMAIL, "");
         String name = settings.getString(MainActivity.PREF_USER_NAME, "");
+        
         Player p = new Player(null, null, name, email, false);
         AsyncTask<Player, Void, Bitmap> loadPlayerTask = new AsyncTask<Player, Void, Bitmap>() {
             @Override
@@ -118,10 +119,10 @@ public class GameChoiceFragment extends Fragment implements View.OnClickListener
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_new_game:
-                getFragmentManager().beginTransaction().addToBackStack("CreateGameFragment").setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new CreateGameFragment()).commit();
+                getFragmentManager().beginTransaction().addToBackStack("CreateGameFragment").setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out,android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new CreateGameFragment()).commit();
                 break;
             case R.id.btn_existing_game:
-                getFragmentManager().beginTransaction().addToBackStack("JoinGameFragment").setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new JoinGameFragment()).commit();
+                getFragmentManager().beginTransaction().addToBackStack("JoinGameFragment").setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out,android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new JoinGameFragment()).commit();
                 break;
         }
 
