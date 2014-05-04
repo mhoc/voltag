@@ -36,6 +36,12 @@ public class SplashFragment extends Fragment implements View.OnClickListener {
 
         return v;
     }
+
+    /**
+     * Onclick for the "Begin" button. Opens the game choice fragment if the user is logged in, otherwise asks for login.
+     *
+     * @param view The button
+     */
     @Override
     public void onClick(View view) {
 

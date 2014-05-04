@@ -15,6 +15,12 @@ import android.graphics.RectF;
 
 public class ImageHelper {
 
+    /**
+     * Rounds the corners of the input bitmap.
+     * @param bitmap The bitmap
+     * @param pixels Unknown, seems to not change anything...
+     * @return The rounded bitmap.
+     */
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
                 .getHeight(), Config.ARGB_8888);

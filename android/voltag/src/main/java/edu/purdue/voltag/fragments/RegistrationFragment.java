@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,11 +48,12 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_registration, container, false);
-        nameBox = (EditText) v.findViewById(R.id.etxt_email);
-        emailBox = (EditText) v.findViewById(R.id.etxt_displayName);
+        emailBox = (EditText) v.findViewById(R.id.etxt_email);
+        nameBox = (EditText) v.findViewById(R.id.etxt_displayName);
         regButton = (Button) v.findViewById(R.id.btn_register);
         regButton.setOnClickListener(this);
 
+        emailBox.addTextChangedListener(new EmailTextWatcher(getActivity(), emailBox, regButton));
         return v;
     }
 
@@ -61,12 +63,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         db = VoltagDB.getDB(getActivity());
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
-
+    /**
+     * Pulls the login data and registers the player.
+     * @param view
+     */
     @Override
     public void onClick(View view) {
 
@@ -74,27 +74,36 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(nameBox.getWindowToken(), 0);
 
+        String email = emailBox.getText().toString();
+        String name = nameBox.getText().toString();
 
-        String name = emailBox.getText().toString();
-        String email = nameBox.getText().toString();
-        String android_id = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
-        Player p = new Player(null, android_id, name, email, false);
+        if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Log.e("Email", "Email is not valid. Using anyway...");
+            Toast.makeText(getActivity(), "Email is not valid.", Toast.LENGTH_SHORT);
+        } else {
+            String android_id = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
+            Player p = new Player(null, android_id, name, email, false);
 
-        RegisterPlayerTask task = new RegisterPlayerTask(getActivity(), p);
-        task.setListener(this);
-        task.execute();
+            RegisterPlayerTask task = new RegisterPlayerTask(getActivity(), p);
+            task.setListener(this);
+            task.execute();
 
-        Toast.makeText(getActivity(), "You are registered", Toast.LENGTH_LONG);
-        regButton.setEnabled(false);
+            Toast.makeText(getActivity(), "You are registered", Toast.LENGTH_LONG);
+            regButton.setEnabled(false);
 
-        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean(MainActivity.PREF_ISREGISTERED, true).commit();
-        editor.putString(MainActivity.PREF_USER_NAME, name).commit();
-        getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameChoiceFragment()).commit();
+            SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(MainActivity.PREF_ISREGISTERED, true).commit();
+            editor.putString(MainActivity.PREF_USER_NAME, name).commit();
+            getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(android.R.id.content, new GameChoiceFragment()).commit();
 
+        }
     }
 
+    /**
+     * Callback for the register task. Called when the user has been logged in
+     * @param p The Player
+     */
     @Override
     public void onPlayerRegistered(Player p) {
 
