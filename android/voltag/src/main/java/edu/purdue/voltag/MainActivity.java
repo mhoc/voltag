@@ -206,7 +206,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                     JSONObject data = null;
                     String name = prefs.getString(MainActivity.PREF_USER_NAME, "")+" is it ";
                     try {
-                         data = new JSONObject("{\"action\": \"com.example.UPDATE_STATUS\",\"alert\":\""+name+"\"}");
+                        data = new JSONObject("{\"action\": \"com.example.UPDATE_STATUS\",\"alert\":\""+name+"\"}");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -231,6 +231,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             Log.d("settings","setting is it to false");
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean(MainActivity.PREF_ISIT,false);
+            editor.commit();
         }
 
     }

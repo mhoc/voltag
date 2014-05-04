@@ -81,7 +81,7 @@ public class GameChoiceFragment extends Fragment implements View.OnClickListener
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
         String email = settings.getString(MainActivity.PREF_USER_EMAIL, "");
         String name = settings.getString(MainActivity.PREF_USER_NAME, "");
-        
+
         Player p = new Player(null, null, name, email, false);
         AsyncTask<Player, Void, Bitmap> loadPlayerTask = new AsyncTask<Player, Void, Bitmap>() {
             @Override
