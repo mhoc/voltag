@@ -174,17 +174,20 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
         ParsePush pushDrop = new ParsePush();
         pushDrop.setChannel("a"+prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
         pushDrop.setMessage(prefs.getString(MainActivity.PREF_USER_NAME, "") + " has left the game.");
-
+           final String oldGameID = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID,"");
         // Send the push and unsubscribe them from push notifications
         pushDrop.sendInBackground(new SendCallback() {
             @Override
             public void done(ParseException e) {
-                PushService.unsubscribe(getActivity(), "a"+prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, ""));
+                Log.d("debug", "unsubscriding from channel "+ "a" + oldGameID);
+                PushService.unsubscribe(getActivity(), "a"+oldGameID);
+
             }
         });
 
         // Execute task
         new LeaveGameTask(getActivity()).execute();
+
 
     }
 

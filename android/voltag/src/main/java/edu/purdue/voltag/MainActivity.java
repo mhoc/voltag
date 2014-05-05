@@ -166,7 +166,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                             NdefRecord.createApplicationRecord("edu.purdue.voltag")
                     }
             );
-            return msg;
+            return null;
 
         }
 
@@ -192,7 +192,6 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
         // If the message contains it, we are on the tagee's phone who just got tagged
         if (message.equals("it")) {
-
             // Tag the player on parse
             TagPlayerTask task = new TagPlayerTask(this);
             task.setListener(new OnPlayerTaggedListener() {
@@ -227,11 +226,11 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             });
             task.execute();
 
-        } else  if(!(message.equals("ignore"))){
-            Log.d("settings","setting is it to false");
+        } else if(message.equals("ignore")){
+            Log.d("debug", "got ndef message ignore");
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean(MainActivity.PREF_ISIT,false);
-            editor.commit();
+            //editor.putBoolean(MainActivity.PREF_ISIT,false);
+            //editor.commit();
         }
 
     }
