@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -111,6 +112,25 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         // Check to see that the Activity started due to an Android Beam
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processIntent(getIntent());
+        }
+        else if ( getIntent().getAction().equals(Intent.ACTION_VIEW))
+        {
+            Log.e("Intent", "" + getIntent().getAction());
+            Log.e("Intent", "" + getIntent().getData());
+            Uri uri = getIntent().getData();
+            String game_id = uri.getPath().substring(2);
+            Log.d("Intent", game_id);
+            Toast.makeText(this, "Url recieved!", Toast.LENGTH_SHORT).show();
+
+            /*SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
+            prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, game_id).apply();
+
+            getFragmentManager().beginTransaction()
+                    .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                    .replace(android.R.id.content, new GameLobbyFragment())
+                    .commit();*/
+
+
         }
     }
 
