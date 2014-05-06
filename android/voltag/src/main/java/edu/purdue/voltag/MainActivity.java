@@ -113,14 +113,14 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processIntent(getIntent());
         }
-        else if ( getIntent().getAction().equals(Intent.ACTION_VIEW))
+        else if ( Intent.ACTION_VIEW.equals(getIntent().getAction()) )
         {
             Log.e("Intent", "" + getIntent().getAction());
             Log.e("Intent", "" + getIntent().getData());
             Uri uri = getIntent().getData();
             String game_id = uri.getPath().substring(2);
             Log.d("Intent", game_id);
-            Toast.makeText(this, "Url recieved!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Url recieved!", Toast.LENGTH_SHORT).show();
 
             /*SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
             prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, game_id).apply();

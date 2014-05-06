@@ -85,7 +85,7 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
         editor.commit();
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
-        String shareBody = "http://voltag.davidtschida.com/"+ g.getID() + " Come join the revolt! Enter the id " + g.getID();
+        String shareBody = /*"http://voltag.davidtschida.com/"+ g.getID() + " " + */ "Come join the revolt! Enter the id " + g.getID();
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Join the revolt");
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
         startActivity(Intent.createChooser(sharingIntent, "Share via"));
