@@ -34,6 +34,7 @@ import edu.purdue.voltag.R;
 import edu.purdue.voltag.bitmap.BitmapCacheHost;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
+import edu.purdue.voltag.helper.ShareHandler;
 import edu.purdue.voltag.interfaces.OnDatabaseRefreshListener;
 import edu.purdue.voltag.tasks.DeletePlayerTask;
 import edu.purdue.voltag.tasks.LeaveGameTask;
@@ -150,12 +151,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
                 String gameId = null;
                 gameId = prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "");
 
-                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-                sharingIntent.setType("text/plain");
-                String shareBody = "Come join the revolt! Enter the id " + gameId;
-                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Join the revolt");
-                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                ShareHandler.shareGame(this.getActivity(), gameId);
 
                 return true;
 

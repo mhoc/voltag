@@ -18,6 +18,7 @@ import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.R;
 import edu.purdue.voltag.data.Game;
 import edu.purdue.voltag.data.VoltagDB;
+import edu.purdue.voltag.helper.ShareHandler;
 import edu.purdue.voltag.interfaces.OnGameCreatedListener;
 import edu.purdue.voltag.tasks.CreateGameTask;
 
@@ -83,12 +84,9 @@ public class CreateGameFragment extends Fragment implements View.OnClickListener
         editor.putString(MainActivity.PREF_CURRENT_GAME_ID, g.getID());
         editor.putBoolean(MainActivity.PREF_ISIT, true);
         editor.commit();
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        String shareBody = /*"http://voltag.davidtschida.com/"+ g.getID() + " " + */ "Come join the revolt! Enter the id " + g.getID();
-        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Join the revolt");
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+
+        ShareHandler.shareGame(this.getActivity(), g.getID());
+
         //getFragmentManager().beginTransaction().replace(android.R.id.content, new GameLobbyFragment()).commit();
         getActivity().runOnUiThread(new Runnable() {
             @Override
