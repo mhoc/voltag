@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.purdue.voltag.fragments.GameLobbyFragment;
+import edu.purdue.voltag.fragments.JoinGameFragment;
 import edu.purdue.voltag.fragments.SplashFragment;
 import edu.purdue.voltag.interfaces.OnPlayerTaggedListener;
 import edu.purdue.voltag.tasks.TagPlayerTask;
@@ -118,17 +119,22 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             Log.e("Intent", "" + getIntent().getAction());
             Log.e("Intent", "" + getIntent().getData());
             Uri uri = getIntent().getData();
-            String game_id = uri.getPath().substring(2);
+            String game_id = uri.getLastPathSegment();
             Log.d("Intent", game_id);
             //Toast.makeText(this, "Url recieved!", Toast.LENGTH_SHORT).show();
 
-            /*SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
-            prefs.edit().putString(MainActivity.PREF_CURRENT_GAME_ID, game_id).apply();
+            SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_NAME, 0);
 
-            getFragmentManager().beginTransaction()
-                    .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                    .replace(android.R.id.content, new GameLobbyFragment())
-                    .commit();*/
+            if(prefs.getString(MainActivity.PREF_CURRENT_GAME_ID, "").equals("")) {
+                
+                getFragmentManager().beginTransaction()
+                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                        .replace(android.R.id.content, JoinGameFragment.newInstance(game_id))
+                        .commit();
+            }
+            else {
+                Toast.makeText(this, "Game cannot be entered until the current game is over or left.", Toast.LENGTH_LONG);
+            }
 
 
         }

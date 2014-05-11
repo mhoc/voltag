@@ -1,5 +1,6 @@
 package edu.purdue.voltag.fragments;
 
+import android.animation.ArgbEvaluator;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -37,6 +38,41 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
     private Button joinGameButton;
     private EditText gameNameEditText;
 
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PREP_GAME_ID = "preparedGameId";
+
+
+    // TODO: Rename and change types of parameters
+    private String preparedGameId;
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @return A new instance of fragment GameChoiceFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static JoinGameFragment newInstance(String preparedGameId) {
+        JoinGameFragment fragment = new JoinGameFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PREP_GAME_ID, preparedGameId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+    public JoinGameFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            preparedGameId = getArguments().getString(ARG_PREP_GAME_ID);
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -46,6 +82,12 @@ public class JoinGameFragment extends Fragment implements View.OnClickListener {
         // Set up widgets
         joinGameButton = (Button) v.findViewById(R.id.joingame_bu_join);
         gameNameEditText = (EditText) v.findViewById(R.id.joingame_et_lobbyid);
+
+        if(preparedGameId != null)
+        {
+            gameNameEditText.setText(preparedGameId);
+        }
+
         joinGameButton.setOnClickListener(this);
 
         // Set a listener for when the user clicks the enter button to submit.
