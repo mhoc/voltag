@@ -58,7 +58,15 @@ public class MyCustomReceiver extends BroadcastReceiver {
             mNotifyMgr.notify(mNotificationId, mBuilder.build());
 
 
-            context.startActivity(i);
+            Intent updateIntent = new Intent("edu.purdue.voltag.UPDATE");
+
+            //put whatever data you want to send, if any
+            //updateIntent.putExtra("message", message);
+
+            //send broadcast
+            context.sendBroadcast(updateIntent);
+
+
         } catch (JSONException e) {
             Log.d(TAG, "JSONException: " + e.getMessage());
         }

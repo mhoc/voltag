@@ -2,6 +2,8 @@ package edu.purdue.voltag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -110,6 +112,9 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         super.onResume();
 //        Log.d("debug-intent",getIntent().getAction());
         LocalBroadcastManager.getInstance(this).registerReceiver(customReceiver, new IntentFilter("edu.purdue.voltag.PARSE_IT_CHANGE"));
+
+        registerReceiver(mMessageReceiver, new IntentFilter("edu.purdue.voltag.UPDATE"));
+
         // Check to see that the Activity started due to an Android Beam
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processIntent(getIntent());
@@ -138,6 +143,12 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
 
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mMessageReceiver);
     }
 
     private void showAboutDialog() {
@@ -254,7 +265,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
         } else if(message.equals("ignore")){
             Log.d("debug", "got ndef message ignore");
-            SharedPreferences.Editor editor = prefs.edit();
+            //SharedPreferences.Editor editor = prefs.edit();
             //editor.putBoolean(MainActivity.PREF_ISIT,false);
             //editor.commit();
         }
@@ -262,4 +273,17 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     }
 
 
+
+
+    //This is the handler that will manager to process the broadcast intent
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            // Extract data included in the Intent
+            String message = intent.getStringExtra("message");
+
+            //do other stuff here
+        }
+    };
 }
