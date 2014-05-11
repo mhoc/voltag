@@ -2,7 +2,6 @@ package edu.purdue.voltag.fragments;
 
 import android.app.Activity;
 import android.app.ListFragment;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.nfc.NfcAdapter;
@@ -31,6 +30,7 @@ import java.util.List;
 import edu.purdue.voltag.MainActivity;
 import edu.purdue.voltag.PlayerListAdapter;
 import edu.purdue.voltag.R;
+import edu.purdue.voltag.Refreshable;
 import edu.purdue.voltag.bitmap.BitmapCacheHost;
 import edu.purdue.voltag.data.Player;
 import edu.purdue.voltag.data.VoltagDB;
@@ -49,7 +49,7 @@ import edu.purdue.voltag.tasks.RefreshPlayersTask;
  * create an instance of this fragment.
  *
  */
-public class GameLobbyFragment extends ListFragment implements OnDatabaseRefreshListener, BitmapCacheHost {
+public class GameLobbyFragment extends ListFragment implements OnDatabaseRefreshListener, BitmapCacheHost, Refreshable {
 
     VoltagDB db;
     ListView theList;
@@ -105,9 +105,7 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
         gameName = settings.getString(MainActivity.PREF_CURRENT_GAME_NAME, "");
 
         tv.setText(gameName);
-        RefreshPlayersTask task = new RefreshPlayersTask(getActivity());
-        task.setListener(this);
-        task.execute();
+        refresh();
     }
 
     @Override
@@ -260,5 +258,12 @@ public class GameLobbyFragment extends ListFragment implements OnDatabaseRefresh
             }
         });
 
+    }
+
+    @Override
+    public void refresh() {
+        RefreshPlayersTask task = new RefreshPlayersTask(getActivity());
+        task.setListener(this);
+        task.execute();
     }
 }

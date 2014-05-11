@@ -2,6 +2,7 @@ package edu.purdue.voltag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -52,6 +53,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
     private NfcAdapter mNfcAdapter;
     private MyCustomReceiver customReceiver;
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -272,7 +274,12 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
     }
 
-
+    @Override
+    public void onAttachFragment(Fragment frag)
+    {
+        super.onAttachFragment(frag);
+        currentFragment = frag;
+    }
 
 
     //This is the handler that will manager to process the broadcast intent
@@ -282,7 +289,10 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
             // Extract data included in the Intent
             String message = intent.getStringExtra("message");
-
+            if(currentFragment instanceof Refreshable)
+            {
+                currentFragment.refresh();
+            }
             //do other stuff here
         }
     };
